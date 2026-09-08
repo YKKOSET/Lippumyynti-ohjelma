@@ -171,6 +171,65 @@ Esimerkki:
 > avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
 > kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
 
+> ### _Lipputyyppi_
+> _Lipputyyppi-taulu sisältää eri lipputyypit, kuten peruslippu, eläkeläinen, lastenlippu, opiskelija. Yhdellä lipulla voi olla vain yksi lipputyyppi, mutta yhdellä lipputyypillä voi olla monta eri lippua._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tyyppi_id | int PK (identity) | Lipputyypin id
+> Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu)
+
+> ### _Lippu_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tarknro_id | int PK (identity) | Lipun tarkistusnumero
+> Esitys_id | int FK |  Mihin esitykseen lippu on
+> Lipputyyppi | int FK | Mikä lipputyyppi lippu on
+> Hinta | numeric(10,2) | Lipun kappalehinta
+> Kaytetty | boolean | Onko lippu käytetty? Default false.
+
+> ### _Ostorivi_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Ostorivi_id | int PK (identity) | Ostorivin yksilöinti
+> Kuitti_id | int FK |  Mihin ostoon rivi kuuluu?
+> Tarknro_id | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
+> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+
+> ### _Tilit_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | int PK | Tilin id
+> nimimerkki | varchar(30) |  Tilin nimimerkki
+> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
+> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+
+> ### _Tilit_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | int PK | Tilin id
+> nimimerkki | varchar(30) |  Tilin nimimerkki
+> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
+> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+
+> ### _Tilit_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | int PK | Tilin id
+> nimimerkki | varchar(30) |  Tilin nimimerkki
+> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
+> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+
 
 <!--
 Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
