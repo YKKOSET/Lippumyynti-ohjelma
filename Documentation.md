@@ -155,7 +155,25 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 
 ## Tietokanta
 
-<!-- Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
+### Tietokantakaavio
+
+### Tietohakemisto
+
+Esimerkki:
+
+> ### _Tilit_
+> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> id | int PK | Tilin id
+> nimimerkki | varchar(30) |  Tilin nimimerkki
+> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
+> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+
+
+<!--
+Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
 kuvataan käsitekaaviolla. Käsitemalliin sisältyy myös taulujen välisten viiteyhteyksien ja avainten
 määritykset. Tietokanta kuvataan käyttäen jotain kuvausmenetelmää, joko ER-kaaviota ja UML-luokkakaaviota.
 
