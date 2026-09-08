@@ -1,13 +1,13 @@
-package lipunmyynti.lipunmyynti;
+package lipunmyynti.ticketguru;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LipunmyyntiApplication {
+public class TicketguruApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LipunmyyntiApplication.class, args);
+		SpringApplication.run(TicketguruApplication.class, args);
 	}
 
 }

@@ -1,10 +1,10 @@
-package lipunmyynti.lipunmyynti;
+package lipunmyynti.ticketguru;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LipunmyyntiApplicationTests {
+class TicketguruApplicationTests {
 
 	@Test
 	void contextLoads() {
