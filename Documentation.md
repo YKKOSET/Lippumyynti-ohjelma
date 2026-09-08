@@ -159,28 +159,16 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 
 ### Tietohakemisto
 
-Esimerkki:
-
-> ### _Tilit_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
->
-> Kenttä | Tyyppi | Kuvaus
-> ------ | ------ | ------
-> id | int PK | Tilin id
-> nimimerkki | varchar(30) |  Tilin nimimerkki
-> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
-
 > ### _Lipputyyppi_
 > _Lipputyyppi-taulu sisältää eri lipputyypit, kuten peruslippu, eläkeläinen, lastenlippu, opiskelija. Yhdellä lipulla voi olla vain yksi lipputyyppi, mutta yhdellä lipputyypillä voi olla monta eri lippua._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
 > Tyyppi_id | int PK (identity) | Lipputyypin id
-> Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu)
+> Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu..)
 
 > ### _Lippu_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> _Lippu-taulu sisältää liput esityskerroille. Yhdellä lipulla voi olla vain yksi esityskerta, mutta yhdellä esityskerralla on monta eri lippua._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
@@ -191,45 +179,48 @@ Esimerkki:
 > Kaytetty | boolean | Onko lippu käytetty? Default false.
 
 > ### _Ostorivi_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> _Ostorivi-taulu sisältää ostetun lipun. Yhdellä ostorivillä voi olla monta eri lippua, mutta yhdellä lipulla voi olla vain yksi ostorivi, eli ostokerta._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
 > Ostorivi_id | int PK (identity) | Ostorivin yksilöinti
 > Kuitti_id | int FK |  Mihin ostoon rivi kuuluu?
-> Tarknro_id | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+> Tarknro_id | int FK | Mikä lippu on ostettu?
+> Myyntihinta | numeric(10,2) | Mihin hintaan lippu ostettiin?
 
-> ### _Tilit_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> ### _Osto_
+> _Osto-taulu ostorivit ja vastaa asiakkaan kuittia. Ostolla voi olla monta eri ostoriviä, mutta yksi ostorivi voi kuulua vain yhteen ostoon._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | int PK | Tilin id
-> nimimerkki | varchar(30) |  Tilin nimimerkki
-> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+> Kuitti_id | int PK (identity) | Kuitin yksilöivä tunniste
+> Asiakas_id | int FK |  Kuka oli ostaja?
+> Ostoaika | timestamp | Milloin ostettiin: pvm ja klo?
+> Kokonaishinta | numeric(10,2) | Oston kokonaishinta
 
-> ### _Tilit_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> ### _Asiakas_
+> _Asiakas-taulu on valmiiksi luotu luokka jatkokehitystä ajatellen. Asiakkaalla voi olla monta ostoa, mutta yhdellä ostolla voi olla vain yksi asiakas/ostaja._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | int PK | Tilin id
-> nimimerkki | varchar(30) |  Tilin nimimerkki
-> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+> Asiakas_id | int PK (identity) | Asiakkaan yksilöivä tunniste
+> Etunimi | varchar(50) |  Asiakkaan etunimi
+> Sukunimi | varchar(100) |  Asiakkaan sukunimi
+> Sähköposti | varchar(300) | Asiakkaan sähköpostiosoite
+> Puhelin | varchar(20) | Asiakkaan puhelinnumero
 
-> ### _Tilit_
-> _Tilit-taulu sisältää käyttäjätilit. Käyttäjällä voi olla monta tiliä. Tili kuuluu aina vain yhdelle käyttäjälle._
+> ### _Jarjestaja_
+> _Jarjestaja-taulu sisältää tapahtuman yhteyshenkilön. Tarkoituksena on, että yhdellä tapahtumalla on vain yksi päävastuuhenkilö/järjestäjä. Järjestäjällä voi olla monta tapahtumaa._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> id | int PK | Tilin id
-> nimimerkki | varchar(30) |  Tilin nimimerkki
-> avatar | int FK | Tilin avatar, viittaus [avatar](#Avatar)-tauluun
-> kayttaja | int FK | Viittaus käyttäjään [käyttäjä](#Kayttaja)-taulussa
+> Jarjestaja_id | int PK (identity) | Järjestäjän id
+> Etunimi | varchar(50) |  Järjestäjän etunimi
+> Sukunimi | varchar(100) |  Järjestäjän sukunimi
+> Sähköposti | varchar(300) | Järjestäjän sähköpostiosoite
+> Puhelin | varchar(20) | Järjestäjän puhelinnumero
 
+JATKUU MYÖHEMMIN...
 
 <!--
 Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
