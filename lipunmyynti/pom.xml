@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>lipunmyynti</groupId>
-	<artifactId>lipunmyynti</artifactId>
+	<artifactId>ticketguru</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>lipunmyynti</name>
+	<name>ticketguru</name>
 	<description/>
 	<url/>
 	<licenses>
