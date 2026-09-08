@@ -220,7 +220,7 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 > Sähköposti | varchar(300) | Järjestäjän sähköpostiosoite
 > Puhelin | varchar(20) | Järjestäjän puhelinnumero
 
-### _Tapahtuma_
+> ### _Tapahtuma_
 > _Tapahtuma-taulu sisältää tapahtuman tiedot. Yhdellä tapahtumalla voi olla monta esityskertaa, mutta yksi esityskerta voi kuulua vain yhteen tapahtumaan._
 >
 > Kenttä | Tyyppi | Kuvaus
@@ -229,7 +229,7 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 > Nimi | varchar(200) |  Tapahtuman nimi
 > Jarjestaja_id | int FK |  Tapahtuman järjestäjä
 
-### _Esityskerta_
+> ### _Esityskerta_
 > _Esityskerta-taulu sisältää tapahtuman yhden esityksen sekä sen tapahtumapaikan, max. osallistujamäärän ja alkamisajan. Yksi esitys voi tapahtua vain yhdessä paikassa, mutta yhdellä paikalla voi olla monta esityskertaa._
 >
 > Kenttä | Tyyppi | Kuvaus
@@ -240,7 +240,7 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 > MaxOsallistujat | int | Esityksen maksimi osallistujamäärä
 > Alkuaika | timestamp | Mikä päivä ja mihin aikaan esitys alkaa
 
-### _Paikka_
+> ### _Paikka_
 > _Paikka-taulu sisältää esityskerran tapahtumapaikan osoitetietoineen._
 >
 > Kenttä | Tyyppi | Kuvaus
@@ -250,7 +250,7 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 > Katuosoite | varchar(100) |  Paikan katuosoite
 > Postinumero | varchar(5) FK | Paikan postinumero
 
-### _Postinumero_
+> ### _Postinumero_
 > _Postinumero-taulu sisältää postinumerolla löytyvän postitoimipaikan. Yhdellä postinumerolla on vain yksi postitoimipaikka. Yhdellä postitoimipaikalla voi olla monta postinumeroa._
 >
 > Kenttä | Tyyppi | Kuvaus
