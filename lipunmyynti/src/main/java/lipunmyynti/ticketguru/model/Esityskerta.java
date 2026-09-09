@@ -4,14 +4,18 @@ import java.sql.Timestamp;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "esityskerta")
 public class Esityskerta {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @ManyToOne
     private Paikka paikka;
-    private TapahtumaId tapahtumaId;
+    
+    @ManyToOne
+    private Tapahtuma tapahtuma;
     private int maxOsallistujat;
     private Timestamp alkuaika;
 

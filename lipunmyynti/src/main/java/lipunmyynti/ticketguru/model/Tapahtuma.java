@@ -4,6 +4,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "tapahtuma")
 public class Tapahtuma {
     
     @Id
@@ -11,6 +12,8 @@ public class Tapahtuma {
     private Long id;
 
     private String nimi;
+
+    @ManyToOne
     private Jarjestaja jarjestaja;
     
     @OneToMany(mappedBy = "tapahtuma")
