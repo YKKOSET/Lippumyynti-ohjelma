@@ -18,6 +18,7 @@ public class Jarjestaja {
     // @OneToMany(mappedBy = "jarjestaja")
     // private List<Tapahtuma> tapahtumat;
 
+
     public Jarjestaja() {
     }
 
