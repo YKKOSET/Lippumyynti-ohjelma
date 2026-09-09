@@ -157,6 +157,9 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 
 ### Tietokantakaavio
 
+Tietokannan relaatiomalli:
+![Relaatiomalli](./kuvat/relaatiomalli_090926.png)
+
 ### Tietohakemisto
 
 > ### _Lipputyyppi_
