@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "jarjestaja")
 
 public class Jarjestaja {
 
@@ -17,8 +18,11 @@ public class Jarjestaja {
     private String sahkoposti;
     private String puhelin;
 
+
     @OneToMany(mappedBy = "jarjestaja")
     private List<Tapahtuma> tapahtumat;
+
+
 
     public Jarjestaja() {
     }
