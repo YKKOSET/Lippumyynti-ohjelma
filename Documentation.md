@@ -155,7 +155,112 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 
 ## Tietokanta
 
-<!-- Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
+### Tietokantakaavio
+
+### Tietohakemisto
+
+> ### _Lipputyyppi_
+> _Lipputyyppi-taulu sisältää eri lipputyypit, kuten peruslippu, eläkeläinen, lastenlippu, opiskelija... Yhdellä lipulla voi olla vain yksi lipputyyppi, mutta yhdellä lipputyypillä voi olla monta eri lippua._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tyyppi_id | int PK (identity) | Lipputyypin id
+> Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu..)
+
+> ### _Lippu_
+> _Lippu-taulu sisältää liput esityskerroille. Yhdellä lipulla voi olla vain yksi esityskerta, mutta esityskerralla on monta erilaista lippua._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tarknro_id | int PK (identity) | Lipun tarkistusnumero
+> Esitys_id | int FK |  Mihin esitykseen lippu on
+> Tyyppi_id | int FK | Mikä lipputyyppi lippu on
+> Hinta | numeric(10,2) | Lipun kappalehinta
+> Kaytetty | boolean (default false) | Onko lippu käytetty
+
+> ### _Ostorivi_
+> _Ostorivi-taulu yhdistää ostetut liput ja ostotapahtuman. Ostorivillä voi olla monta eri lippua, mutta yhdellä lipulla voi olla vain yksi ostorivi, eli ostokerta._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Ostorivi_id | int PK (identity) | Ostorivin id
+> Kuitti_id | int FK |  Mihin ostoon ostorivi kuuluu
+> Tarknro_id | int FK | Mikä lippu on ostettu
+> Myyntihinta | numeric(10,2) | Lipun toteutunut (kappale)hinta
+
+> ### _Osto_
+> _Osto-taulu vastaa asiakkaan kuittia, eli yhtä ostotapahtumaa. Yhdellä ostolla voi olla monta ostoriviä, mutta yksi ostorivi voi kuulua vain yhteen ostotapahtumaan._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Kuitti_id | int PK (identity) | Kuitin id
+> Asiakas_id | int FK |  Kuka oli ostaja
+> Ostoaika | timestamp | Milloin ostettiin: pvm ja klo
+> Kokonaishinta | numeric(10,2) | Oston kokonaishinta
+
+> ### _Asiakas_
+> _Asiakas-taulu on valmiiksi luotu luokka jatkokehitystä ajatellen. Asiakkaalla voi olla monta ostoa, mutta yhdellä ostolla voi olla vain yksi asiakas/ostaja._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Asiakas_id | int PK (identity) | Asiakkaan id
+> Etunimi | varchar(50) |  Asiakkaan etunimi
+> Sukunimi | varchar(100) |  Asiakkaan sukunimi
+> Sähköposti | varchar(300) | Asiakkaan sähköpostiosoite
+> Puhelin | varchar(20) | Asiakkaan puhelinnumero
+
+> ### _Jarjestaja_
+> _Jarjestaja-taulu sisältää tapahtuman yhteyshenkilön. Tarkoituksena on, että yhdellä tapahtumalla on vain yksi päävastuuhenkilö/järjestäjä. Järjestäjällä voi olla monta tapahtumaa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Jarjestaja_id | int PK (identity) | Järjestäjän id
+> Etunimi | varchar(50) |  Järjestäjän etunimi
+> Sukunimi | varchar(100) |  Järjestäjän sukunimi
+> Sähköposti | varchar(300) | Järjestäjän sähköpostiosoite
+> Puhelin | varchar(20) | Järjestäjän puhelinnumero
+
+> ### _Tapahtuma_
+> _Tapahtuma-taulu sisältää tapahtuman tiedot. Yhdellä tapahtumalla voi olla monta esityskertaa, mutta yksi esityskerta voi kuulua vain yhteen tapahtumaan._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tapahtuma_id | int PK (identity) | Tapahtuman id
+> Nimi | varchar(200) |  Tapahtuman nimi
+> Jarjestaja_id | int FK |  Tapahtuman järjestäjä
+
+> ### _Esityskerta_
+> _Esityskerta-taulu sisältää tapahtuman yhden esityksen sekä sen tapahtumapaikan, max. osallistujamäärän ja alkamisajan. Yksi esitys voi tapahtua vain yhdessä paikassa, mutta yhdellä paikalla voi olla monta esityskertaa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Esitys_id | int PK (identity) | Esityskerran id
+> Paikka_id | int FK |  Missä esitys järjestetään
+> Tapahtuma_id | int FK |  Mihin tapahtumaan esityskerta kuuluu
+> MaxOsallistujat | int | Esityksen maksimi osallistujamäärä
+> Alkuaika | timestamp | Mikä päivä ja mihin aikaan esitys alkaa
+
+> ### _Paikka_
+> _Paikka-taulu sisältää esityskerran tapahtumapaikan osoitetietoineen._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Paikka_id | int PK (identity) | Paikan id
+> Nimi | varchar(200) |  Paikan nimi
+> Katuosoite | varchar(100) |  Paikan katuosoite
+> Postinumero | varchar(5) FK | Paikan postinumero
+
+> ### _Postinumero_
+> _Postinumero-taulu sisältää postinumerolla löytyvän postitoimipaikan. Yhdellä postinumerolla on vain yksi postitoimipaikka. Yhdellä postitoimipaikalla voi olla monta postinumeroa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Postinumero | varchar(5) PK | Yksilöivä postinumero
+> Postitoimipaikka | varchar(50) |  Postitoimipaikan nimi
+
+
+<!--
+Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
 kuvataan käsitekaaviolla. Käsitemalliin sisältyy myös taulujen välisten viiteyhteyksien ja avainten
 määritykset. Tietokanta kuvataan käyttäen jotain kuvausmenetelmää, joko ER-kaaviota ja UML-luokkakaaviota.
 
