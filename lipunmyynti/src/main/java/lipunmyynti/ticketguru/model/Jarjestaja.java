@@ -1,7 +1,6 @@
 package lipunmyynti.ticketguru.model;
 
 import java.util.List;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -18,11 +17,10 @@ public class Jarjestaja {
     private String sahkoposti;
     private String puhelin;
 
-
     @OneToMany(mappedBy = "jarjestaja")
     private List<Tapahtuma> tapahtumat;
 
-
+    //Constructors, getters & setters, toString begin:
 
     public Jarjestaja() {
     }
