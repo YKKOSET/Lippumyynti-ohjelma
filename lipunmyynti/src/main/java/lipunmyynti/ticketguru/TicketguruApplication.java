@@ -13,7 +13,13 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 @SpringBootApplication
 public class TicketguruApplication {
 
-	public static void main(String[] args) {
+	private final TapahtumaRepository tapahtumaRepository;
+
+    TicketguruApplication(TapahtumaRepository tapahtumaRepository) {
+        this.tapahtumaRepository = tapahtumaRepository;
+    }
+
+    public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
 
@@ -24,8 +30,14 @@ public class TicketguruApplication {
     return (args) -> {
         //Hard-coded Jarjestajat
         jarjestajaRepository.save(new Jarjestaja("Matti", "Halminen", "matin@kukat.fi", "0401234567"));
+        jarjestajaRepository.save(new Jarjestaja("Tom", "Aatti", "tom.aatti@gmail.com", "0407654321"));
+        jarjestajaRepository.save(new Jarjestaja("Naami", "Puronen", "NewKirjailijaliitto@liitto.fi", "0501234567"));
+        
         //Hard-coded Tapahtumat
         tapahtumaRepository.save(new Tapahtuma("Keikkakeidas"));
+        tapahtumaRepository.save(new Tapahtuma("Teatterin Aave"));
+        tapahtumaRepository.save(new Tapahtuma("Vantaan kirjamessut"));
+
     };
 }
 
