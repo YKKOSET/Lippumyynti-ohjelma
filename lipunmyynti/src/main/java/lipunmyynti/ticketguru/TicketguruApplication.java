@@ -22,6 +22,8 @@ public class TicketguruApplication {
 	public CommandLineRunner demo(TapahtumaRepository tapahtumaRepository,
     JarjestajaRepository jarjestajaRepository) {
     return (args) -> {
+
+        
         //Hard-coded Jarjestajat
         jarjestajaRepository.save(new Jarjestaja("Matti", "Halminen", "matin@kukat.fi", "0401234567"));
         //Hard-coded Tapahtumat
