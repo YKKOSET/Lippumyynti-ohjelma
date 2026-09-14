@@ -13,11 +13,6 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 @SpringBootApplication
 public class TicketguruApplication {
 
-	private final TapahtumaRepository tapahtumaRepository;
-
-    TicketguruApplication(TapahtumaRepository tapahtumaRepository) {
-        this.tapahtumaRepository = tapahtumaRepository;
-    }
 
     public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
@@ -40,9 +35,6 @@ public class TicketguruApplication {
 
     };
 }
-
-
-
 
 
 }
