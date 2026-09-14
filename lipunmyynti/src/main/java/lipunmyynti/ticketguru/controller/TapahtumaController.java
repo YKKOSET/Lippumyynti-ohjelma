@@ -13,15 +13,21 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 
 public class TapahtumaController {
 
-    @Autowired
     // injection: repository into controller
-    private TapahtumaRepository tapahtumaRepository;
+    private final TapahtumaRepository tapahtumaRepository;
+
+    TapahtumaController(TapahtumaRepository tapahtumaRepository) {
+        this.tapahtumaRepository = tapahtumaRepository;
+    }
 
     // list all events (findAll() comes automatically from JpaRepository)
     @GetMapping("/tapahtumat")
     public List<Tapahtuma> getAllTapahtumat() {
         return tapahtumaRepository.findAll();
     }
+
+    
+
 
 }
 
