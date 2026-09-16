@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController 
-@RequestMapping ("/ticketguru") //http://localhost:8080/ticketguru/
+@RequestMapping ("/ticketguru/jarjestajat") //http://localhost:8080/ticketguru/jarjestajat
 
-public class JarjestajaController {
+public class JarjestajaRestController {
 
     private final JarjestajaRepository jarjestajaRepository;
 
-    JarjestajaController(JarjestajaRepository jarjestajaRepository){
+    JarjestajaRestController(JarjestajaRepository jarjestajaRepository){
         this.jarjestajaRepository = jarjestajaRepository;
     }
         //list all organizers
-    @GetMapping("/jarjestajat")
+    @GetMapping
     public List<Jarjestaja>getAlljarjestajat() {
         return jarjestajaRepository.findAll();
     }
         // add new organizer
-    @PostMapping("/jarjestajat")
+    @PostMapping
     public Jarjestaja addJarjestaja(@RequestBody Jarjestaja uusiJarjestaja) {
         
         return jarjestajaRepository.save(uusiJarjestaja) ;
