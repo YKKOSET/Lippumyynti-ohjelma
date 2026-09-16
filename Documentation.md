@@ -277,6 +277,8 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 
 ## Tekninen kuvaus
 
+### REST-rajapinnan kuvaus
+
 <!-- Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
 ratkaisut, esim.
 
