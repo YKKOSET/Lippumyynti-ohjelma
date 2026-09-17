@@ -25,6 +25,12 @@ public class TapahtumaRestController {
         return tapahtumaRepository.findAll();
     }
 
+    // adding one event
+    @PostMapping
+    public Tapahtuma addTapahtuma(@RequestBody Tapahtuma tapahtuma) {
+        return tapahtumaRepository.save(tapahtuma);
+    }
+
     // editing one event
     @PutMapping("/{id}")
     public Tapahtuma updateTapahtuma(@PathVariable Long id, @RequestBody Tapahtuma updateTapahtuma) {
