@@ -339,12 +339,22 @@ GET /ticketguru/jarjestajat
 ```json
 [
   {
-    "id": 1,
-    "nimi": "Live Nation"
+    "etunimi": "Matti",
+    "sukunimi": "Halminen",
+    "sahkoposti": "matin@kukat.fi",
+    "puhelin": "0401234567"
   },
   {
-    "id": 2,
-    "nimi": "Rock Events Oy"
+    "etunimi": "Tom",
+    "sukunimi": "Aatti",
+    "sahkoposti": "tom.aatti@gmail.com",
+    "puhelin": "0407654321"
+  },
+  {
+    "etunimi": "Naami",
+    "sukunimi": "Puronen",
+    "sahkoposti": "NewKirjailijaliitto@liitto.fi",
+    "puhelin": "0501234567"
   }
 ]
 ```
@@ -378,8 +388,10 @@ GET /ticketguru/jarjestajat/1
 
 ```json
 {
-  "id": 1,
-  "nimi": "Live Nation"
+  "etunimi": "Matti",
+  "sukunimi": "Halminen",
+  "sahkoposti": "matin@kukat.fi",
+  "puhelin": "0401234567"
 }
 ```
 
@@ -449,12 +461,22 @@ GET /ticketguru/tapahtumat
 ```json
 [
   {
+    "nimi": "Keikkakeidas",
+    "esityskerrat": [],
     "id": 1,
-    "nimi": "Summer Festival"
+    "jarjestaja": null
   },
   {
+    "nimi": "Teatterin Aave",
+    "esityskerrat": [],
     "id": 2,
-    "nimi": "Rock Festival"
+    "jarjestaja": null
+  },
+  {
+    "nimi": "Vantaan kirjamessut",
+    "esityskerrat": [],
+    "id": 3,
+    "jarjestaja": null
   }
 ]
 ```
@@ -488,9 +510,10 @@ GET /ticketguru/tapahtumat/1
 
 ```json
 {
+  "nimi": "Keikkakeidas",
+  "esityskerrat": [],
   "id": 1,
-  "nimi": "Summer Festival",
-  "kuvaus": "Kesän suurin musiikkitapahtuma"
+  "jarjestaja": null
 }
 ```
 
@@ -524,8 +547,8 @@ PUT /ticketguru/tapahtumat/1
 
 ```json
 {
-  "id": 1,
-  "nimi": "Summer Festival 2025"
+  "nimi": "Summer Festival 2025",
+  "id": 1
 }
 ```
 
