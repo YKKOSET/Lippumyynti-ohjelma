@@ -34,9 +34,9 @@ public class JarjestajaRestController {
     }
         // add new organizer
     @PostMapping
-    public Jarjestaja addJarjestaja(@RequestBody Jarjestaja uusiJarjestaja) {
+    public Jarjestaja addJarjestaja(@RequestBody Jarjestaja jarjestaja) {
         
-        return jarjestajaRepository.save(uusiJarjestaja) ;
+        return jarjestajaRepository.save(jarjestaja) ;
     }
     
     // Edit existing Järjestäjä
