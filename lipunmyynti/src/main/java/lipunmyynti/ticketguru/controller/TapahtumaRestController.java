@@ -39,4 +39,10 @@ public class TapahtumaRestController {
         return tapahtumaRepository.findAll(); 
     }
 
+    // returns all events for a specific organizer
+    @GetMapping("/jarjestaja/{id}")
+    public List<Tapahtuma> getTapahtumatByJarjestaja(@PathVariable Long id) {
+        return tapahtumaRepository.findByJarjestajaId(id);
+    }
+
 }
