@@ -1,8 +1,3 @@
-
-<!--
-# Projektin nimi
--->
-
 # TicketGuru -lipunmyyntijärjestelmä
 
 
@@ -155,7 +150,114 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 
 ## Tietokanta
 
-<!-- Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
+### Tietokantakaavio
+
+![Relaatiomalli](./kuvat/relaatiomalli_090926.png)
+
+### Tietohakemisto
+
+> ### _Lipputyyppi_
+> _Lipputyyppi-taulu sisältää eri lipputyypit, kuten peruslippu, eläkeläinen, lastenlippu, opiskelija... Yhdellä lipulla voi olla vain yksi lipputyyppi, mutta yhdellä lipputyypillä voi olla monta eri lippua._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tyyppi_id | int PK (identity) | Lipputyypin id
+> Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu..)
+
+> ### _Lippu_
+> _Lippu-taulu sisältää liput esityskerroille. Yhdellä lipulla voi olla vain yksi esityskerta, mutta esityskerralla on monta erilaista lippua._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tarknro_id | int PK (identity) | Lipun tarkistusnumero
+> Esitys_id | int FK |  Mihin esitykseen lippu on
+> Tyyppi_id | int FK | Mikä lipputyyppi lippu on
+> Hinta | numeric(10,2) | Lipun kappalehinta
+> Kaytetty | boolean (default false) | Onko lippu käytetty
+
+> ### _Ostorivi_
+> _Ostorivi-taulu yhdistää ostetut liput ja ostotapahtuman. Ostorivillä voi olla monta eri lippua, mutta yhdellä lipulla voi olla vain yksi ostorivi, eli ostokerta._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Ostorivi_id | int PK (identity) | Ostorivin id
+> Kuitti_id | int FK |  Mihin ostoon ostorivi kuuluu
+> Tarknro_id | int FK | Mikä lippu on ostettu
+> Myyntihinta | numeric(10,2) | Lipun toteutunut (kappale)hinta
+
+> ### _Osto_
+> _Osto-taulu vastaa asiakkaan kuittia, eli yhtä ostotapahtumaa. Yhdellä ostolla voi olla monta ostoriviä, mutta yksi ostorivi voi kuulua vain yhteen ostotapahtumaan._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Kuitti_id | int PK (identity) | Kuitin id
+> Asiakas_id | int FK |  Kuka oli ostaja
+> Ostoaika | timestamp | Milloin ostettiin: pvm ja klo
+> Kokonaishinta | numeric(10,2) | Oston kokonaishinta
+
+> ### _Asiakas_
+> _Asiakas-taulu on valmiiksi luotu luokka jatkokehitystä ajatellen. Asiakkaalla voi olla monta ostoa, mutta yhdellä ostolla voi olla vain yksi asiakas/ostaja._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Asiakas_id | int PK (identity) | Asiakkaan id
+> Etunimi | varchar(50) |  Asiakkaan etunimi
+> Sukunimi | varchar(100) |  Asiakkaan sukunimi
+> Sähköposti | varchar(300) | Asiakkaan sähköpostiosoite
+> Puhelin | varchar(20) | Asiakkaan puhelinnumero
+
+> ### _Jarjestaja_
+> _Jarjestaja-taulu sisältää tapahtuman yhteyshenkilön. Tarkoituksena on, että yhdellä tapahtumalla on vain yksi päävastuuhenkilö/järjestäjä. Järjestäjällä voi olla monta tapahtumaa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Jarjestaja_id | int PK (identity) | Järjestäjän id
+> Etunimi | varchar(50) |  Järjestäjän etunimi
+> Sukunimi | varchar(100) |  Järjestäjän sukunimi
+> Sähköposti | varchar(300) | Järjestäjän sähköpostiosoite
+> Puhelin | varchar(20) | Järjestäjän puhelinnumero
+
+> ### _Tapahtuma_
+> _Tapahtuma-taulu sisältää tapahtuman tiedot. Yhdellä tapahtumalla voi olla monta esityskertaa, mutta yksi esityskerta voi kuulua vain yhteen tapahtumaan._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Tapahtuma_id | int PK (identity) | Tapahtuman id
+> Nimi | varchar(200) |  Tapahtuman nimi
+> Jarjestaja_id | int FK |  Tapahtuman järjestäjä
+
+> ### _Esityskerta_
+> _Esityskerta-taulu sisältää tapahtuman yhden esityksen sekä sen tapahtumapaikan, max. osallistujamäärän ja alkamisajan. Yksi esitys voi tapahtua vain yhdessä paikassa, mutta yhdellä paikalla voi olla monta esityskertaa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Esitys_id | int PK (identity) | Esityskerran id
+> Paikka_id | int FK |  Missä esitys järjestetään
+> Tapahtuma_id | int FK |  Mihin tapahtumaan esityskerta kuuluu
+> MaxOsallistujat | int | Esityksen maksimi osallistujamäärä
+> Alkuaika | timestamp | Mikä päivä ja mihin aikaan esitys alkaa
+
+> ### _Paikka_
+> _Paikka-taulu sisältää esityskerran tapahtumapaikan osoitetietoineen._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Paikka_id | int PK (identity) | Paikan id
+> Nimi | varchar(200) |  Paikan nimi
+> Katuosoite | varchar(100) |  Paikan katuosoite
+> Postinumero | varchar(5) FK | Paikan postinumero
+
+> ### _Postinumero_
+> _Postinumero-taulu sisältää postinumerolla löytyvän postitoimipaikan. Yhdellä postinumerolla on vain yksi postitoimipaikka. Yhdellä postitoimipaikalla voi olla monta postinumeroa._
+>
+> Kenttä | Tyyppi | Kuvaus
+> ------ | ------ | ------
+> Postinumero | varchar(5) PK | Yksilöivä postinumero
+> Postitoimipaikka | varchar(50) |  Postitoimipaikan nimi
+
+
+<!--
+Järjestelmään säilöttävä ja siinä käsiteltävät tiedot ja niiden väliset suhteet
 kuvataan käsitekaaviolla. Käsitemalliin sisältyy myös taulujen välisten viiteyhteyksien ja avainten
 määritykset. Tietokanta kuvataan käyttäen jotain kuvausmenetelmää, joko ER-kaaviota ja UML-luokkakaaviota.
 
@@ -175,24 +277,375 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 
 ## Tekninen kuvaus
 
-<!-- Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
-ratkaisut, esim.
+### REST-rajapinnan kuvaus
 
--   Missä mikäkin järjestelmän komponentti ajetaan (tietokone, palvelinohjelma)
-    ja komponenttien väliset yhteydet (vaikkapa tähän tyyliin:
-    https://security.ufl.edu/it-workers/risk-assessment/creating-an-information-systemdata-flow-diagram/)
--   Palvelintoteutuksen yleiskuvaus: teknologiat, deployment-ratkaisut yms.
--   Keskeisten rajapintojen kuvaukset, esimerkit REST-rajapinta. Tarvittaessa voidaan rajapinnan käyttöä täsmentää
-    UML-sekvenssikaavioilla.
--   Toteutuksen yleisiä ratkaisuja, esim. turvallisuus.
+## Yleiskuvaus
 
-Tämän lisäksi
+TicketGuru-järjestelmän REST-rajapinta on toteutettu Java-ohjelmointikielellä käyttäen Spring Boot -sovelluskehystä. Rajapinnan tehtävänä on tarjota käyttöliittymälle ja mahdollisille ulkoisille järjestelmille pääsy tapahtuma- ja järjestäjätietoihin HTTP-protokollan välityksellä.
 
--   ohjelmakoodin tulee olla kommentoitua
--   luokkien, metodien ja muuttujien tulee olla kuvaavasti nimettyjä ja noudattaa
-    johdonmukaisia nimeämiskäytäntöjä
--   ohjelmiston pitää olla organisoitu komponentteihin niin, että turhalta toistolta
-    vältytään -->
+Rajapinta noudattaa REST-arkkitehtuurityyliä, jossa resurssit esitetään URL-osoitteina ja operaatioiden suorittamiseen käytetään HTTP-metodeja (GET, POST, PUT ja DELETE). Tietojen vaihto tapahtuu JSON-muodossa.
+
+Tietojen tallennus toteutetaan SQL-tietokantaan Spring Data JPA -kirjaston avulla. Controller-luokat vastaanottavat HTTP-pyynnöt ja välittävät tietokantaoperaatiot repository-kerrokselle.
+
+## Arkkitehtuuri
+
+```text
+Käyttäjä / selain
+        │
+        │ HTTP / HTTPS
+        ▼
+Spring Boot REST API
+        │
+        │ Spring Data JPA
+        ▼
+SQL-tietokanta
+```
+
+Rajapinnan toteutuksessa käytetään seuraavia teknologioita:
+
+- Java
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- SQL-tietokanta
+- Maven
+
+---
+
+# Järjestäjärajapinta
+
+## Perusosoite
+
+```http
+/ticketguru/jarjestajat
+```
+
+Järjestäjärajapinnan avulla voidaan hakea, lisätä ja yksittäistapauksissa hakea järjestäjätietoja tietokannasta.
+
+---
+
+## Hae kaikki järjestäjät
+
+Palauttaa kaikki järjestelmään tallennetut järjestäjät.
+
+### Pyyntö
+
+```http
+GET /ticketguru/jarjestajat
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "etunimi": "Matti",
+    "sukunimi": "Halminen",
+    "sahkoposti": "matin@kukat.fi",
+    "puhelin": "0401234567"
+  },
+  {
+    "etunimi": "Tom",
+    "sukunimi": "Aatti",
+    "sahkoposti": "tom.aatti@gmail.com",
+    "puhelin": "0407654321"
+  },
+  {
+    "etunimi": "Naami",
+    "sukunimi": "Puronen",
+    "sahkoposti": "NewKirjailijaliitto@liitto.fi",
+    "puhelin": "0501234567"
+  }
+]
+```
+
+### Toteutus
+
+```java
+@GetMapping
+public List<Jarjestaja> getAlljarjestajat()
+```
+
+---
+
+## Hae yksittäinen järjestäjä
+
+Palauttaa yhden järjestäjän tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+GET /ticketguru/jarjestajat/{id}
+```
+
+### Esimerkki
+
+```http
+GET /ticketguru/jarjestajat/1
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "etunimi": "Matti",
+  "sukunimi": "Halminen",
+  "sahkoposti": "matin@kukat.fi",
+  "puhelin": "0401234567"
+}
+```
+
+---
+
+## Lisää uusi järjestäjä
+
+Tallentaa uuden järjestäjän tietokantaan.
+
+### Pyyntö
+
+```http
+POST /ticketguru/jarjestajat
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "nimi": "Rock Events Oy"
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 3,
+  "nimi": "Rock Events Oy"
+}
+```
+
+### Toteutus
+
+```java
+@PostMapping
+public Jarjestaja addJarjestaja(
+        @RequestBody Jarjestaja uusiJarjestaja)
+```
+
+---
+
+# Tapahtumarajapinta
+
+## Perusosoite
+
+```http
+/ticketguru/tapahtumat
+```
+
+Tapahtumarajapinta tarjoaa toiminnot tapahtumien hakemiseen, päivittämiseen ja poistamiseen.
+
+---
+
+## Hae kaikki tapahtumat
+
+Palauttaa kaikki tietokannassa olevat tapahtumat.
+
+### Pyyntö
+
+```http
+GET /ticketguru/tapahtumat
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "nimi": "Keikkakeidas",
+    "esityskerrat": [],
+    "id": 1,
+    "jarjestaja": null
+  },
+  {
+    "nimi": "Teatterin Aave",
+    "esityskerrat": [],
+    "id": 2,
+    "jarjestaja": null
+  },
+  {
+    "nimi": "Vantaan kirjamessut",
+    "esityskerrat": [],
+    "id": 3,
+    "jarjestaja": null
+  }
+]
+```
+
+### Toteutus
+
+```java
+@GetMapping
+public List<Tapahtuma> getAllTapahtumat()
+```
+
+---
+
+## Hae yksittäinen tapahtuma
+
+Palauttaa yhden tapahtuman tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+GET /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+GET /ticketguru/tapahtumat/1
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "nimi": "Keikkakeidas",
+  "esityskerrat": [],
+  "id": 1,
+  "jarjestaja": null
+}
+```
+
+---
+
+## Päivitä tapahtuma
+
+Päivittää olemassa olevan tapahtuman tiedot.
+
+### Pyyntö
+
+```http
+PUT /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+PUT /ticketguru/tapahtumat/1
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "nimi": "Summer Festival 2025"
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "nimi": "Summer Festival 2025",
+  "id": 1
+}
+```
+
+### Toteutus
+
+```java
+@PutMapping("/{id}")
+public Tapahtuma updateTapahtuma(
+        @PathVariable Long id,
+        @RequestBody Tapahtuma updateTapahtuma)
+```
+
+---
+
+## Poista tapahtuma
+
+Poistaa tapahtuman tietokannasta.
+
+### Pyyntö
+
+```http
+DELETE /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+DELETE /ticketguru/tapahtumat/1
+```
+
+### Esimerkkivastaus
+
+Poistamisen jälkeen palvelu palauttaa päivitetyn tapahtumalistan.
+
+```json
+[
+  {
+    "id": 2,
+    "nimi": "Rock Festival"
+  }
+]
+```
+
+### Toteutus
+
+```java
+@DeleteMapping("/{id}")
+public List<Tapahtuma> deleteTapahtuma(
+        @PathVariable Long id)
+```
+
+---
+
+# Sekvenssikaavio: uuden järjestäjän lisääminen
+
+```text
+Käyttäjä
+    │
+    │ POST /ticketguru/jarjestajat
+    ▼
+JarjestajaRestController
+    │
+    │ save(uusiJarjestaja)
+    ▼
+JarjestajaRepository
+    │
+    │ INSERT
+    ▼
+SQL-tietokanta
+    │
+    │ Tallennettu järjestäjä
+    ▼
+JarjestajaRepository
+    ▼
+JarjestajaRestController
+    ▼
+Käyttäjä
+```
+
+---
+
+# Tietoturva ja tekniset ratkaisut
+
+REST-rajapinta hyödyntää Spring Bootin annotaatiopohjaista ohjelmointimallia, joka mahdollistaa selkeän controller-rakenteen ja HTTP-pyyntöjen käsittelyn. Tietokantakerros on toteutettu Spring Data JPA:n repository-rajapintojen avulla.
+
+Tietokantan käsittely on erotettu controller-kerroksesta repository-luokkiin, mikä parantaa ohjelmiston ylläpidettävyyttä ja vähentää koodin toistoa. Ratkaisu noudattaa kerrosarkkitehtuuria, jossa käyttöliittymä-, palvelu- ja tietokantakerrokset ovat loogisesti erotettu toisistaan.
+
+Sovellus käyttää JSON-muotoista tiedonsiirtoa, mikä mahdollistaa rajapinnan käytön sekä selainpohjaisista käyttöliittymistä että ulkoisista järjestelmistä.
+
+Keskeisiä tietoturvaratkaisuja ovat:
+
+- Spring Data JPA:n käyttämät parametrisoidut tietokantakyselyt
+- tietokantaoperaatioiden kapselointi repository-kerrokseen
+- resurssien erottelu REST-periaatteiden mukaisesti
+- mahdollisuus käyttää HTTPS-suojausta tuotantoympäristössä
+
+Nykyisessä toteutuksessa rajapinta toimii kehitysympäristössä ilman käyttäjien tunnistautumista. Tuotantokäyttöä varten järjestelmään voidaan lisätä esimerkiksi Spring Security -pohjainen käyttäjien autentikointi ja käyttöoikeuksien hallinta.
 
 ## Testaus
 
