@@ -48,5 +48,13 @@ public class JarjestajaRestController {
         updateJarjestaja.setId(id);
         return jarjestajaRepository.save(updateJarjestaja);
     }
+
+    // Get one organizer by id
+    @GetMapping("/{id}")
+    public Jarjestaja getJarjestajaById(@PathVariable Long id) 
+    {
+        return jarjestajaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Järjestäjää ei löytynyt"));
+    }
     
 }
