@@ -279,24 +279,350 @@ attribuuttien (kentät/sarakkeet) listausta ja lyhyttä kuvausta esim. tähän t
 
 ### REST-rajapinnan kuvaus
 
-<!-- Teknisessä kuvauksessa esitetään järjestelmän toteutuksen suunnittelussa tehdyt tekniset
-ratkaisut, esim.
+## Yleiskuvaus
 
--   Missä mikäkin järjestelmän komponentti ajetaan (tietokone, palvelinohjelma)
-    ja komponenttien väliset yhteydet (vaikkapa tähän tyyliin:
-    https://security.ufl.edu/it-workers/risk-assessment/creating-an-information-systemdata-flow-diagram/)
--   Palvelintoteutuksen yleiskuvaus: teknologiat, deployment-ratkaisut yms.
--   Keskeisten rajapintojen kuvaukset, esimerkit REST-rajapinta. Tarvittaessa voidaan rajapinnan käyttöä täsmentää
-    UML-sekvenssikaavioilla.
--   Toteutuksen yleisiä ratkaisuja, esim. turvallisuus.
+TicketGuru-järjestelmän REST-rajapinta on toteutettu Java-ohjelmointikielellä käyttäen Spring Boot -sovelluskehystä. Rajapinnan tehtävänä on tarjota käyttöliittymälle ja mahdollisille ulkoisille järjestelmille pääsy tapahtuma- ja järjestäjätietoihin HTTP-protokollan välityksellä.
 
-Tämän lisäksi
+Rajapinta noudattaa REST-arkkitehtuurityyliä, jossa resurssit esitetään URL-osoitteina ja operaatioiden suorittamiseen käytetään HTTP-metodeja (GET, POST, PUT ja DELETE). Tietojen vaihto tapahtuu JSON-muodossa.
 
--   ohjelmakoodin tulee olla kommentoitua
--   luokkien, metodien ja muuttujien tulee olla kuvaavasti nimettyjä ja noudattaa
-    johdonmukaisia nimeämiskäytäntöjä
--   ohjelmiston pitää olla organisoitu komponentteihin niin, että turhalta toistolta
-    vältytään -->
+Tietojen tallennus toteutetaan SQL-tietokantaan Spring Data JPA -kirjaston avulla. Controller-luokat vastaanottavat HTTP-pyynnöt ja välittävät tietokantaoperaatiot repository-kerrokselle.
+
+## Arkkitehtuuri
+
+```text
+Käyttäjä / selain
+        │
+        │ HTTP / HTTPS
+        ▼
+Spring Boot REST API
+        │
+        │ Spring Data JPA
+        ▼
+SQL-tietokanta
+```
+
+Rajapinnan toteutuksessa käytetään seuraavia teknologioita:
+
+- Java
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- SQL-tietokanta
+- Maven
+
+---
+
+# Järjestäjärajapinta
+
+## Perusosoite
+
+```http
+/ticketguru/jarjestajat
+```
+
+Järjestäjärajapinnan avulla voidaan hakea, lisätä ja yksittäistapauksissa hakea järjestäjätietoja tietokannasta.
+
+---
+
+## Hae kaikki järjestäjät
+
+Palauttaa kaikki järjestelmään tallennetut järjestäjät.
+
+### Pyyntö
+
+```http
+GET /ticketguru/jarjestajat
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "id": 1,
+    "nimi": "Live Nation"
+  },
+  {
+    "id": 2,
+    "nimi": "Rock Events Oy"
+  }
+]
+```
+
+### Toteutus
+
+```java
+@GetMapping
+public List<Jarjestaja> getAlljarjestajat()
+```
+
+---
+
+## Hae yksittäinen järjestäjä
+
+Palauttaa yhden järjestäjän tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+GET /ticketguru/jarjestajat/{id}
+```
+
+### Esimerkki
+
+```http
+GET /ticketguru/jarjestajat/1
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "nimi": "Live Nation"
+}
+```
+
+---
+
+## Lisää uusi järjestäjä
+
+Tallentaa uuden järjestäjän tietokantaan.
+
+### Pyyntö
+
+```http
+POST /ticketguru/jarjestajat
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "nimi": "Rock Events Oy"
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 3,
+  "nimi": "Rock Events Oy"
+}
+```
+
+### Toteutus
+
+```java
+@PostMapping
+public Jarjestaja addJarjestaja(
+        @RequestBody Jarjestaja uusiJarjestaja)
+```
+
+---
+
+# Tapahtumarajapinta
+
+## Perusosoite
+
+```http
+/ticketguru/tapahtumat
+```
+
+Tapahtumarajapinta tarjoaa toiminnot tapahtumien hakemiseen, päivittämiseen ja poistamiseen.
+
+---
+
+## Hae kaikki tapahtumat
+
+Palauttaa kaikki tietokannassa olevat tapahtumat.
+
+### Pyyntö
+
+```http
+GET /ticketguru/tapahtumat
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "id": 1,
+    "nimi": "Summer Festival"
+  },
+  {
+    "id": 2,
+    "nimi": "Rock Festival"
+  }
+]
+```
+
+### Toteutus
+
+```java
+@GetMapping
+public List<Tapahtuma> getAllTapahtumat()
+```
+
+---
+
+## Hae yksittäinen tapahtuma
+
+Palauttaa yhden tapahtuman tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+GET /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+GET /ticketguru/tapahtumat/1
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "nimi": "Summer Festival",
+  "kuvaus": "Kesän suurin musiikkitapahtuma"
+}
+```
+
+---
+
+## Päivitä tapahtuma
+
+Päivittää olemassa olevan tapahtuman tiedot.
+
+### Pyyntö
+
+```http
+PUT /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+PUT /ticketguru/tapahtumat/1
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "nimi": "Summer Festival 2025"
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "nimi": "Summer Festival 2025"
+}
+```
+
+### Toteutus
+
+```java
+@PutMapping("/{id}")
+public Tapahtuma updateTapahtuma(
+        @PathVariable Long id,
+        @RequestBody Tapahtuma updateTapahtuma)
+```
+
+---
+
+## Poista tapahtuma
+
+Poistaa tapahtuman tietokannasta.
+
+### Pyyntö
+
+```http
+DELETE /ticketguru/tapahtumat/{id}
+```
+
+### Esimerkki
+
+```http
+DELETE /ticketguru/tapahtumat/1
+```
+
+### Esimerkkivastaus
+
+Poistamisen jälkeen palvelu palauttaa päivitetyn tapahtumalistan.
+
+```json
+[
+  {
+    "id": 2,
+    "nimi": "Rock Festival"
+  }
+]
+```
+
+### Toteutus
+
+```java
+@DeleteMapping("/{id}")
+public List<Tapahtuma> deleteTapahtuma(
+        @PathVariable Long id)
+```
+
+---
+
+# Sekvenssikaavio: uuden järjestäjän lisääminen
+
+```text
+Käyttäjä
+    │
+    │ POST /ticketguru/jarjestajat
+    ▼
+JarjestajaRestController
+    │
+    │ save(uusiJarjestaja)
+    ▼
+JarjestajaRepository
+    │
+    │ INSERT
+    ▼
+SQL-tietokanta
+    │
+    │ Tallennettu järjestäjä
+    ▼
+JarjestajaRepository
+    ▼
+JarjestajaRestController
+    ▼
+Käyttäjä
+```
+
+---
+
+# Tietoturva ja tekniset ratkaisut
+
+REST-rajapinta hyödyntää Spring Bootin annotaatiopohjaista ohjelmointimallia, joka mahdollistaa selkeän controller-rakenteen ja HTTP-pyyntöjen käsittelyn. Tietokantakerros on toteutettu Spring Data JPA:n repository-rajapintojen avulla.
+
+Tietokantan käsittely on erotettu controller-kerroksesta repository-luokkiin, mikä parantaa ohjelmiston ylläpidettävyyttä ja vähentää koodin toistoa. Ratkaisu noudattaa kerrosarkkitehtuuria, jossa käyttöliittymä-, palvelu- ja tietokantakerrokset ovat loogisesti erotettu toisistaan.
+
+Sovellus käyttää JSON-muotoista tiedonsiirtoa, mikä mahdollistaa rajapinnan käytön sekä selainpohjaisista käyttöliittymistä että ulkoisista järjestelmistä.
+
+Keskeisiä tietoturvaratkaisuja ovat:
+
+- Spring Data JPA:n käyttämät parametrisoidut tietokantakyselyt
+- tietokantaoperaatioiden kapselointi repository-kerrokseen
+- resurssien erottelu REST-periaatteiden mukaisesti
+- mahdollisuus käyttää HTTPS-suojausta tuotantoympäristössä
+
+Nykyisessä toteutuksessa rajapinta toimii kehitysympäristössä ilman käyttäjien tunnistautumista. Tuotantokäyttöä varten järjestelmään voidaan lisätä esimerkiksi Spring Security -pohjainen käyttäjien autentikointi ja käyttöoikeuksien hallinta.
 
 ## Testaus
 
