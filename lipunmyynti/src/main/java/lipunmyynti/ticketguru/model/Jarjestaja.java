@@ -52,6 +52,10 @@ public class Jarjestaja {
         return sahkoposti;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setSahkoposti(String sahkoposti) {
         this.sahkoposti = sahkoposti;
     }
