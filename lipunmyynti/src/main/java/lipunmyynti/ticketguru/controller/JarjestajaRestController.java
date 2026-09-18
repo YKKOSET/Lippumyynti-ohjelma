@@ -4,12 +4,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lipunmyynti.ticketguru.model.Jarjestaja;
+import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.JarjestajaRepository;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -34,6 +37,24 @@ public class JarjestajaRestController {
     public Jarjestaja addJarjestaja(@RequestBody Jarjestaja uusiJarjestaja) {
         
         return jarjestajaRepository.save(uusiJarjestaja) ;
+    }
+    
+    // Edit existing Järjestäjä
+    @PutMapping("/{id}")
+    public Jarjestaja updateJarjestaja(@PathVariable Long id, @RequestBody Jarjestaja updateJarjestaja) {
+        if (!jarjestajaRepository.existsById(id)) {
+            throw new RuntimeException("Järjestäjää ei löytynyt");
+        }
+        updateJarjestaja.setId(id);
+        return jarjestajaRepository.save(updateJarjestaja);
+    }
+
+    // Get one organizer by id
+    @GetMapping("/{id}")
+    public Jarjestaja getJarjestajaById(@PathVariable Long id) 
+    {
+        return jarjestajaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Järjestäjää ei löytynyt"));
     }
     
 }
