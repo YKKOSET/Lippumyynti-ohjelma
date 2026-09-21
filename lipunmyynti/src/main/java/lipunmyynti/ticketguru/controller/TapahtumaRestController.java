@@ -25,6 +25,12 @@ public class TapahtumaRestController {
         return tapahtumaRepository.findAll();
     }
 
+    // adding one event
+    @PostMapping
+    public Tapahtuma addTapahtuma(@RequestBody Tapahtuma tapahtuma) {
+        return tapahtumaRepository.save(tapahtuma);
+    }
+
     // editing one event
     @PutMapping("/{id}")
     public Tapahtuma updateTapahtuma(@PathVariable Long id, @RequestBody Tapahtuma updateTapahtuma) {
@@ -37,6 +43,12 @@ public class TapahtumaRestController {
     public List<Tapahtuma> deleteTapahtuma(@PathVariable Long id) {
         tapahtumaRepository.deleteById(id);
         return tapahtumaRepository.findAll(); 
+    }
+
+    // returns all events for a specific organizer
+    @GetMapping("/jarjestaja/{id}")
+    public List<Tapahtuma> getTapahtumatByJarjestaja(@PathVariable Long id) {
+        return tapahtumaRepository.findByJarjestajaId(id);
     }
 
 }
