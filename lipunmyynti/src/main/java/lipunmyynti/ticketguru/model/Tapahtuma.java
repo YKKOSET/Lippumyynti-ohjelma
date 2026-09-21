@@ -26,36 +26,36 @@ public class Tapahtuma {
         this.nimi = nimi;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
-    }
-
-    public void setJarjestaja(Jarjestaja jarjestaja) {
-        this.jarjestaja = jarjestaja;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNimi() {
         return nimi;
     }
 
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
+    }
+
     public Jarjestaja getJarjestaja() {
         return jarjestaja;
+    }
+
+    public void setJarjestaja(Jarjestaja jarjestaja) {
+        this.jarjestaja = jarjestaja;
     }
 
     public List<Esityskerta> getEsityskerrat() {
         return esityskerrat;
     }
 
-    public void addEsityskerta(Esityskerta esityskerta) {
-        this.esityskerrat.add(esityskerta);
+    public void setEsityskerrat(List<Esityskerta> esityskerrat) {
+        this.esityskerrat = esityskerrat;
     }
 
     @Override
@@ -63,9 +63,4 @@ public class Tapahtuma {
         return "Tapahtuma [id=" + id + ", nimi=" + nimi + ", jarjestaja=" + jarjestaja + ", esityskerrat="
                 + esityskerrat + "]";
     }
-
-    
-
-
-    
 }
