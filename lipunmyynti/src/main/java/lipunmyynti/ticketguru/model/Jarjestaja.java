@@ -20,7 +20,7 @@ public class Jarjestaja {
     @OneToMany(mappedBy = "jarjestaja")
     private List<Tapahtuma> tapahtumat;
 
-    //Constructors, getters & setters, toString begin:
+    //constructors:
 
     public Jarjestaja() {
     }
@@ -30,6 +30,16 @@ public class Jarjestaja {
         this.sukunimi = sukunimi;
         this.sahkoposti = sahkoposti;
         this.puhelin = puhelin;
+    }
+
+    //getters & setters:
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEtunimi() {
@@ -52,10 +62,6 @@ public class Jarjestaja {
         return sahkoposti;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setSahkoposti(String sahkoposti) {
         this.sahkoposti = sahkoposti;
     }
@@ -68,10 +74,21 @@ public class Jarjestaja {
         this.puhelin = puhelin;
     }
 
+    public List<Tapahtuma> getTapahtumat() {
+        return tapahtumat;
+    }
+
+    public void setTapahtumat(List<Tapahtuma> tapahtumat) {
+        this.tapahtumat = tapahtumat;
+    }
+
+    //toString:
+
     @Override
     public String toString() {
-        return "Jarjestaja [etunimi=" + etunimi + ", sukunimi=" + sukunimi + ", sahkoposti=" + sahkoposti + ", puhelin="
-                + puhelin + "]";
+        return "Jarjestaja [id=" + id + ", etunimi=" + etunimi + ", sukunimi=" + sukunimi + ", sahkoposti=" + sahkoposti
+                + ", puhelin=" + puhelin + "]";
     }
+
 
 }
