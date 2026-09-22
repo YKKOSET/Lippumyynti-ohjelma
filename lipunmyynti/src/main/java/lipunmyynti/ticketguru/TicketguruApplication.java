@@ -23,6 +23,7 @@ public class TicketguruApplication {
 	public CommandLineRunner demo(TapahtumaRepository tapahtumaRepository,
     JarjestajaRepository jarjestajaRepository) {
     return (args) -> {
+        
         //Hard-coded Jarjestajat
         jarjestajaRepository.save(new Jarjestaja("Matti", "Halminen", "matin@kukat.fi", "0401234567"));
         jarjestajaRepository.save(new Jarjestaja("Tom", "Aatti", "tom.aatti@gmail.com", "0407654321"));
@@ -36,7 +37,6 @@ public class TicketguruApplication {
         tapahtumaRepository.save(new Tapahtuma("Vantaan kirjamessut"));
         tapahtumaRepository.save(new Tapahtuma("Helsinki festivalland"));
         tapahtumaRepository.save(new Tapahtuma("Ruislock 2026"));
-
     };
 }
 }
