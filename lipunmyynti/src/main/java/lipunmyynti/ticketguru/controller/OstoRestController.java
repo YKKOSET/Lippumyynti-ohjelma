@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController 
-@RequestMapping ("/ticketguru/ostot") //http://localhost:8080/ticketguru/ostot
+@RequestMapping ("/api/ostot") //http://localhost:8080/api/ostot
 public class OstoRestController {
     private final OstoRepository ostoRepository;
 
