@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController 
-@RequestMapping ("/ticketguru/osto") //http://localhost:8080/ticketguru/osto
+@RequestMapping ("/ticketguru/osto") //http://localhost:8080/ticketguru/ostot
 public class OstoRestController {
     private final OstoRepository ostoRepository;
 
@@ -25,7 +25,7 @@ public class OstoRestController {
 
     //list all buys
     @GetMapping
-    public List<Osto> getAlljarjestajat() {
+    public List<Osto> getAllOstot() {
         return ostoRepository.findAll();
     }
     
