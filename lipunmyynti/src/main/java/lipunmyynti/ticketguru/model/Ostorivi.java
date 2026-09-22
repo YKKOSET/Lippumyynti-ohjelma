@@ -20,13 +20,12 @@ public class Ostorivi {
 
     private BigDecimal myyntihinta;
 
-    //Constructors, getters & setters, toString begin:
+    // Constructors, getters & setters, toString begin:
 
     public Ostorivi() {
     }
 
-    public Ostorivi(Long id, Osto osto, Lippu lippu, BigDecimal myyntihinta) {
-        this.id = id;
+    public Ostorivi(Osto osto, Lippu lippu, BigDecimal myyntihinta) {
         this.osto = osto;
         this.lippu = lippu;
         this.myyntihinta = myyntihinta;
