@@ -1,9 +1,13 @@
 package lipunmyynti.ticketguru.model;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
+@JsonIgnoreProperties("tapahtumat") // prevent loop between events and organizers
 @Table(name = "jarjestaja")
 
 public class Jarjestaja {
@@ -20,7 +24,7 @@ public class Jarjestaja {
     @OneToMany(mappedBy = "jarjestaja")
     private List<Tapahtuma> tapahtumat;
 
-    //constructors:
+    // constructors:
 
     public Jarjestaja() {
     }
@@ -32,7 +36,7 @@ public class Jarjestaja {
         this.puhelin = puhelin;
     }
 
-    //getters & setters:
+    // getters & setters:
 
     public Long getId() {
         return id;
@@ -82,13 +86,12 @@ public class Jarjestaja {
         this.tapahtumat = tapahtumat;
     }
 
-    //toString:
+    // toString:
 
     @Override
     public String toString() {
         return "Jarjestaja [id=" + id + ", etunimi=" + etunimi + ", sukunimi=" + sukunimi + ", sahkoposti=" + sahkoposti
                 + ", puhelin=" + puhelin + "]";
     }
-
 
 }
