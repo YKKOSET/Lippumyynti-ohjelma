@@ -14,12 +14,6 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 public class TicketguruApplication {
 
 
-    private final JarjestajaRepository jarjestajaRepository;
-
-    TicketguruApplication(JarjestajaRepository jarjestajaRepository) {
-        this.jarjestajaRepository = jarjestajaRepository;
-    }
-
     public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
