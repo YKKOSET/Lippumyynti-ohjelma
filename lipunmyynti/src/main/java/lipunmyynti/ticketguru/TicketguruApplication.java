@@ -14,6 +14,12 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 public class TicketguruApplication {
 
 
+    private final JarjestajaRepository jarjestajaRepository;
+
+    TicketguruApplication(JarjestajaRepository jarjestajaRepository) {
+        this.jarjestajaRepository = jarjestajaRepository;
+    }
+
     public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
 	}
@@ -32,11 +38,11 @@ public class TicketguruApplication {
         jarjestajaRepository.save(new Jarjestaja("Mikko", "Korhonen", "mikko@clockfest.fi", "0509876543"));
         
         //Hard-coded Tapahtumat
-        tapahtumaRepository.save(new Tapahtuma("Keikkakeidas"));
-        tapahtumaRepository.save(new Tapahtuma("Teatterin Aave"));
-        tapahtumaRepository.save(new Tapahtuma("Vantaan kirjamessut"));
-        tapahtumaRepository.save(new Tapahtuma("Helsinki festivalland"));
-        tapahtumaRepository.save(new Tapahtuma("Ruislock 2026"));
+        tapahtumaRepository.save(new Tapahtuma("Keikkakeidas", jarjestajaRepository.getReferenceById(1L))); //1L = Long id 1
+        tapahtumaRepository.save(new Tapahtuma("Teatterin Aave", jarjestajaRepository.getReferenceById(1L)));
+        tapahtumaRepository.save(new Tapahtuma("Vantaan kirjamessut", jarjestajaRepository.getReferenceById(2L)));
+        tapahtumaRepository.save(new Tapahtuma("Helsinki festivalland", jarjestajaRepository.getReferenceById(3L)));
+        tapahtumaRepository.save(new Tapahtuma("Ruislock 2026", jarjestajaRepository.getReferenceById(4L)));
     };
 }
 }
