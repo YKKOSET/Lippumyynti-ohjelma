@@ -1,11 +1,13 @@
 package lipunmyynti.ticketguru;
 
+import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import lipunmyynti.ticketguru.model.Jarjestaja;
+import lipunmyynti.ticketguru.model.Lipputyyppi;
 import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.JarjestajaRepository;
 import lipunmyynti.ticketguru.repository.TapahtumaRepository;
@@ -13,6 +15,12 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 @SpringBootApplication
 public class TicketguruApplication {
 
+
+    private final LipputyyppiRepository lipputyyppiRepository;
+
+    TicketguruApplication(LipputyyppiRepository lipputyyppiRepository) {
+        this.lipputyyppiRepository = lipputyyppiRepository;
+    }
 
     public static void main(String[] args) {
 		SpringApplication.run(TicketguruApplication.class, args);
@@ -37,6 +45,14 @@ public class TicketguruApplication {
         tapahtumaRepository.save(new Tapahtuma("Vantaan kirjamessut", jarjestajaRepository.getReferenceById(2L)));
         tapahtumaRepository.save(new Tapahtuma("Helsinki festivalland", jarjestajaRepository.getReferenceById(3L)));
         tapahtumaRepository.save(new Tapahtuma("Ruislock 2026", jarjestajaRepository.getReferenceById(4L)));
+
+        //Hard-coded Lipputyyppi
+        lipputyyppiRepository.save(new Lipputyyppi("Lastenlippu"));
+        lipputyyppiRepository.save(new Lipputyyppi("Opiskelija"));
+        lipputyyppiRepository.save(new Lipputyyppi("Eläkeläinen"));
+        lipputyyppiRepository.save(new Lipputyyppi("Normaalihintainen"));
+
+        
     };
 }
 }
