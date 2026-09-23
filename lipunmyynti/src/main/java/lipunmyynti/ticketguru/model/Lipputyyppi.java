@@ -16,7 +16,7 @@ public class Lipputyyppi
 
 
     //constructors
-    public Lipputyyppi()        {}
+    public Lipputyyppi()                                {}
 
     public Lipputyyppi(Long id, String nimi)
     {
