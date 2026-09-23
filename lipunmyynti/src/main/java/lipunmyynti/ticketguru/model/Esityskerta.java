@@ -26,6 +26,11 @@ public class Esityskerta {
     public Esityskerta() {
     }
 
+    public Esityskerta(Tapahtuma tapahtuma, Timestamp alkuaika) {
+        this.tapahtuma = tapahtuma;
+        this.alkuaika = alkuaika;
+    }
+
     public Esityskerta(Paikka paikka, Tapahtuma tapahtuma, int maxOsallistujat, Timestamp alkuaika) {
         this.paikka = paikka;
         this.tapahtuma = tapahtuma;
