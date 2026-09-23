@@ -1,6 +1,7 @@
 package lipunmyynti.ticketguru.model;
 
 import jakarta.persistence.*;
+import java.math.*;
 
 
 @Entity
@@ -13,16 +14,17 @@ public class Lippu
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_;
 
+    @ManyToOne  
     private int esitysId_;
     private int tyyppiId_;
-    private int hinta_;
+    private BigDecimal hinta_;
     private boolean kaytetty_;
 
 
     //constructors
-    public Lippu()        {}
+    public Lippu()                              {}
 
-    public Lippu(int esitysId, int tyyppiId, int hinta, boolean kaytetty)
+    public Lippu(int esitysId, int tyyppiId, BigDecimal hinta, boolean kaytetty)
     {
         esitysId_ = esitysId;
         tyyppiId_ = tyyppiId;
@@ -44,9 +46,9 @@ public class Lippu
 
     public void setTyyppiId_(int tyyppiId)      { tyyppiId_ = tyyppiId; }
 
-    public int getHinta_()                      { return hinta_; }
+    public BigDecimal getHinta_()               { return hinta_; }
 
-    public void setHinta_(int hinta)            { hinta_ = hinta; }
+    public void setHinta_(BigDecimal hinta)     { hinta_ = hinta; }
 
     public boolean isKaytetty_()                { return kaytetty_; }
 
