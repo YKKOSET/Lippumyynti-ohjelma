@@ -602,6 +602,106 @@ public List<Tapahtuma> deleteTapahtuma(
 
 ---
 
+# Lippurajapinta
+
+## Perusosoite
+
+```http
+/api/liput
+```
+
+Lippurajapinnan avulla saadaan lisättyä ja muokattua lippuja tietokannassa
+
+## Lisää uusi lippu
+
+Tallentaa uuden lipun tietokantaan
+
+### Pyyntö
+
+```http
+POST /api/liput
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 25,
+  "kaytetty_": false
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id_": 1,
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_" : 25,
+  "kaytetty_" : false
+}
+```
+
+### Toteutus
+
+​```java
+@PostMapping
+public Lippu lisaaLippu(@RequestBody Lippu uusiLippu)
+​```
+
+---
+
+## Muokkaa lippua
+
+Päivittää olemassa olevan lipun tiedot
+
+### Pyyntö
+
+```http
+PUT /api/liput/{id}
+```
+### Esimerkki
+
+```http
+PUT /api/liput/1
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 20,
+  "kaytetty_": true
+}
+```
+### Esimerkkivastaus
+
+```json
+{
+  "id_": 1,
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 20,
+  "kaytetty_": true
+}
+```
+### Toteutus
+
+```java 
+@PutMapping("/{id}")
+public Lippu muokkaaLippua( 
+  @PathVariable Long id,
+  @RequestBody Lippu paivitetty
+)
+```
+
+---
+
 # Sekvenssikaavio: uuden järjestäjän lisääminen
 
 ```text

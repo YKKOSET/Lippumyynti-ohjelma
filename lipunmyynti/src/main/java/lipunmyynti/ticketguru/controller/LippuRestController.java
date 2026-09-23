@@ -21,7 +21,7 @@ public class LippuRestController {
         this.lippuRepository = lippuRepository;
         this.esityskertaRepository = esityskertaRepository;
         this.lipputyyppiRepository = lipputyyppiRepository;
-    }
+    } 
 
     
 }
