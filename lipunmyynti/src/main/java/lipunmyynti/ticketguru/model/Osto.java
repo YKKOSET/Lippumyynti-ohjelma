@@ -17,7 +17,7 @@ private Long id;
 private Timestamp ostoaika;
 private double kokonaishinta;
 
-@ManyToOne 
+@ManyToOne (optional = false)
 private Asiakas asiakas;
 
 public Osto() {
