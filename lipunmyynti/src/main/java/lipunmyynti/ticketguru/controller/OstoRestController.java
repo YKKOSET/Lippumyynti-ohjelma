@@ -29,8 +29,8 @@ public class OstoRestController {
     
     // add new buy
     @PostMapping
-    public Osto addOsto(@RequestBody Osto newOsto) {   
-        return ostoRepository.save(newOsto) ;
+    public Osto addOsto(@RequestBody Osto osto) {   
+        return ostoRepository.save(osto) ;
     }
     
     // Edit existing buy
