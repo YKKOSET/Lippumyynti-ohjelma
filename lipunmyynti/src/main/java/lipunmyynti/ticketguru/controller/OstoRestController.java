@@ -4,6 +4,9 @@ package lipunmyynti.ticketguru.controller;
 import lipunmyynti.ticketguru.model.Osto;
 import lipunmyynti.ticketguru.repository.OstoRepository;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +26,7 @@ public class OstoRestController {
 
     //list all buys
     @GetMapping
-    public Iterable<Osto> getAllOstot() {
+    public List<Osto> getAllOstot() {
         return ostoRepository.findAll();
     }
     
@@ -50,4 +53,15 @@ public class OstoRestController {
         return ostoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Ostotapahtumaa ei löytynyt"));
     }
+
+    //deleting one purchase transaction
+    @DeleteMapping("/{id}")
+    public List<Osto> deleteOsto(@PathVariable Long id) {
+        ostoRepository.deleteById(id);
+        return ostoRepository.findAll(); //listing remaining purchases transactions
+    }
+
+    
+
+
 }
