@@ -1,12 +1,20 @@
 package lipunmyynti.ticketguru;
 
+import lipunmyynti.ticketguru.repository.EsityskertaRepository;
+import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import lipunmyynti.ticketguru.model.Esityskerta;
 import lipunmyynti.ticketguru.model.Jarjestaja;
+import lipunmyynti.ticketguru.model.Lippu;
 import lipunmyynti.ticketguru.model.Lipputyyppi;
 import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.JarjestajaRepository;
@@ -16,10 +24,14 @@ import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 public class TicketguruApplication {
 
 
+    private final EsityskertaRepository esityskertaRepository;
+    private final LippuRepository lippuRepository;
     private final LipputyyppiRepository lipputyyppiRepository;
 
-    TicketguruApplication(LipputyyppiRepository lipputyyppiRepository) {
+    TicketguruApplication(LipputyyppiRepository lipputyyppiRepository, LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository) {
         this.lipputyyppiRepository = lipputyyppiRepository;
+        this.lippuRepository = lippuRepository;
+        this.esityskertaRepository = esityskertaRepository;
     }
 
     public static void main(String[] args) {
@@ -52,7 +64,13 @@ public class TicketguruApplication {
         lipputyyppiRepository.save(new Lipputyyppi("Eläkeläinen"));
         lipputyyppiRepository.save(new Lipputyyppi("Normaalihintainen"));
 
-        
+        //Hard-coded Esityskerta
+        //Tapahtuma tapahtuma, Timestamp alkuaika
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-10-01 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-11-08 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-10-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-11-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2026-12-12 13:00:00")));
     };
 }
 }
