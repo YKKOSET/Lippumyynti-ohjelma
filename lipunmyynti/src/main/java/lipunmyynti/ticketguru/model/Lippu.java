@@ -2,11 +2,12 @@ package lipunmyynti.ticketguru.model;
 
 import jakarta.persistence.*;
 import java.math.*;
+import java.util.*;
+
 
 
 @Entity
 @Table(name = "lippu")
-
 public class Lippu 
 {
 
@@ -14,52 +15,57 @@ public class Lippu
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_;
 
-    @ManyToOne  
-    private int esitysId_;
-    private int tyyppiId_;
+    @ManyToOne
     private BigDecimal hinta_;
     private boolean kaytetty_;
 
+    @ManyToOne
+    @JoinColumn(name = "tyyppiId")
+    private Lipputyyppi lipputyyppi_;
+
+    @JoinColumn(name = "esitysId")
+    private Esityskerta esityskerta_;
+
 
     //constructors
-    public Lippu()                              {}
+    public Lippu()                                              {}
 
-    public Lippu(int esitysId, int tyyppiId, BigDecimal hinta, boolean kaytetty)
+    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty)
     {
-        esitysId_ = esitysId;
-        tyyppiId_ = tyyppiId;
+        esityskerta_ = esityskerta;
+        lipputyyppi_ = lipputyyppi;
         hinta_ = hinta;
         kaytetty_ = kaytetty;
     }
 
 
     //setters and getters
-    public Long getId_()                        { return id_; }
+    public Long getId()                                         { return id_; }
 
-    public void setId_(Long id)                 { id_ = id; }
+    public void setId(Long id)                                  { id_ = id; }
 
-    public int getEsitysId_()                   { return esitysId_; }
+    public Esityskerta getEsityskerta()                         { return esityskerta_; }
 
-    public void setEsitysId_(int esitysId)      { esitysId_ = esitysId; }
+    public void setEsityskerta(Esityskerta esityskerta)         { esityskerta_ = esityskerta; }
 
-    public int getTyyppiId_()                   { return tyyppiId_; }
+    public Lipputyyppi getLipputyyppi()                         { return lipputyyppi_; }
 
-    public void setTyyppiId_(int tyyppiId)      { tyyppiId_ = tyyppiId; }
+    public void setLipputyyppi(Lipputyyppi lipputyyppi)         { lipputyyppi_ = lipputyyppi; }
 
-    public BigDecimal getHinta_()               { return hinta_; }
+    public BigDecimal getHinta()                                { return hinta_; }
 
-    public void setHinta_(BigDecimal hinta)     { hinta_ = hinta; }
+    public void setHinta(BigDecimal hinta)                      { hinta_ = hinta; }
 
-    public boolean isKaytetty_()                { return kaytetty_; }
+    public boolean isKaytetty()                                 { return kaytetty_; }
 
-    public void setKaytetty_(boolean kaytetty)  { kaytetty_ = kaytetty; }
+    public void setKaytetty(boolean kaytetty)                   { kaytetty_ = kaytetty; }
 
 
     //to string method
     @Override
     public String toString() 
     {
-        return "Lippu [id_=" + id_ + ", esitysId_=" + esitysId_ + ", tyyppiId_=" + tyyppiId_ + ", hinta_=" + hinta_
+        return "Lippu [id_=" + id_ + ", esityskerta_=" + esityskerta_ + ", Lipputyyppi_=" + lipputyyppi_ + ", hinta_=" + hinta_
                 + ", kaytetty_=" + kaytetty_ + "]";
     }
 }
