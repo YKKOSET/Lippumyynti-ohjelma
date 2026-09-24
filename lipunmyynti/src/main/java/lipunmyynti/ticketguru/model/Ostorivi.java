@@ -1,6 +1,9 @@
 package lipunmyynti.ticketguru.model;
 
 import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +16,7 @@ public class Ostorivi {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore //prevent loop
     private Osto osto;
 
     @ManyToOne
