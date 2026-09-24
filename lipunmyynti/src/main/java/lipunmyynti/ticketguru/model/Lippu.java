@@ -15,7 +15,6 @@ public class Lippu
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_;
 
-    @ManyToOne
     private BigDecimal hinta_;
     private boolean kaytetty_;
 
