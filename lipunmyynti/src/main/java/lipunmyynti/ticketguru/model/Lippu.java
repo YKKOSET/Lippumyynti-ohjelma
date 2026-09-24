@@ -22,6 +22,7 @@ public class Lippu
     @JoinColumn(name = "tyyppiId")
     private Lipputyyppi lipputyyppi_;
 
+    @ManyToOne
     @JoinColumn(name = "esitysId")
     private Esityskerta esityskerta_;
 

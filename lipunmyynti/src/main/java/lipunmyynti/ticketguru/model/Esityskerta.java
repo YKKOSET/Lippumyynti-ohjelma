@@ -3,6 +3,7 @@ package lipunmyynti.ticketguru.model;
 import java.sql.Timestamp;
 
 import jakarta.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "esityskerta")
@@ -20,8 +21,9 @@ public class Esityskerta {
     private int maxOsallistujat;
     private Timestamp alkuaika;
 
-    //@OneToMany(mappedBy = "esityskerta")
-    //private List<Lippu> liput;
+    @OneToMany(mappedBy = "esityskerta_")
+    private List<Lippu> liput;
+
 
     public Esityskerta() {
     }
