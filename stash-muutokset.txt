@@ -1,0 +1,47 @@
+diff --git a/lipunmyynti/src/main/java/lipunmyynti/ticketguru/TicketguruApplication.java b/lipunmyynti/src/main/java/lipunmyynti/ticketguru/TicketguruApplication.java
+index 769a20c..9162edc 100644
+--- a/lipunmyynti/src/main/java/lipunmyynti/ticketguru/TicketguruApplication.java
++++ b/lipunmyynti/src/main/java/lipunmyynti/ticketguru/TicketguruApplication.java
+@@ -1,5 +1,6 @@
+ package lipunmyynti.ticketguru;
+ 
++import lipunmyynti.ticketguru.repository.AsiakasRepository;
+ import lipunmyynti.ticketguru.repository.EsityskertaRepository;
+ import lipunmyynti.ticketguru.repository.LippuRepository;
+ import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
+@@ -12,6 +13,7 @@ import org.springframework.boot.SpringApplication;
+ import org.springframework.boot.autoconfigure.SpringBootApplication;
+ import org.springframework.context.annotation.Bean;
+ 
++import lipunmyynti.ticketguru.model.Asiakas;
+ import lipunmyynti.ticketguru.model.Esityskerta;
+ import lipunmyynti.ticketguru.model.Jarjestaja;
+ import lipunmyynti.ticketguru.model.Lippu;
+@@ -27,11 +29,13 @@ public class TicketguruApplication {
+     private final EsityskertaRepository esityskertaRepository;
+     private final LippuRepository lippuRepository;
+     private final LipputyyppiRepository lipputyyppiRepository;
++    private final AsiakasRepository asiakasRepository;
+ 
+-    TicketguruApplication(LipputyyppiRepository lipputyyppiRepository, LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository) {
++    TicketguruApplication(LipputyyppiRepository lipputyyppiRepository, LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository, AsiakasRepository asiakasRepository) {
+         this.lipputyyppiRepository = lipputyyppiRepository;
+         this.lippuRepository = lippuRepository;
+         this.esityskertaRepository = esityskertaRepository;
++        this.asiakasRepository = asiakasRepository;
+     }
+ 
+     public static void main(String[] args) {
+@@ -71,6 +75,12 @@ public class TicketguruApplication {
+         esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-10-01 10:00:00")));
+         esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-11-01 10:00:00")));
+         esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2026-12-12 13:00:00")));
++   
++        //Hard-coded Asiakas
++        asiakasRepository.save(new Asiakas("Jordi", "Alba", "Jordi.Alba@gmail.com", "+358 878 8473289"));
++        asiakasRepository.save(new Asiakas("Jonni", "Ponni", "Jonni.Ponni@gmail.com", "+358 647 457938"));
++        asiakasRepository.save(new Asiakas("Bard", "Chime", "Bard.Chime@gmail.com", "+358 423 8573498"));
++        asiakasRepository.save(new Asiakas("Gucci", "Mane", "Gucci.Mane@gmail.com", "+358 312 597834"));
+     };
+ }
+ }
