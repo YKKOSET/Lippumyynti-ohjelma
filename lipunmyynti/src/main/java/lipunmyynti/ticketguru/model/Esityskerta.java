@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import jakarta.persistence.*;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "esityskerta")
 public class Esityskerta {
@@ -17,6 +19,7 @@ public class Esityskerta {
     private Paikka paikka;
 
     @ManyToOne
+    @JsonIgnore 
     private Tapahtuma tapahtuma;
     private int maxOsallistujat;
     private Timestamp alkuaika;
