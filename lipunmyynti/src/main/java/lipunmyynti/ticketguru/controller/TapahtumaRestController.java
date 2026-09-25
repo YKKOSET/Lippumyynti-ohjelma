@@ -8,7 +8,7 @@ import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 
 @RestController
-@RequestMapping("/ticketguru/tapahtumat") // http://localhost:8080/ticketguru/tapahtumat
+@RequestMapping("/api/tapahtumat") // http://localhost:8080/api/tapahtumat
 
 public class TapahtumaRestController {
 

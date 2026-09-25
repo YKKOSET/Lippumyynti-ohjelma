@@ -1,11 +1,17 @@
 package lipunmyynti.ticketguru.controller;
 
 
-import lipunmyynti.ticketguru.model.Osto;
+import lipunmyynti.ticketguru.model.*;
+import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.OstoRepository;
+import lipunmyynti.ticketguru.repository.OstoriviRepository;
 
-import java.util.List;
+import java.util.*;
+import java.math.*;
+import java.sql.*;
+import jakarta.persistence.*;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +21,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController 
-@RequestMapping ("/ticketguru/osto") //http://localhost:8080/ticketguru/ostot
+@RequestMapping ("/api/ostot") //http://localhost:8080/api/ostot
 public class OstoRestController {
-    private final OstoRepository ostoRepository;
 
-    OstoRestController(OstoRepository ostoRepository) {
-        this.ostoRepository = ostoRepository;
+    private final OstoRepository ostoRepository;
+    private final OstoriviRepository ostoriviRepository;
+    private final LippuRepository lippuRepository; 
+    
+    public OstoRestController( OstoRepository ostoRepository, OstoriviRepository ostoriviRepository, LippuRepository lippuRepository)
+    {
+        this.ostoRepository = ostoRepository; 
+        this.ostoriviRepository = ostoriviRepository;
+        this.lippuRepository = lippuRepository;
     }
 
     //list all buys
@@ -31,8 +43,8 @@ public class OstoRestController {
     
     // add new buy
     @PostMapping
-    public Osto addOsto(@RequestBody Osto newOsto) {   
-        return ostoRepository.save(newOsto) ;
+    public Osto addOsto(@RequestBody Osto osto) {   
+        return ostoRepository.save(osto) ;
     }
     
     // Edit existing buy
@@ -51,5 +63,12 @@ public class OstoRestController {
     {
         return ostoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Ostotapahtumaa ei löytynyt"));
+    }
+
+    //deleting one purchase transaction
+    @DeleteMapping("/{id}")
+    public List<Osto> deleteOsto(@PathVariable Long id) {
+        ostoRepository.deleteById(id);
+        return ostoRepository.findAll(); //listing remaining purchases transactions
     }
 }

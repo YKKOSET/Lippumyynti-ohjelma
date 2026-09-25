@@ -1,6 +1,7 @@
 package lipunmyynti.ticketguru.model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -14,10 +15,13 @@ public class Osto {
 @GeneratedValue (strategy = GenerationType.IDENTITY)
 private Long id;
 
+@OneToMany(mappedBy = "osto")
+private List<Ostorivi> ostorivit;
+
 private Timestamp ostoaika;
 private double kokonaishinta;
 
-@ManyToOne 
+@ManyToOne (optional = true) //customer is not necessery
 private Asiakas asiakas;
 
 public Osto() {
@@ -59,6 +63,14 @@ public Asiakas getAsiakas() {
 
 public void setAsiakas(Asiakas asiakas) {
     this.asiakas = asiakas;
+}
+
+public List<Ostorivi> getOstorivit() {
+    return ostorivit;
+}
+
+public void setOstorivit(List<Ostorivi> ostorivit) {
+    this.ostorivit = ostorivit;
 }
 
 @Override

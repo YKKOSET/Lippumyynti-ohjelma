@@ -1,9 +1,11 @@
 package lipunmyynti.ticketguru.model;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import jakarta.persistence.*;
+import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "esityskerta")
@@ -17,14 +19,21 @@ public class Esityskerta {
     private Paikka paikka;
 
     @ManyToOne
+    @JsonIgnore 
     private Tapahtuma tapahtuma;
     private int maxOsallistujat;
     private Timestamp alkuaika;
 
-    //@OneToMany(mappedBy = "esityskerta")
-    //private List<Lippu> liput;
+    @OneToMany(mappedBy = "esityskerta_")
+    private List<Lippu> liput;
+
 
     public Esityskerta() {
+    }
+
+    public Esityskerta(Tapahtuma tapahtuma, Timestamp alkuaika) {
+        this.tapahtuma = tapahtuma;
+        this.alkuaika = alkuaika;
     }
 
     public Esityskerta(Paikka paikka, Tapahtuma tapahtuma, int maxOsallistujat, Timestamp alkuaika) {

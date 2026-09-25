@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lipunmyynti.ticketguru.model.Jarjestaja;
-import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.JarjestajaRepository;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController 
-@RequestMapping ("/ticketguru/jarjestajat") //http://localhost:8080/ticketguru/jarjestajat
+@RequestMapping ("/api/jarjestajat") //http://localhost:8080/api/jarjestajat
 
 public class JarjestajaRestController {
 

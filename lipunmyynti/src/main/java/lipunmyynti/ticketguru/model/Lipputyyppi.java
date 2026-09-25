@@ -16,14 +16,12 @@ public class Lipputyyppi
 
 
     //constructors
-    public Lipputyyppi()        {}
+    public Lipputyyppi()                                {}
 
-    public Lipputyyppi(Long id, String nimi)
+    public Lipputyyppi(String nimi)
     {
-        id_ = id;
         nimi_ = nimi;
     }
-
 
     //setters and getters
     public Long getId_()                                { return id_; }

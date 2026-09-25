@@ -14,7 +14,7 @@ public class Tapahtuma {
     private String nimi;
 
     @ManyToOne
-    private Long jarjestajaId;
+    private Jarjestaja jarjestaja;
     
     @OneToMany(mappedBy = "tapahtuma")
     private List<Esityskerta> esityskerrat;
@@ -26,9 +26,9 @@ public class Tapahtuma {
         this.nimi = nimi;
     }
 
-    public Tapahtuma(String nimi, Long jarjestajaId) {
+    public Tapahtuma(String nimi, Jarjestaja jarjestaja) {
         this.nimi = nimi;
-        this.jarjestajaId = jarjestajaId;
+        this.jarjestaja = jarjestaja;
     }
 
     public Long getId() {
@@ -47,12 +47,12 @@ public class Tapahtuma {
         this.nimi = nimi;
     }
 
-    public Long getJarjestajaId() {
-        return this.jarjestajaId;
+    public Jarjestaja getJarjestaja() {
+        return this.jarjestaja;
     }
 
-    public void setJarjestajaID(Long jarjestajaId) {
-        this.jarjestajaId = jarjestajaId;
+    public void setJarjestaja(Jarjestaja jarjestaja) {
+        this.jarjestaja = jarjestaja;
     }
 
     public List<Esityskerta> getEsityskerrat() {
@@ -65,7 +65,7 @@ public class Tapahtuma {
 
     @Override
     public String toString() {
-        return "Tapahtuma [id=" + id + ", nimi=" + nimi + ", jarjestajaID=" + jarjestajaId + ", esityskerrat="
+        return "Tapahtuma [id=" + id + ", nimi=" + nimi + ", jarjestaja=" + jarjestaja + ", esityskerrat="
                 + esityskerrat + "]";
     }
 }

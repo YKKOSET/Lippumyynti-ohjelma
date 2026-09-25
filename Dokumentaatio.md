@@ -602,6 +602,324 @@ public List<Tapahtuma> deleteTapahtuma(
 
 ---
 
+# Lippurajapinta
+
+## Perusosoite
+
+```http
+/api/liput
+```
+
+Lippurajapinnan avulla saadaan lisättyä ja muokattua lippuja tietokannassa
+
+## Lisää uusi lippu
+
+Tallentaa uuden lipun tietokantaan
+
+### Pyyntö
+
+```http
+POST /api/liput
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 25,
+  "kaytetty_": false
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id_": 1,
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_" : 25,
+  "kaytetty_" : false
+}
+```
+
+### Toteutus
+
+​```java
+@PostMapping
+public Lippu lisaaLippu(@RequestBody Lippu uusiLippu)
+​```
+
+---
+
+## Muokkaa lippua
+
+Päivittää olemassa olevan lipun tiedot
+
+### Pyyntö
+
+```http
+PUT /api/liput/{id}
+```
+### Esimerkki
+
+```http
+PUT /api/liput/1
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 20,
+  "kaytetty_": true
+}
+```
+### Esimerkkivastaus
+
+```json
+{
+  "id_": 1,
+  "esitysId_": 1,
+  "tyyppiId_": 1,
+  "hinta_": 20,
+  "kaytetty_": true
+}
+```
+### Toteutus
+
+```java 
+@PutMapping("/{id}")
+public Lippu muokkaaLippua( 
+  @PathVariable Long id,
+  @RequestBody Lippu paivitetty
+)
+```
+
+---
+
+# Ostorajapinta
+
+## Perusosoite
+
+```http
+/api/ostot
+```
+
+Ostorajapinnan avulla voidaan lisätä, hakea, muokata ja poistaa ostotapahtumia tietokannasta. Ostotapahtuma sisältää ostoajan, ostoksen kokonaishinnan sekä mahdollisen asiakkaan. Ostokseen voi liittyä useampi ostorivi.
+
+## Lisää uusi osto
+
+Tallentaa uuden ostotapahtuman tietokantaan.
+
+### Pyyntö
+
+```http
+POST /api/ostot
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "ostoaika": "2026-09-25T10:30:00",
+  "kokonaishinta": 50.0,
+  "asiakas": {
+    "id": 1
+  }
+}
+```
+
+Asiakas ei ole pakollinen tieto, joten osto voidaan tallentaa myös ilman asiakasta.
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "ostoaika": "2026-09-25T10:30:00",
+  "kokonaishinta": 50.0,
+  "asiakas": {
+    "id": 1
+  }
+}
+```
+
+### Toteutus
+
+```java
+@PostMapping
+public Osto addOsto(@RequestBody Osto osto)
+```
+
+---
+
+## Hae kaikki ostot
+
+Hakee kaikki järjestelmään tallennetut ostotapahtumat.
+
+### Pyyntö
+
+```http
+GET /api/ostot
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "id": 1,
+    "ostoaika": "2026-09-25T10:30:00",
+    "kokonaishinta": 50.0,
+    "asiakas": {
+      "id": 1
+    }
+  },
+  {
+    "id": 2,
+    "ostoaika": "2026-09-25T11:15:00",
+    "kokonaishinta": 25.0,
+    "asiakas": null
+  }
+]
+```
+
+### Toteutus
+
+```java
+@GetMapping
+public List<Osto> getAllOstot()
+```
+
+---
+
+## Hae yksittäinen osto
+
+Hakee yhden ostotapahtuman sen tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+GET /api/ostot/{id}
+```
+
+### Esimerkki
+
+```http
+GET /api/ostot/1
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "ostoaika": "2026-09-25T10:30:00",
+  "kokonaishinta": 50.0,
+  "asiakas": {
+    "id": 1
+  }
+}
+```
+
+Jos annetulla tunnisteella ei löydy ostotapahtumaa, palautetaan virhe `Ostotapahtumaa ei löytynyt`.
+
+### Toteutus
+
+```java
+@GetMapping("/{id}")
+public Osto getOstoById(@PathVariable Long id)
+```
+
+---
+
+## Muokkaa ostoa
+
+Päivittää olemassa olevan ostotapahtuman tiedot.
+
+### Pyyntö
+
+```http
+PUT /api/ostot/{id}
+```
+
+### Esimerkki
+
+```http
+PUT /api/ostot/1
+```
+
+### Pyynnön sisältö
+
+```json
+{
+  "ostoaika": "2026-09-25T10:30:00",
+  "kokonaishinta": 40.0,
+  "asiakas": {
+    "id": 1
+  }
+}
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "id": 1,
+  "ostoaika": "2026-09-25T10:30:00",
+  "kokonaishinta": 40.0,
+  "asiakas": {
+    "id": 1
+  }
+}
+```
+
+Jos muokattavaa ostoa ei löydy annetulla tunnisteella, palautetaan virhe `Ostotapahtumaa ei löytynyt`.
+
+### Toteutus
+
+```java
+@PutMapping("/{id}")
+public Osto updateOsto(
+    @PathVariable Long id,
+    @RequestBody Osto updateOsto
+)
+```
+
+---
+
+## Poista osto
+
+Poistaa ostotapahtuman tietokannasta annetun tunnisteen perusteella.
+
+### Pyyntö
+
+```http
+DELETE /api/ostot/{id}
+```
+
+### Esimerkki
+
+```http
+DELETE /api/ostot/1
+```
+
+Poiston jälkeen rajapinta palauttaa tietokannassa jäljellä olevat ostotapahtumat.
+
+### Toteutus
+
+```java
+@DeleteMapping("/{id}")
+public List<Osto> deleteOsto(@PathVariable Long id)
+```
+
+---
+
 # Sekvenssikaavio: uuden järjestäjän lisääminen
 
 ```text
