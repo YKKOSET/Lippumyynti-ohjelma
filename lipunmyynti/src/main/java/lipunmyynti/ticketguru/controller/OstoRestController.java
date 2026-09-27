@@ -10,7 +10,9 @@ import java.util.*;
 import java.math.*;
 import java.sql.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController 
 @RequestMapping ("/api/ostot") //http://localhost:8080/api/ostot
 public class OstoRestController {
@@ -49,7 +52,7 @@ public class OstoRestController {
     
     // Edit existing buy
     @PutMapping("/{id}")
-    public Osto updateOsto(@PathVariable Long id, @RequestBody Osto updateOsto) {
+    public Osto updateOsto(@PathVariable @Positive Long id, @RequestBody Osto updateOsto) {
         if (!ostoRepository.existsById(id)) {
             throw new RuntimeException("Ostotapahtumaa ei löytynyt");
         }
@@ -59,7 +62,7 @@ public class OstoRestController {
 
     // Get one buy by id
     @GetMapping("/{id}")
-    public Osto getOstoById(@PathVariable Long id) 
+    public Osto getOstoById(@PathVariable @Positive Long id) //id not null, id > 0
     {
         return ostoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Ostotapahtumaa ei löytynyt"));
@@ -67,7 +70,7 @@ public class OstoRestController {
 
     //deleting one purchase transaction
     @DeleteMapping("/{id}")
-    public List<Osto> deleteOsto(@PathVariable Long id) {
+    public List<Osto> deleteOsto(@PathVariable @Positive Long id) {
         ostoRepository.deleteById(id);
         return ostoRepository.findAll(); //listing remaining purchases transactions
     }
