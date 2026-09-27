@@ -14,7 +14,6 @@ public class Jarjestaja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-generation
-    @Column(nullable = false, updatable = false) //not null, not update
     private Long id;
 
     @Size(max = 50, message = "Etunimi voi olla enintään 50 merkkiä pitkä.") //it can also be empty
