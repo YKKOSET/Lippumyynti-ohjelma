@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
 
 
 @Entity 
@@ -18,7 +21,12 @@ private Long id;
 @OneToMany(mappedBy = "osto")
 private List<Ostorivi> ostorivit;
 
+@NotNull (message = "Ostoaika on pakollinen.")
+@PastOrPresent (message = "Ostoaika ei voi olla tulevaisuudessa.")
+@Column (nullable = false)
 private Timestamp ostoaika;
+
+@PositiveOrZero (message = "Kokonaishinta ei voi olla negatiivinen.")
 private double kokonaishinta;
 
 @ManyToOne (optional = true) //customer is not necessery
