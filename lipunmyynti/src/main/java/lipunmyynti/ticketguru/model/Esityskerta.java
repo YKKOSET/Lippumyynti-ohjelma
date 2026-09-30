@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 import java.util.*;
+import jakarta.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,12 +17,16 @@ public class Esityskerta {
     private Long id;
 
     @ManyToOne
+    @Size(max = 100, message = "Tarkista paikan nimi")    
     private Paikka paikka;
 
     @ManyToOne
     @JsonIgnore 
     private Tapahtuma tapahtuma;
     private int maxOsallistujat;
+
+    @NotNull(message = "Alkuaika on pakollinen.")
+    @Future(message = "Tapahtuma ei voi olla menneisyydessä")
     private Timestamp alkuaika;
 
     @OneToMany(mappedBy = "esityskerta_")
