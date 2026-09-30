@@ -94,9 +94,9 @@ public class TicketguruApplication {
         asiakasRepository.save(new Asiakas("Gucci", "Mane", "Gucci.Mane@gmail.com", "+358 312 597834"));
    
         //Hard-coded Osto
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-09 14:30:00"), 25.00, asiakasRepository.getReferenceById(1L)));
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-15 15:30:00"), 20.00, asiakasRepository.getReferenceById(2L)));
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-18 12:30:00"), 10.00, asiakasRepository.getReferenceById(3L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-09 14:30:00"), 25.00, asiakasRepository.getReferenceById(1L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-15 15:30:00"), 20.00, asiakasRepository.getReferenceById(2L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-18 12:30:00"), 10.00, asiakasRepository.getReferenceById(3L)));
 
         //Hard-coded Lippu
         lippuRepository.save(new  Lippu(esityskertaRepository.getReferenceById(1L), lipputyyppiRepository.getReferenceById(1L), new BigDecimal("10.00"), false)); //Lastenlippu
