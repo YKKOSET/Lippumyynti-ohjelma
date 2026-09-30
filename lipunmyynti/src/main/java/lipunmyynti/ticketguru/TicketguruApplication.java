@@ -1,11 +1,6 @@
 package lipunmyynti.ticketguru;
 
-import lipunmyynti.ticketguru.repository.AsiakasRepository;
-import lipunmyynti.ticketguru.repository.EsityskertaRepository;
-import lipunmyynti.ticketguru.repository.LippuRepository;
-import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
-import lipunmyynti.ticketguru.repository.OstoRepository;
-import lipunmyynti.ticketguru.repository.OstoriviRepository;
+import lipunmyynti.ticketguru.repository.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -15,20 +10,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import lipunmyynti.ticketguru.model.Asiakas;
-import lipunmyynti.ticketguru.model.Esityskerta;
-import lipunmyynti.ticketguru.model.Jarjestaja;
-import lipunmyynti.ticketguru.model.Lippu;
-import lipunmyynti.ticketguru.model.Lipputyyppi;
-import lipunmyynti.ticketguru.model.Osto;
-import lipunmyynti.ticketguru.model.Ostorivi;
-import lipunmyynti.ticketguru.model.Tapahtuma;
-import lipunmyynti.ticketguru.repository.JarjestajaRepository;
-import lipunmyynti.ticketguru.repository.TapahtumaRepository;
+import lipunmyynti.ticketguru.model.*;
+
 
 @SpringBootApplication
 public class TicketguruApplication {
-
 
     private final EsityskertaRepository esityskertaRepository;
     private final LippuRepository lippuRepository;
@@ -37,7 +23,6 @@ public class TicketguruApplication {
     private final OstoRepository ostoRepository;
     private final OstoriviRepository ostoriviRepository;
     
-
     TicketguruApplication(LipputyyppiRepository lipputyyppiRepository, LippuRepository lippuRepository
          ,EsityskertaRepository esityskertaRepository, AsiakasRepository asiakasRepository, OstoRepository ostoRepository, OstoriviRepository ostoriviRepository) {
         this.lipputyyppiRepository = lipputyyppiRepository;
