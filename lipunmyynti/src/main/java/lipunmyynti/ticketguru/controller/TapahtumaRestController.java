@@ -3,10 +3,12 @@ package lipunmyynti.ticketguru.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 
+@Validated
 @RestController
 @RequestMapping("/api/tapahtumat") // http://localhost:8080/api/tapahtumat
 
