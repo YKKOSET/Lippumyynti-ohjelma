@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body("400 Bad request");
     }*/
 
+    // 400
     @ExceptionHandler({
         HttpMessageNotReadableException.class,
         MissingServletRequestParameterException.class,
@@ -37,14 +38,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.TEXT_PLAIN)
-                .body("-400 bad request-");
+                .body("-400 Bad request-");
     }
     
+    // 404
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<String> handleNoResource(NoResourceFoundException ex) {
         return ResponseEntity
                 .status(ex.getStatusCode())
                 .contentType(MediaType.TEXT_PLAIN)
-                .body("-Resource not found-");
+                .body("-404 Resource not found-");
     }
 }
