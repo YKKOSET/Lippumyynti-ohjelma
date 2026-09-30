@@ -30,7 +30,7 @@ private String sukunimi;
 private String sahkoposti;
 
 @Size(max = 20, message = "Puhelinnumero voi olla enintään 20 merkkiä pitkä.")
-@Pattern (regexp = "^\\+?[0-9]*$", message = "Puhelinnumero voi sisältää vain numeroita")
+@Pattern (regexp = "^\\+?[0-9 ]*$", message = "Puhelinnumero voi sisältää vain numeroita")
 private String puhelin;
 
 @OneToMany (mappedBy = "asiakas")
