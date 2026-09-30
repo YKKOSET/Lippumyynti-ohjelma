@@ -6,12 +6,9 @@ import lipunmyynti.ticketguru.repository.OstoRepository;
 import lipunmyynti.ticketguru.repository.OstoriviRepository;
 
 import java.util.*;
-import java.math.*;
-import java.sql.*;
-import jakarta.persistence.*;
+import java.math.*; //säilytin: saattaa tarvita kokonaishinnan laskemiselle
 import jakarta.validation.constraints.Positive;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @Validated
 @RestController
@@ -54,19 +50,14 @@ public class OstoRestController {
     // Edit existing buy
     @PutMapping("/{id}")
     public Osto updateOsto(@PathVariable @Positive Long id, @RequestBody Osto updateOsto) {
-        if (!ostoRepository.existsById(id)) {
-            throw new RuntimeException("Ostotapahtumaa ei löytynyt");
-        }
         updateOsto.setId(id);
         return ostoRepository.save(updateOsto);
     }
 
     // Get one buy by id
     @GetMapping("/{id}")
-    public Osto getOstoById(@PathVariable @Positive Long id) // id not null, id > 0
-    {
+    public Osto getOstoById(@PathVariable @Positive Long id) { // id not null, id > 0
         return ostoRepository.findById(id).orElse(null);
-        // orElseThrow(() -> new RuntimeException("Ostotapahtumaa ei löytynyt"));
     }
 
     // deleting one purchase transaction
