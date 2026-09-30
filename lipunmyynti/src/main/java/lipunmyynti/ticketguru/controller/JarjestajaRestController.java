@@ -34,27 +34,21 @@ public class JarjestajaRestController {
     }
         // add new organizer
     @PostMapping
-    public Jarjestaja addJarjestaja(@RequestBody Jarjestaja jarjestaja) {
-        
+    public Jarjestaja addJarjestaja(@RequestBody Jarjestaja jarjestaja) { 
         return jarjestajaRepository.save(jarjestaja) ;
     }
     
     // Edit existing Järjestäjä
     @PutMapping("/{id}")
     public Jarjestaja updateJarjestaja(@PathVariable Long id, @RequestBody Jarjestaja updateJarjestaja) {
-        if (!jarjestajaRepository.existsById(id)) {
-            throw new RuntimeException("Järjestäjää ei löytynyt");
-        }
         updateJarjestaja.setId(id);
         return jarjestajaRepository.save(updateJarjestaja);
     }
 
     // Get one organizer by id
     @GetMapping("/{id}")
-    public Jarjestaja getJarjestajaById(@PathVariable Long id) 
-    {
-        return jarjestajaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Järjestäjää ei löytynyt"));
+    public Jarjestaja getJarjestajaById(@PathVariable Long id) {
+        return jarjestajaRepository.findById(id).orElse(null);
     }
     
 }
