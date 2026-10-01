@@ -50,14 +50,19 @@ public class OstoRestController {
     // Edit existing buy
     @PutMapping("/{id}")
     public Osto updateOsto(@PathVariable @Positive Long id, @RequestBody Osto updateOsto) {
-        updateOsto.setId(id);
-        return ostoRepository.save(updateOsto);
+        if(!ostoRepository.existsById(id))
+            return ostoRepository.findById(id).orElseThrow();
+        else
+        {
+            updateOsto.setId(id);
+            return ostoRepository.save(updateOsto);
+        }
     }
 
     // Get one buy by id
     @GetMapping("/{id}")
     public Osto getOstoById(@PathVariable @Positive Long id) { // id not null, id > 0
-        return ostoRepository.findById(id).orElse(null);
+        return ostoRepository.findById(id).orElseThrow();
     }
 
     // deleting one purchase transaction

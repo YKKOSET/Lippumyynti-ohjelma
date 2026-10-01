@@ -1,5 +1,8 @@
 package lipunmyynti.ticketguru.controller;
 
+import java.util.NoSuchElementException;
+
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -42,10 +45,16 @@ public class GlobalExceptionHandler {
     }
     
     // 404
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<String> handleNoResource(NoResourceFoundException ex) {
+    /*@ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<String> handleNoResource(NoResourceFoundException ex) {*/
+
+    @ExceptionHandler({
+        NoResourceFoundException.class,
+        NoSuchElementException.class
+    })
+    public ResponseEntity<String> handleNotFound(Exception ex) {
         return ResponseEntity
-                .status(ex.getStatusCode())
+                .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body("-404 Resource not found-");
     }
