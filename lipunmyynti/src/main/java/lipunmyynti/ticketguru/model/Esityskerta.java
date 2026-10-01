@@ -20,7 +20,6 @@ public class Esityskerta {
     private Long id;
 
     @ManyToOne
-    @Size(max = 100, message = "Tarkista paikan nimi")
     private Paikka paikka;
 
     @ManyToOne
