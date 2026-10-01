@@ -66,11 +66,11 @@ public class TicketguruApplication {
 
         //Hard-coded Esityskerta
         //Tapahtuma tapahtuma, Timestamp alkuaika
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-10-01 19:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-11-08 19:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-10-01 10:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-11-01 10:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2026-12-12 13:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2028-10-01 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2028-11-08 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2028-10-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2028-11-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2028-12-12 13:00:00")));
 
         //Hard-coded Asiakas
         asiakasRepository.save(new Asiakas("Jordi", "Alba", "Jordi.Alba@gmail.com", "+358 878 8473289"));

@@ -2,6 +2,8 @@ package lipunmyynti.ticketguru.model;
 
 import java.util.List;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tapahtuma")
@@ -11,6 +13,8 @@ public class Tapahtuma {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull (message = "Syötä tapahtuman nimi")
+    @Size(max = 200, message = "Tapahtuman nimi ei saa olla yli 200 merkkiä pitkä")
     private String nimi;
 
     @ManyToOne
