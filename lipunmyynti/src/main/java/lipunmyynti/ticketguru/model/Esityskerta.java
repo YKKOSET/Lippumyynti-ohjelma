@@ -3,6 +3,10 @@ package lipunmyynti.ticketguru.model;
 import java.sql.Timestamp;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,6 +26,9 @@ public class Esityskerta {
     @JsonIgnore 
     private Tapahtuma tapahtuma;
     private int maxOsallistujat;
+
+    @NotNull (message = "Alkuaika on pakollinen.")
+    @Future(message = "Alkuaika ei voi olla menneisyydessä.")
     private Timestamp alkuaika;
 
     @OneToMany(mappedBy = "esityskerta_")

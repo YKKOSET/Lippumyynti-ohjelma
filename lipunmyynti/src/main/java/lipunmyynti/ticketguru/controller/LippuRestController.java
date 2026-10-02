@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.validation.annotation.Validated;
 
 import lipunmyynti.ticketguru.model.*;
 import lipunmyynti.ticketguru.repository.EsityskertaRepository;
@@ -20,34 +20,32 @@ import java.math.*;
 import java.sql.*;
 import jakarta.persistence.*;
 
-
-@RestController 
+@Validated
+@RestController
 @RequestMapping("/api/liput") // http://localhost:8080/api/liput
 
 public class LippuRestController {
 
-    //injection: repository to restcontroller
+    // injection: repository to restcontroller
     private final LippuRepository lippuRepository;
     private final EsityskertaRepository esityskertaRepository;
     private final LipputyyppiRepository lipputyyppiRepository;
 
-    public LippuRestController(LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository, LipputyyppiRepository lipputyyppiRepository) {
+    public LippuRestController(LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository,
+            LipputyyppiRepository lipputyyppiRepository) {
         this.lippuRepository = lippuRepository;
         this.esityskertaRepository = esityskertaRepository;
         this.lipputyyppiRepository = lipputyyppiRepository;
     }
-    
-    @GetMapping 
-    public List<Lippu> getAllLiput()
-    {
+
+    @GetMapping
+    public List<Lippu> getAllLiput() {
         return lippuRepository.findAll();
     }
 
     // Search lippu with id
     @GetMapping("/{id}")
     public Lippu getLippuById(@PathVariable Long id) {
-        return lippuRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Lippua ei löytynyt"));
+        return lippuRepository.findById(id).orElse(null);
     }
 }

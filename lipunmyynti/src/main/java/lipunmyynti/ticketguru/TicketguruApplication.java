@@ -1,11 +1,6 @@
 package lipunmyynti.ticketguru;
 
-import lipunmyynti.ticketguru.repository.AsiakasRepository;
-import lipunmyynti.ticketguru.repository.EsityskertaRepository;
-import lipunmyynti.ticketguru.repository.LippuRepository;
-import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
-import lipunmyynti.ticketguru.repository.OstoRepository;
-import lipunmyynti.ticketguru.repository.OstoriviRepository;
+import lipunmyynti.ticketguru.repository.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -15,20 +10,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import lipunmyynti.ticketguru.model.Asiakas;
-import lipunmyynti.ticketguru.model.Esityskerta;
-import lipunmyynti.ticketguru.model.Jarjestaja;
-import lipunmyynti.ticketguru.model.Lippu;
-import lipunmyynti.ticketguru.model.Lipputyyppi;
-import lipunmyynti.ticketguru.model.Osto;
-import lipunmyynti.ticketguru.model.Ostorivi;
-import lipunmyynti.ticketguru.model.Tapahtuma;
-import lipunmyynti.ticketguru.repository.JarjestajaRepository;
-import lipunmyynti.ticketguru.repository.TapahtumaRepository;
+import lipunmyynti.ticketguru.model.*;
+
 
 @SpringBootApplication
 public class TicketguruApplication {
-
 
     private final EsityskertaRepository esityskertaRepository;
     private final LippuRepository lippuRepository;
@@ -37,7 +23,6 @@ public class TicketguruApplication {
     private final OstoRepository ostoRepository;
     private final OstoriviRepository ostoriviRepository;
     
-
     TicketguruApplication(LipputyyppiRepository lipputyyppiRepository, LippuRepository lippuRepository
          ,EsityskertaRepository esityskertaRepository, AsiakasRepository asiakasRepository, OstoRepository ostoRepository, OstoriviRepository ostoriviRepository) {
         this.lipputyyppiRepository = lipputyyppiRepository;
@@ -81,11 +66,11 @@ public class TicketguruApplication {
 
         //Hard-coded Esityskerta
         //Tapahtuma tapahtuma, Timestamp alkuaika
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-10-01 19:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2026-11-08 19:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-10-01 10:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2026-11-01 10:00:00")));
-        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2026-12-12 13:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2028-10-01 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(2L), Timestamp.valueOf("2028-11-08 19:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2028-10-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(1L), Timestamp.valueOf("2028-11-01 10:00:00")));
+        esityskertaRepository.save(new Esityskerta(tapahtumaRepository.getReferenceById(3L), Timestamp.valueOf("2028-12-12 13:00:00")));
 
         //Hard-coded Asiakas
         asiakasRepository.save(new Asiakas("Jordi", "Alba", "Jordi.Alba@gmail.com", "+358 878 8473289"));
@@ -94,9 +79,9 @@ public class TicketguruApplication {
         asiakasRepository.save(new Asiakas("Gucci", "Mane", "Gucci.Mane@gmail.com", "+358 312 597834"));
    
         //Hard-coded Osto
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-09 14:30:00"), 25.00, asiakasRepository.getReferenceById(1L)));
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-15 15:30:00"), 20.00, asiakasRepository.getReferenceById(2L)));
-        ostoRepository.save(new Osto(Timestamp.valueOf("2026-11-18 12:30:00"), 10.00, asiakasRepository.getReferenceById(3L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-09 14:30:00"), 25.00, asiakasRepository.getReferenceById(1L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-15 15:30:00"), 20.00, asiakasRepository.getReferenceById(2L)));
+        ostoRepository.save(new Osto(Timestamp.valueOf("2025-11-18 12:30:00"), 10.00, asiakasRepository.getReferenceById(3L)));
 
         //Hard-coded Lippu
         lippuRepository.save(new  Lippu(esityskertaRepository.getReferenceById(1L), lipputyyppiRepository.getReferenceById(1L), new BigDecimal("10.00"), false)); //Lastenlippu

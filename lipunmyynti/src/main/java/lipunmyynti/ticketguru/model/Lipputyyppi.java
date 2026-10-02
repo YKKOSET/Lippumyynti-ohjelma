@@ -1,6 +1,7 @@
 package lipunmyynti.ticketguru.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 
 @Entity
@@ -12,6 +13,10 @@ public class Lipputyyppi
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_;
+    
+    @NotBlank(message = "Lipputyypin nimi on pakollinen")
+    @Size(min = 2, max = 50, message = "Lipputyypin nimen pitää olla 2-50 merkkiä")
+    @Column(nullable = false, length = 50)
     private String nimi_;
 
 
