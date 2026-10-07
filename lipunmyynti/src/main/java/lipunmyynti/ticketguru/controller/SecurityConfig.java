@@ -23,6 +23,9 @@ public class SecurityConfig {
             .requestMatchers("/css/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/tapahtumat").permitAll()
+            .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
             .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults() // Postman's login
         )
