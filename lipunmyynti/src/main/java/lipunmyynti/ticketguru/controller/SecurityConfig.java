@@ -19,11 +19,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/h2-console**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated())
 
                 .httpBasic(Customizer.withDefaults() // Postman's login
                 )
+
+                .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**"))      //h2-console
+            
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions
                         .disable()) // h2-console
                 )
