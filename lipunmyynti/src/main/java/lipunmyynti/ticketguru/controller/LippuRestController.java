@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import lipunmyynti.ticketguru.model.*;
@@ -39,11 +40,13 @@ public class LippuRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Lippu> getAllLiput() {
         return lippuRepository.findAll();
     }
 
     // Search lippu with id
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @GetMapping("/{id}")
     public Lippu getLippuById(@PathVariable Long id) {
         return lippuRepository.findById(id).orElse(null);

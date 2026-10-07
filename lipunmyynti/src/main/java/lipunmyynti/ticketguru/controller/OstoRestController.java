@@ -9,6 +9,7 @@ import java.util.*;
 import java.math.*; //säilytin: saattaa tarvita kokonaishinnan laskemiselle
 import jakarta.validation.constraints.Positive;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,18 +37,21 @@ public class OstoRestController {
     }
 
     // list all buys
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @GetMapping
     public List<Osto> getAllOstot() {
         return ostoRepository.findAll();
     }
 
     // add new buy
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public Osto addOsto(@RequestBody Osto osto) {
         return ostoRepository.save(osto);
     }
 
     // Edit existing buy
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public Osto updateOsto(@PathVariable @Positive Long id, @RequestBody Osto updateOsto) {
         if(!ostoRepository.existsById(id))
@@ -60,12 +64,14 @@ public class OstoRestController {
     }
 
     // Get one buy by id
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public Osto getOstoById(@PathVariable @Positive Long id) { // id not null, id > 0
         return ostoRepository.findById(id).orElseThrow();
     }
 
     // deleting one purchase transaction
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public List<Osto> deleteOsto(@PathVariable @Positive Long id) {
         ostoRepository.deleteById(id);

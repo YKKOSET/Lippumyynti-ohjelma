@@ -3,6 +3,7 @@ package lipunmyynti.ticketguru.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import lipunmyynti.ticketguru.model.Tapahtuma;
@@ -28,12 +29,14 @@ public class TapahtumaRestController {
     }
 
     // adding one event
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @PostMapping
     public Tapahtuma addTapahtuma(@RequestBody Tapahtuma tapahtuma) {
         return tapahtumaRepository.save(tapahtuma);
     }
 
     // editing one event
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public Tapahtuma updateTapahtuma(@PathVariable Long id, @RequestBody Tapahtuma updateTapahtuma) {
         updateTapahtuma.setId(id);
@@ -41,6 +44,7 @@ public class TapahtumaRestController {
     }
 
     //deleting one event
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public List<Tapahtuma> deleteTapahtuma(@PathVariable Long id) {
         tapahtumaRepository.deleteById(id);
@@ -48,6 +52,7 @@ public class TapahtumaRestController {
     }
 
     // returns all events for a specific organizer
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @GetMapping("/jarjestaja/{id}")
     public List<Tapahtuma> getTapahtumatByJarjestaja(@PathVariable Long id) {
         return tapahtumaRepository.findByJarjestajaId(id);

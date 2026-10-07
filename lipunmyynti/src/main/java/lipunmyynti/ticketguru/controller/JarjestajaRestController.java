@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 
@@ -27,18 +28,23 @@ public class JarjestajaRestController {
     JarjestajaRestController(JarjestajaRepository jarjestajaRepository){
         this.jarjestajaRepository = jarjestajaRepository;
     }
-        //list all organizers
+    
+    //list all organizers
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public List<Jarjestaja>getAlljarjestajat() {
         return jarjestajaRepository.findAll();
     }
-        // add new organizer
+    
+    // add new organizer
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public Jarjestaja addJarjestaja(@RequestBody Jarjestaja jarjestaja) { 
         return jarjestajaRepository.save(jarjestaja) ;
     }
     
     // Edit existing Järjestäjä
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public Jarjestaja updateJarjestaja(@PathVariable Long id, @RequestBody Jarjestaja updateJarjestaja) {
         updateJarjestaja.setId(id);
@@ -46,6 +52,7 @@ public class JarjestajaRestController {
     }
 
     // Get one organizer by id
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public Jarjestaja getJarjestajaById(@PathVariable Long id) {
         return jarjestajaRepository.findById(id).orElse(null);
