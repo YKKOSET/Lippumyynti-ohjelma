@@ -87,13 +87,17 @@ Roolin käyttötapaukset:
 
 ### Käyttäjätarinat
 
-#### Tarina 1: Saman päivän esitys
-Kaverukset Christian ja Laura haluavat mennä Teatterin Aave -esitykseen perjantaina. Perjantaina heidän saapuessaan lipunmyynnille myyjä kertoo, että päivä on loppuunmyyty eikä lippuja kyseiselle päivälle enää ole. Myyjä kertoo, että ensi viikon lauantaina on vielä paikkoja jäljellä. Kaverukset ostavat liput lauantain esitykseen jotka saavat heti tulostettuna, ja joutuvat keksimään muuta tekemistä illalleen. <br>
-Seuraavana lauantaina Christian ja Laura saapuvat ajallaan esitykseen. Ovella valvoja tarkistaa liput, ja merkitsee ne käytetyksi kavereiden mennessä sisään.
+## Vaihe 1: Perusta
 
-#### Tarina 2: Tapahtuman kannattavuus
-Erään tapahtumahallin omistaja pohtii, kannattaako Kuukauden Kirja -tapahtumaa järjestää enää. Päätöksensä tueksi hän haluaa tietää, kuinka monta kävijää edellisessä tapahtumassa on ollut ja kuinka paljon tapahtuma on tienannut, jotta voi verrata niitä tapahtuman järjestämisestä aiheutuviin kuluihin. <br>
-Omistaja ottaa yhteyttä lipputoimistoon jonka kautta liput myydään ja tahtoo tietää tapahtuman tilastot. Lipputoimiston työntekijä selvittää järjestelmästään Kuukauden kirja -tapahtumaan myytyjen lippujen myyntiraportin ja osaa kertoa, että tapahtumaan ostettiin 314 aikuisten lippua ja 42 lasten lippua. Näin ollen tuottoja oli yhteensä 4020 euroa. Tämän perusteella omistaja voi pohtia, kannattaako tapahtumaa enää järjestää vai olisiko mahdollista lisätä tapahtuman houkuttelevuutta.
+#### Tarina 8: Tapahtuman tietojen ja hintojen hallinta
+Lipputoimiston työntekijä saa tiedon, että tapahtumajärjestäjä on muuttanut tulevan tapahtuman lippujen hintoja. Aikuisten lipun hinta nousee 20 eurosta 25 euroon ja lasten lipun hinta 10 eurosta 12 euroon. Työntekijä kirjautuu lipunmyyntijärjestelmään ja päivittää tapahtuman hinnat sekä muut tarvittavat tapahtumatiedot. Järjestelmä tallentaa muutokset, minkä jälkeen asiakkaat näkevät verkkokaupassa uudet hinnat ja järjestelmä laskee ostoksen loppusumman niiden perusteella.
+
+---
+
+## Vaihe 2: Ydinvirta
+
+#### Tarina 7: Lipun ostaminen verkosta
+Asiakas haluaa ostaa lipun tulevana viikonloppuna järjestettävään tapahtumaan. Hän avaa lipputoimiston verkkosivut ja valitsee haluamansa tapahtuman sekä näytöksestä vapaan paikan. Asiakas valitsee aikuisten lipun, maksaa ostoksen verkkopankissa ja saa onnistuneen maksun jälkeen sähköpostiinsa vahvistuksen sekä digitaalisen lipun. Lipussa näkyvät tapahtuman tiedot ja yksilöllinen koodi, jonka hän voi näyttää puhelimestaan tapahtuman ovella. Asiakkaan ei näin tarvitse käydä lipunmyyntipisteellä tai tulostaa lippua etukäteen.
 
 #### Tarina 3: Lipun tulostus
 Lipunmyyjänä haluan, että jokaiselle myydylle lipulle tulostuu automaattisesti fyysinen lippu, jossa näkyy tapahtuman tiedot sekä yksilöllinen, helposti luettava koodi, jotta asiakas saa mukaansa toimivan pääsylipun heti oston yhteydessä. Tulostuksen tulisi onnistua sekä ennakkomyynnissä että tapahtumapäivänä ovella tapahtuvassa myynnissä. Haluan myös, että tulostusvirheen sattuessa lippua voidaan tulostaa uudelleen ilman, että asiakkaalta veloitetaan kahdesti tai että järjestelmään syntyy virheellisiä kaksoiskappaleita samasta lipusta.
@@ -101,24 +105,37 @@ Lipunmyyjänä haluan, että jokaiselle myydylle lipulle tulostuu automaattisest
 #### Tarina 4: Lipun tarkastus ovella
 Ovella työskentelevänä henkilönä haluan lukea lipussa olevan koodin järjestelmän avulla, jotta näen välittömästi, onko lippu aito, oikeaan tapahtumaan kuuluva ja vielä käyttämätön. Kun lippu todetaan kelvolliseksi, haluan pystyä merkitsemään sen käytetyksi yhdellä toiminnolla, jotta samaa lippua ei voida käyttää uudelleen sisäänpääsyyn. Mikäli lippu on jo käytetty tai virheellinen, haluan järjestelmän ilmoittavan siitä selkeästi, jotta voin estää asiakkaan pääsyn ja toimia tilanteen vaatimalla tavalla.
 
+#### Tarina 1: Saman päivän esitys
+Kaverukset Christian ja Laura haluavat mennä Teatterin Aave -esitykseen perjantaina. Perjantaina heidän saapuessaan lipunmyynnille myyjä kertoo, että päivä on loppuunmyyty eikä lippuja kyseiselle päivälle enää ole. Myyjä kertoo, että ensi viikon lauantaina on vielä paikkoja jäljellä. Kaverukset ostavat liput lauantain esitykseen jotka saavat heti tulostettuna, ja joutuvat keksimään muuta tekemistä illalleen. <br>
+Seuraavana lauantaina Christian ja Laura saapuvat ajallaan esitykseen. Ovella valvoja tarkistaa liput, ja merkitsee ne käytetyksi kavereiden mennessä sisään.
+
+---
+
+## Vaihe 3: Eheys
+
 #### Tarina 5: Tungos ja tuplaliput
 Lipputoimisto sai ison tapahtumajärjestäjän asiakkaakseen. Tapahtuman suosio yllätti ja liput myytiin hetkessä loppuun. Ongelmaksi koitui, ettei myydyt liput päivittyneet reaaliajassa eri lipunmyyntipisteisiin, jolloin tapahtumaan myytiin liikaa lippuja. Seurauksena tilojen enimmäismäärä ylittyi. Tapahtuma sai huonoa palautetta tungoksesta, josta seurasi muitakin käytännön ongelmia. Lisäksi asiakkaille oli tulostunut tuplalippuja samoilla sarjanumeroilla. Osa asiakkaista ei päässyt paikalle ja he myivät alkuperäisiä lippujaan yksityisesti eteenpäin ennen tapahtumaa. Tapahtumapäivänä ovella oli paljon selvittelyä, oliko eteenpäin myydyt liput väärennettyjä vai alkuperäisiä ”tuplalippuja”. Tämä hidasti kaikkien sisäänpääsyä sekä lisäsi pahaa mieltä ja mainehaittaa lipputoimistolle.
 
-#### Tarina 6: Peruutusoikeus
-Asiakas on ostanut lipun tapahtumaan Syysyö Sastamalassa. Alkusyksystä hän kuitenkin loukkaantuu tapaturmaisesti. Saattajan avustamana sekä raajat kipsattuna hän lähtee käymään lipunmyyntipisteellä, koska he eivät löydä mahdollisuutta asioida netin kautta, eikä puhelimitsekaan oikein osattu auttaa, että mitä lipun kanssa voisi nyt tehdä. Asiakas näyttää lipunmyyntipisteellä lääkärintodistuksen sekä ostamansa paperisen lipun. Hän toivoisi, että saisi lippua vastaan rahat takaisin taikka vaihtaa lipun toiseen, myöhemmin tulevaan tapahtumaan. Lipunmyyntipisteellä henkilökunta ei oikein tiedä miten lipun kanssa kuuluisi toimia, kun ei ole lipunmyyntijärjestelmääkään, jonne voisi kirjata lipun palautuneeksi. Lopulta he ottavat lipun kuitenkin takaisin myyntiin ja antavat samanhintaisen, tulevan tapahtuman lipun tilalle. He pahoittelevat, että asiakas joutui asian vuoksi tulemaan fyysisesti paikan päälle. Asiakas on tyytyväinen, että asia hoitui parhain päin, mutta olisi halunnut mieluummin asioida verkossa.
+---
 
-#### Tarina 7: Lipun ostaminen verkosta
-Asiakas haluaa ostaa lipun tulevana viikonloppuna järjestettävään tapahtumaan. Hän avaa lipputoimiston verkkosivut ja valitsee haluamansa tapahtuman sekä näytöksestä vapaan paikan. Asiakas valitsee aikuisten lipun, maksaa ostoksen verkkopankissa ja saa onnistuneen maksun jälkeen sähköpostiinsa vahvistuksen sekä digitaalisen lipun. Lipussa näkyvät tapahtuman tiedot ja yksilöllinen koodi, jonka hän voi näyttää puhelimestaan tapahtuman ovella. Asiakkaan ei näin tarvitse käydä lipunmyyntipisteellä tai tulostaa lippua etukäteen.
-
-#### Tarina 8: Tapahtuman tietojen ja hintojen hallinta
-Lipputoimiston työntekijä saa tiedon, että tapahtumajärjestäjä on muuttanut tulevan tapahtuman lippujen hintoja. Aikuisten lipun hinta nousee 20 eurosta 25 euroon ja lasten lipun hinta 10 eurosta 12 euroon. Työntekijä kirjautuu lipunmyyntijärjestelmään ja päivittää tapahtuman hinnat sekä muut tarvittavat tapahtumatiedot. Järjestelmä tallentaa muutokset, minkä jälkeen asiakkaat näkevät verkkokaupassa uudet hinnat ja järjestelmä laskee ostoksen loppusumman niiden perusteella.
+## Vaihe 4: Tuki
 
 #### Tarina 9: Aiemman ostoksen etsiminen
 Lipunmyyjä saa asiakkaalta kyselyn aikaisemmin ostetusta lipusta. Asiakas ei löydä lippuaan eikä muista, milloin ostos on tehty. Lipunmyyjä etsii järjestelmästä asiakkaan ostoksen esim. tietyn tapahtuman ostotietojen perusteella. Järjestelmä näyttää löydetyn ostoksen tiedot, jolloin myyjä voi tarkistaa lipun tilanteen ja tarvittaessa auttaa asiakasta.
 
+#### Tarina 6: Peruutusoikeus
+Asiakas on ostanut lipun tapahtumaan Syysyö Sastamalassa. Alkusyksystä hän kuitenkin loukkaantuu tapaturmaisesti. Saattajan avustamana sekä raajat kipsattuna hän lähtee käymään lipunmyyntipisteellä, koska he eivät löydä mahdollisuutta asioida netin kautta, eikä puhelimitsekaan oikein osattu auttaa, että mitä lipun kanssa voisi nyt tehdä. Asiakas näyttää lipunmyyntipisteellä lääkärintodistuksen sekä ostamansa paperisen lipun. Hän toivoisi, että saisi lippua vastaan rahat takaisin taikka vaihtaa lipun toiseen, myöhemmin tulevaan tapahtumaan. Lipunmyyntipisteellä henkilökunta ei oikein tiedä miten lipun kanssa kuuluisi toimia, kun ei ole lipunmyyntijärjestelmääkään, jonne voisi kirjata lipun palautuneeksi. Lopulta he ottavat lipun kuitenkin takaisin myyntiin ja antavat samanhintaisen, tulevan tapahtuman lipun tilalle. He pahoittelevat, että asiakas joutui asian vuoksi tulemaan fyysisesti paikan päälle. Asiakas on tyytyväinen, että asia hoitui parhain päin, mutta olisi halunnut mieluummin asioida verkossa.
+
+---
+
+## Vaihe 5: Raportointi
+
 #### Tarina 10: Tapahtuman tietojen seuranta
 Tapahtumajärjestäjä haluaa nähdä, kuinka paljon tapahtumaan on vielä vapaita paikkoja ja kuinka monta lippua on jo myyty. Hän pääsee katsomaan näitä tilastoja tapahtumajärjestäjälle jaetun linkin kautta. Linkin kautta avautuu näkymä järjestelmän tietoihin kyseisestä tapahtumasta ja siihen liittyvistä tilastoista. Tapahtumajärjestäjä on tyytyväinen toiminnallisuuteen, koska hän pääsee tutkimaan ajankohtaista dataa.
 
+#### Tarina 2: Tapahtuman kannattavuus
+Erään tapahtumahallin omistaja pohtii, kannattaako Kuukauden Kirja -tapahtumaa järjestää enää. Päätöksensä tueksi hän haluaa tietää, kuinka monta kävijää edellisessä tapahtumassa on ollut ja kuinka paljon tapahtuma on tienannut, jotta voi verrata niitä tapahtuman järjestämisestä aiheutuviin kuluihin. <br>
+Omistaja ottaa yhteyttä lipputoimistoon jonka kautta liput myydään ja tahtoo tietää tapahtuman tilastot. Lipputoimiston työntekijä selvittää järjestelmästään Kuukauden kirja -tapahtumaan myytyjen lippujen myyntiraportin ja osaa kertoa, että tapahtumaan ostettiin 314 aikuisten lippua ja 42 lasten lippua. Näin ollen tuottoja oli yhteensä 4020 euroa. Tämän perusteella omistaja voi pohtia, kannattaako tapahtumaa enää järjestää vai olisiko mahdollista lisätä tapahtuman houkuttelevuutta.
 
 ### Käyttötapauskaavio
 
