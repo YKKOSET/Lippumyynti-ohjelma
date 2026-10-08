@@ -3,7 +3,6 @@ package lipunmyynti.ticketguru.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import lipunmyynti.ticketguru.model.Tapahtuma;
@@ -30,14 +29,12 @@ public class TapahtumaRestController {
 
     // adding one event
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
     public Tapahtuma addTapahtuma(@RequestBody Tapahtuma tapahtuma) {
         return tapahtumaRepository.save(tapahtuma);
     }
 
     // editing one event
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public Tapahtuma updateTapahtuma(@PathVariable Long id, @RequestBody Tapahtuma updateTapahtuma) {
         updateTapahtuma.setId(id);
         return tapahtumaRepository.save(updateTapahtuma);
