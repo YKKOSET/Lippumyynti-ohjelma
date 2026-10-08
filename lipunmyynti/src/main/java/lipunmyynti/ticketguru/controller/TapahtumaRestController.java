@@ -40,11 +40,11 @@ public class TapahtumaRestController {
         return tapahtumaRepository.save(updateTapahtuma);
     }
 
-    //deleting one event
+    // deleting one event
     @DeleteMapping("/{id}")
     public List<Tapahtuma> deleteTapahtuma(@PathVariable Long id) {
         tapahtumaRepository.deleteById(id);
-        return tapahtumaRepository.findAll(); 
+        return tapahtumaRepository.findAll();
     }
 
     // returns all events for a specific organizer
