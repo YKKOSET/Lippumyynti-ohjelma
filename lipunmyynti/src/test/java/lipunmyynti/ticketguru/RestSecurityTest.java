@@ -23,33 +23,32 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @SpringBootTest
 @AutoConfigureMockMvc
 // @Transactional //non-permanental changes
-// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //allready for db
+// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+// //allready for db
 
 public class RestSecurityTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    //ADMIN SEE EVENTS:
+    // ADMIN sees events:
     @Test
     public void testGETAllEvents() throws Exception {
         mockMvc.perform(
-            get("/api/tapahtumat")
-            .with(user("ADMIN")
-            .authorities(new SimpleGrantedAuthority("ADMIN"))) 
-        )      
-            .andExpect(status().isOk());
+                get("/api/tapahtumat")
+                        .with(user("ADMIN")
+                                .authorities(new SimpleGrantedAuthority("ADMIN"))))
+                .andExpect(status().isOk());
     }
 
-    //USER DOESN'T SEE EVENTS:
+    // USER cannot see organizers:
     @Test
     public void testGETAllEventsWithoutAdmin() throws Exception {
-    mockMvc.perform(
-        get("/api/tapahtumat")
-            .with(user("USER")
-                .authorities(new SimpleGrantedAuthority("USER")))
-    )
-    .andExpect(status().isForbidden());
-}
+        mockMvc.perform(
+                get("/api/jarjestajat")
+                        .with(user("USER")
+                                .authorities(new SimpleGrantedAuthority("USER"))))
+                .andExpect(status().isForbidden());
+    }
 
 }
