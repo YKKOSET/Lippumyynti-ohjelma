@@ -23,6 +23,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/css/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/tapahtumat").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/ostot").hasAnyAuthority("ADMIN", "USER")
                                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAuthority("ADMIN")
                                                 .requestMatchers(HttpMethod.POST, "/api/**")
                                                 .hasAuthority("ADMIN")
