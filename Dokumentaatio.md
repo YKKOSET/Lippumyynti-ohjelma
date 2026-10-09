@@ -982,6 +982,44 @@ Keskeisiä tietoturvaratkaisuja ovat:
 
 Nykyisessä toteutuksessa rajapinta toimii kehitysympäristössä ilman käyttäjien tunnistautumista. Tuotantokäyttöä varten järjestelmään voidaan lisätä esimerkiksi Spring Security -pohjainen käyttäjien autentikointi ja käyttöoikeuksien hallinta.
 
+---
+
+# Käyttäjien tunnistautuminen ja käyttöoikeudet
+
+Käyttöoikeuksien tarkoituksena on rajata, mitä tietoja käyttäjä voi tarkastella ja mitä toimintoja hän voi suorittaa. Käyttäjien tunnistautuminen ja käyttöoikeuksien hallinta on toteutettu Spring Securityn avulla.
+
+Kehitysympäristössä alustetaan testikäyttäjät `ADMIN` ja `USER`. Molempien käyttäjätunnus ja salasana ovat (toistaiseksi) alustuksessa samat kuin roolin nimi.
+
+Jokaisella järjestelmän käyttäjällä on käyttäjätunnus, salasana ja rooli. Salasanat tallennetaan tietokantaan BCryptillä muodostettuina tiivisteinä, eli niitä ei tallenneta tietokantaan selväkielisinä.
+
+## Käyttöoikeuksien tarkistus
+
+Käyttöoikeudet määritellään SecurityConfig-luokassa. Käyttäjän rooli tarkistetaan Spring Securityn hasAuthority-määrityksillä.
+
+Jos käyttäjällä ei ole pyydettyyn toimintoon vaadittavia oikeuksia, järjestelmä estää pyynnön. Tunnistautumaton käyttäjä ei voi käyttää kirjautumista vaativia rajapintoja.
+
+#### ADMIN (ylläpitäjä)
+
+ADMIN-roolilla on laajat käyttöoikeudet järjestelmän REST-rajapintaan. Admin voi tehdä GET-, POST- ja PUT-pyyntöjä `/api/**`-polun alla oleviin rajapintoihin.
+
+Adminin oikeudet mahdollistavat tietojen hakemisen, uusien tietojen lisäämisen ja olemassa olevien tietojen muokkaamisen. Esimerkiksi tapahtumia voidaan hakea, lisätä ja muokata rajapinnan `/api/tapahtumat` kautta.
+
+#### USER (tavallinen käyttäjä)
+
+USER-rooli on rajoitettu käyttäjärooli. User voi tunnistautua järjestelmään, mutta hänellä ei ole oikeutta tehdä GET-, POST- tai PUT-pyyntöjä `/api/**`-rajapintoihin.
+
+#### Kirjautuminen Postmanilla
+
+REST-rajapintaan kirjaudutaan Postmanissa seuraavasti:
+
+1. Valitaan pyynnön HTTP-metodi ja rajapinnan URL-osoite, esimerkiksi `http://localhost:8080/api/tapahtumat`.
+2. Avataan Authorization-välilehti.
+3. Valitaan tyypiksi **Basic Auth**.
+4. Syötetään käyttäjätunnus ja salasana.
+5. Lähetetään pyyntö.
+
+---
+
 ## Testaus
 
 <!-- Tässä kohdin selvitetään, miten ohjelmiston oikea toiminta varmistetaan
