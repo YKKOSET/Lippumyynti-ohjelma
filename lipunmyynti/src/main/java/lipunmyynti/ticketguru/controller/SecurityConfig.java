@@ -22,6 +22,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers("/css/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/tapahtumat").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAuthority("ADMIN")
                                                 .requestMatchers(HttpMethod.POST, "/api/**")
                                                 .hasAuthority("ADMIN")
