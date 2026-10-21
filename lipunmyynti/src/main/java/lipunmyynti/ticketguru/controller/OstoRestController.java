@@ -6,7 +6,6 @@ import lipunmyynti.ticketguru.repository.OstoRepository;
 import lipunmyynti.ticketguru.repository.OstoriviRepository;
 
 import java.util.*;
-import java.math.*; //säilytin: saattaa tarvita kokonaishinnan laskemiselle
 import jakarta.validation.constraints.Positive;
 
 import org.springframework.validation.annotation.Validated;
@@ -25,14 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class OstoRestController {
 
     private final OstoRepository ostoRepository;
-    private final OstoriviRepository ostoriviRepository;
-    private final LippuRepository lippuRepository;
 
     public OstoRestController(OstoRepository ostoRepository, OstoriviRepository ostoriviRepository,
             LippuRepository lippuRepository) {
         this.ostoRepository = ostoRepository;
-        this.ostoriviRepository = ostoriviRepository;
-        this.lippuRepository = lippuRepository;
     }
 
     // list all buys
