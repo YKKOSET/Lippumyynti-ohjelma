@@ -1,11 +1,7 @@
 package lipunmyynti.ticketguru.controller;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.annotation.Validated;
@@ -16,9 +12,6 @@ import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 
 import java.util.*;
-import java.math.*;
-import java.sql.*;
-import jakarta.persistence.*;
 
 @Validated
 @RestController
@@ -28,14 +21,10 @@ public class LippuRestController {
 
     // injection: repository to restcontroller
     private final LippuRepository lippuRepository;
-    private final EsityskertaRepository esityskertaRepository;
-    private final LipputyyppiRepository lipputyyppiRepository;
 
     public LippuRestController(LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository,
             LipputyyppiRepository lipputyyppiRepository) {
         this.lippuRepository = lippuRepository;
-        this.esityskertaRepository = esityskertaRepository;
-        this.lipputyyppiRepository = lipputyyppiRepository;
     }
 
     @GetMapping
@@ -43,9 +32,9 @@ public class LippuRestController {
         return lippuRepository.findAll();
     }
 
-    // Search lippu with id
+    //Search lippu with id
     @GetMapping("/{id}")
-    public Lippu getLippuById(@PathVariable Long id) {
+    public Lippu getLippuById(@PathVariable UUID id) {
         return lippuRepository.findById(id).orElse(null);
     }
 }

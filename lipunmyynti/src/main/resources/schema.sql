@@ -20,7 +20,7 @@ CREATE TABLE jarjestaja (
 CREATE TABLE tapahtuma (
     tapahtuma_id BIGSERIAL PRIMARY KEY,
     nimi VARCHAR(200) NOT NULL,
-    jarjestaja_id BIGSERIAL,
+    jarjestaja_id BIGINT,
     CONSTRAINT fk_jarjestaja_id
         FOREIGN KEY (jarjestaja_id)
         REFERENCES jarjestaja(jarjestaja_id)
@@ -48,7 +48,7 @@ CREATE TABLE osto (
     kuitti_id BIGSERIAL PRIMARY KEY,
     ostoaika TIMESTAMP NOT NULL,
     kokonaishinta NUMERIC(10,2) NOT NULL,
-	asiakas_Id BIGSERIAL,
+	asiakas_Id BIGINT,
     CONSTRAINT fk_asiakas_id
         FOREIGN KEY (asiakas_id)
         REFERENCES asiakas(asiakas_id)
@@ -68,35 +68,104 @@ CREATE TABLE esityskerta (
     esityskerta_id BIGSERIAL PRIMARY KEY,
     max_osallistujat INTEGER,
     alkuaika TIMESTAMP NOT NULL,
-    paikka_id BIGSERIAL,
+    paikka_id BIGINT,
     CONSTRAINT fk_paikka_id
         FOREIGN KEY (paikka_id)
         REFERENCES paikka(paikka_id),
-    tapahtuma_id BIGSERIAL NOT NULL,
+    tapahtuma_id BIGINT NOT NULL,
     CONSTRAINT fk_tapahtuma_id
         FOREIGN KEY (tapahtuma_id)
         REFERENCES tapahtuma(tapahtuma_id)
 );
 
 CREATE TABLE lippu (
-    tark_nro BIGSERIAL PRIMARY KEY,
+    tark_nro UUID NOT NULL PRIMARY KEY,
     hinta NUMERIC(10,2) NOT NULL,
     kaytetty BOOLEAN NOT NULL,
-    esityskerta_id BIGSERIAL NOT NULL,
+    esityskerta_id BIGINT NOT NULL,
     CONSTRAINT fk_esityskerta_id
         FOREIGN KEY (esityskerta_id)
-        REFERENCES esityskerta(esityskerta_id)
+        REFERENCES esityskerta(esityskerta_id),
+    lipputyyppi_id BIGINT NOT NULL,
+    CONSTRAINT fk_lipputyyppi_id
+        FOREIGN KEY (lipputyyppi_id)
+        REFERENCES lipputyyppi(lipputyyppi_id)
 );
 
 CREATE TABLE ostorivi (
     ostorivi_id BIGSERIAL PRIMARY KEY,
     myyntihinta NUMERIC(10,2) NOT NULL,
-    kuitti_id BIGSERIAL NOT NULL,
+    kuitti_id BIGINT NOT NULL,
     CONSTRAINT fk_kuitti_id
         FOREIGN KEY (kuitti_id)
         REFERENCES osto(kuitti_id),
-    tark_nro BIGSERIAL NOT NULL,
+    tark_nro UUID NOT NULL,
     CONSTRAINT fk_tark_nro
         FOREIGN KEY (tark_nro)
         REFERENCES lippu(tark_nro)
 );
+
+-- Jarjestajat
+INSERT INTO jarjestaja (etunimi, sukunimi, sahkoposti, puhelin) VALUES
+('Matti', 'Halminen', 'matin@kukat.fi', '0401234567'),
+('Tom', 'Aatti', 'tom.aatti@gmail.com', '0407654321'),
+('Naami', 'Puronen', 'NewKirjailijaliitto@liitto.fi', '0501234567'),
+('Tony', 'Swift', 'music@tomorrowland.com', '0206537769'),
+('Mikko', 'Korhonen', 'mikko@clockfest.fi', '0509876543');
+
+-- Tapahtumat
+INSERT INTO tapahtuma (nimi, jarjestaja_id) VALUES
+('Keikkakeidas', 1),
+('Teatterin Aave', 1),
+('Vantaan kirjamessut', 2),
+('Helsinki festivalland', 3),
+('Ruislock 2026', 4);
+
+-- Lipputyypit
+INSERT INTO lipputyyppi (nimi) VALUES
+('Lastenlippu'),
+('Opiskelija'),
+('Eläkeläinen'),
+('Normaalihintainen');
+
+-- Postinumero ja paikka (Javassa ei ole, mutta esityskerta tarvitsee paikka_id:n, ks. huomio alla)
+INSERT INTO postinumero (postinumero, postitoimipaikka) VALUES
+('00100', 'Helsinki');
+
+INSERT INTO paikka (nimi, katuosoite, postinumero) VALUES
+('Esimerkkipaikka', 'Esimerkkikatu 1', '00100');
+
+-- Esityskerrat (max_osallistujat, alkuaika, paikka_id, tapahtuma_id)
+INSERT INTO esityskerta (max_osallistujat, alkuaika, paikka_id, tapahtuma_id) VALUES
+(NULL, '2028-10-01 19:00:00', 1, 2),
+(NULL, '2028-11-08 19:00:00', 1, 2),
+(NULL, '2028-10-01 10:00:00', 1, 1),
+(NULL, '2028-11-01 10:00:00', 1, 1),
+(NULL, '2028-12-12 13:00:00', 1, 3);
+
+-- Asiakkaat
+INSERT INTO asiakas (etunimi, sukunimi, sahkoposti, puhelin) VALUES
+('Jordi', 'Alba', 'Jordi.Alba@gmail.com', '+358 878 8473289'),
+('Jonni', 'Ponni', 'Jonni.Ponni@gmail.com', '+358 647 457938'),
+('Bard', 'Chime', 'Bard.Chime@gmail.com', '+358 423 8573498'),
+('Gucci', 'Mane', 'Gucci.Mane@gmail.com', '+358 312 597834');
+
+-- Ostot (ostoaika, kokonaishinta, asiakas_id)
+INSERT INTO osto (ostoaika, kokonaishinta, asiakas_id) VALUES
+('2025-11-09 14:30:00', 25.00, 1),
+('2025-11-15 15:30:00', 20.00, 2),
+('2025-11-18 12:30:00', 10.00, 3);
+
+-- Liput (tark_nro (ohittaa autogeneroinnin), hinta, kaytetty, esityskerta_id, lipputyyppi_id)
+INSERT INTO lippu (tark_nro, hinta, kaytetty, esityskerta_id, lipputyyppi_id) VALUES
+('00220000-0000-3230-8070-000000000001', 10.00, false, 1, 1), -- Lastenlippu
+('00220000-0000-3230-0070-000000000002', 15.00, false, 1, 2), -- Opiskelijalippu
+('00220000-0000-3230-0070-000000000003', 20.00, false, 1, 4), -- Normaali
+('00220000-0000-3230-0070-000000000004', 10.00, false, 1, 3); -- Eläkeläinen
+
+-- Ostorivit (myyntihinta, kuitti_id, tark_nro)
+INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
+(10.00, 1, '00220000-0000-3230-8070-000000000001'),
+(15.00, 1, '00220000-0000-3230-0070-000000000002'),
+(20.00, 2, '00220000-0000-3230-0070-000000000003'),
+(10.00, 3, '00220000-0000-3230-0070-000000000004');
