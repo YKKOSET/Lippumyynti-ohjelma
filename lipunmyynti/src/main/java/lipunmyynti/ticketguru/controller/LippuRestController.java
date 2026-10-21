@@ -44,8 +44,8 @@ public class LippuRestController {
     }
 
     // Search lippu with id
-    @GetMapping("/{id}")
-    public Lippu getLippuById(@PathVariable Long id) {
-        return lippuRepository.findById(id).orElse(null);
-    }
+    //@GetMapping("/{id}")
+    //public Lippu getLippuById(@PathVariable Long id) {
+    //    return lippuRepository.findById(id).orElse(null);
+    //}
 }
