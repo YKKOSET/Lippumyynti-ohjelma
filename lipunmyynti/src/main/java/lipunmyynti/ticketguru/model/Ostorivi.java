@@ -14,21 +14,22 @@ public class Ostorivi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-generation
+    @Column(name = "ostorivi_id")
     private Long id;
 
     @ManyToOne
     @JsonIgnore //prevent loop
     @NotNull(message = "Osto on pakollinen.") //not null in java
-    @JoinColumn(nullable = false) //not null in db
+    @JoinColumn(name = "kuitti_id", nullable = false) //not null in db
     private Osto osto;
 
     @ManyToOne
     @NotNull(message = "Lippu on pakollinen.") //not null in java
-    @JoinColumn(nullable = false) //not null in db
+    @JoinColumn(name = "tark_nro", nullable = false) //not null in db
     private Lippu lippu;
 
     @NotNull (message = "Myyntihinta tulee antaa.") //not null in java
-    @Column(nullable = false) //not null in db
+    @Column(name="myyntihinta", nullable = false) //not null in db
     @DecimalMin("0.00") //not negative (0.00 is okay)
     private BigDecimal myyntihinta;
 

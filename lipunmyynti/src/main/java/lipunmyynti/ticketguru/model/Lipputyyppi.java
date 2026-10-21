@@ -12,11 +12,12 @@ public class Lipputyyppi
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lipputyyppi_id")
     private Long id_;
     
     @NotBlank(message = "Lipputyypin nimi on pakollinen")
     @Size(min = 2, max = 50, message = "Lipputyypin nimen pitää olla 2-50 merkkiä")
-    @Column(nullable = false, length = 50)
+    @Column(name="nimi", nullable = false, length = 50)
     private String nimi_;
 
 
