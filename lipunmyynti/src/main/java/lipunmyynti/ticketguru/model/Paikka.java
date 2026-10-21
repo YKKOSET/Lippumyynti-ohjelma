@@ -10,9 +10,13 @@ public class Paikka {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "paikka_id")
     private Long id;
 
+    @Column(name = "nimi")
     private String nimi;
+
+    @Column(name = "katuosoite")
     private String katuosoite;
 
     @ManyToOne

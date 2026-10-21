@@ -16,18 +16,24 @@ public class Esityskerta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "esityskerta_id")
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "paikka_id")
     private Paikka paikka;
 
     @ManyToOne
+    @JoinColumn(name = "tapahtuma_id")
     @JsonIgnore 
     private Tapahtuma tapahtuma;
+
+    @Column(name = "max_osallistujat")
     private int maxOsallistujat;
 
     @NotNull (message = "Alkuaika on pakollinen.")
     @Future(message = "Alkuaika ei voi olla menneisyydessä.")
+    @Column(name = "alkuaika")
     private Timestamp alkuaika;
 
     @OneToMany(mappedBy = "esityskerta_")

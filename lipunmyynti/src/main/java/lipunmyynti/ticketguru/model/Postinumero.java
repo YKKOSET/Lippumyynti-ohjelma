@@ -7,9 +7,10 @@ import jakarta.persistence.*;
 public class Postinumero {
 
     @Id
-    @Column(length = 5)
+    @Column(name = "postinumero", length = 5)
     private String postinumero;
     
+    @Column(name = "postitoimipaikka")
     private String postitoimipaikka;
 
     public Postinumero() {
