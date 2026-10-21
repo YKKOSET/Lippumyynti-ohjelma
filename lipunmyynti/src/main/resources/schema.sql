@@ -79,13 +79,17 @@ CREATE TABLE esityskerta (
 );
 
 CREATE TABLE lippu (
-    tark_nro UUID PRIMARY KEY,
+    tark_nro UUID NOT NULL PRIMARY KEY,
     hinta NUMERIC(10,2) NOT NULL,
     kaytetty BOOLEAN NOT NULL,
     esityskerta_id BIGINT NOT NULL,
     CONSTRAINT fk_esityskerta_id
         FOREIGN KEY (esityskerta_id)
-        REFERENCES esityskerta(esityskerta_id)
+        REFERENCES esityskerta(esityskerta_id),
+    lipputyyppi_id BIGINT NOT NULL,
+    CONSTRAINT fk_lipputyyppi_id
+        FOREIGN KEY (lipputyyppi_id)
+        REFERENCES lipputyyppi(lipputyyppi_id)
 );
 
 CREATE TABLE ostorivi (
@@ -152,16 +156,16 @@ INSERT INTO osto (ostoaika, kokonaishinta, asiakas_id) VALUES
 ('2025-11-15 15:30:00', 20.00, 2),
 ('2025-11-18 12:30:00', 10.00, 3);
 
--- Liput (hinta, kaytetty, esityskerta_id)
-INSERT INTO lippu (tark_nro, hinta, kaytetty, esityskerta_id) VALUES
-('00000000-0000-0000-0000-000110000001', 10.00, false, 1), -- Lastenlippu
-('00000000-0000-0000-0000-000010000001', 15.00, false, 1), -- Opiskelijalippu
-('00000000-0000-0100-0000-000000000001', 20.00, false, 1), -- Normaali
-('00000000-0100-0000-0000-000000000001', 10.00, false, 1); -- Eläkeläinen
+-- Liput (tark_nro (ohittaa autogeneroinnin), hinta, kaytetty, esityskerta_id, lipputyyppi_id)
+INSERT INTO lippu (tark_nro, hinta, kaytetty, esityskerta_id, lipputyyppi_id) VALUES
+('00220000-0000-3230-8070-000000000001', 10.00, false, 1, 1), -- Lastenlippu
+('00220000-0000-3230-0070-000000000002', 15.00, false, 1, 2), -- Opiskelijalippu
+('00220000-0000-3230-0070-000000000003', 20.00, false, 1, 4), -- Normaali
+('00220000-0000-3230-0070-000000000004', 10.00, false, 1, 3); -- Eläkeläinen
 
 -- Ostorivit (myyntihinta, kuitti_id, tark_nro)
 INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
-(10.00, 1, '00000000-0000-0000-0000-000110000001'),
-(15.00, 1, '00000000-0000-0000-0000-000010000001'),
-(20.00, 2, '00000000-0000-0100-0000-000000000001'),
-(10.00, 3, '00000000-0100-0000-0000-000000000001');
+(10.00, 1, '00220000-0000-3230-8070-000000000001'),
+(15.00, 1, '00220000-0000-3230-0070-000000000002'),
+(20.00, 2, '00220000-0000-3230-0070-000000000003'),
+(10.00, 3, '00220000-0000-3230-0070-000000000004');
