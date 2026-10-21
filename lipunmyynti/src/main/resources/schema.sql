@@ -20,7 +20,7 @@ CREATE TABLE jarjestaja (
 CREATE TABLE tapahtuma (
     tapahtuma_id BIGSERIAL PRIMARY KEY,
     nimi VARCHAR(200) NOT NULL,
-    jarjestaja_id BIGSERIAL,
+    jarjestaja_id BIGINT,
     CONSTRAINT fk_jarjestaja_id
         FOREIGN KEY (jarjestaja_id)
         REFERENCES jarjestaja(jarjestaja_id)
@@ -48,7 +48,7 @@ CREATE TABLE osto (
     kuitti_id BIGSERIAL PRIMARY KEY,
     ostoaika TIMESTAMP NOT NULL,
     kokonaishinta NUMERIC(10,2) NOT NULL,
-	asiakas_Id BIGSERIAL,
+	asiakas_Id BIGINT,
     CONSTRAINT fk_asiakas_id
         FOREIGN KEY (asiakas_id)
         REFERENCES asiakas(asiakas_id)
@@ -68,21 +68,21 @@ CREATE TABLE esityskerta (
     esityskerta_id BIGSERIAL PRIMARY KEY,
     max_osallistujat INTEGER,
     alkuaika TIMESTAMP NOT NULL,
-    paikka_id BIGSERIAL,
+    paikka_id BIGINT,
     CONSTRAINT fk_paikka_id
         FOREIGN KEY (paikka_id)
         REFERENCES paikka(paikka_id),
-    tapahtuma_id BIGSERIAL NOT NULL,
+    tapahtuma_id BIGINT NOT NULL,
     CONSTRAINT fk_tapahtuma_id
         FOREIGN KEY (tapahtuma_id)
         REFERENCES tapahtuma(tapahtuma_id)
 );
 
 CREATE TABLE lippu (
-    tark_nro BIGSERIAL PRIMARY KEY,
+    tark_nro UUID PRIMARY KEY,
     hinta NUMERIC(10,2) NOT NULL,
     kaytetty BOOLEAN NOT NULL,
-    esityskerta_id BIGSERIAL NOT NULL,
+    esityskerta_id BIGINT NOT NULL,
     CONSTRAINT fk_esityskerta_id
         FOREIGN KEY (esityskerta_id)
         REFERENCES esityskerta(esityskerta_id)
@@ -91,11 +91,11 @@ CREATE TABLE lippu (
 CREATE TABLE ostorivi (
     ostorivi_id BIGSERIAL PRIMARY KEY,
     myyntihinta NUMERIC(10,2) NOT NULL,
-    kuitti_id BIGSERIAL NOT NULL,
+    kuitti_id BIGINT NOT NULL,
     CONSTRAINT fk_kuitti_id
         FOREIGN KEY (kuitti_id)
         REFERENCES osto(kuitti_id),
-    tark_nro BIGSERIAL NOT NULL,
+    tark_nro UUID NOT NULL,
     CONSTRAINT fk_tark_nro
         FOREIGN KEY (tark_nro)
         REFERENCES lippu(tark_nro)
@@ -153,15 +153,15 @@ INSERT INTO osto (ostoaika, kokonaishinta, asiakas_id) VALUES
 ('2025-11-18 12:30:00', 10.00, 3);
 
 -- Liput (hinta, kaytetty, esityskerta_id)
-INSERT INTO lippu (hinta, kaytetty, esityskerta_id) VALUES
-(10.00, false, 1), -- Lastenlippu
-(15.00, false, 1), -- Opiskelijalippu
-(20.00, false, 1), -- Normaali
-(10.00, false, 1); -- Eläkeläinen
+INSERT INTO lippu (tark_nro, hinta, kaytetty, esityskerta_id) VALUES
+('00000000-0000-0000-0000-000110000001', 10.00, false, 1), -- Lastenlippu
+('00000000-0000-0000-0000-000010000001', 15.00, false, 1), -- Opiskelijalippu
+('00000000-0000-0100-0000-000000000001', 20.00, false, 1), -- Normaali
+('00000000-0100-0000-0000-000000000001', 10.00, false, 1); -- Eläkeläinen
 
 -- Ostorivit (myyntihinta, kuitti_id, tark_nro)
 INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
-(10.00, 1, 1),
-(15.00, 1, 2),
-(20.00, 2, 3),
-(10.00, 3, 4);
+(10.00, 1, '00000000-0000-0000-0000-000110000001'),
+(15.00, 1, '00000000-0000-0000-0000-000010000001'),
+(20.00, 2, '00000000-0000-0100-0000-000000000001'),
+(10.00, 3, '00000000-0100-0000-0000-000000000001');
