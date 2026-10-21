@@ -100,3 +100,68 @@ CREATE TABLE ostorivi (
         FOREIGN KEY (tark_nro)
         REFERENCES lippu(tark_nro)
 );
+
+-- Jarjestajat
+INSERT INTO jarjestaja (etunimi, sukunimi, sahkoposti, puhelin) VALUES
+('Matti', 'Halminen', 'matin@kukat.fi', '0401234567'),
+('Tom', 'Aatti', 'tom.aatti@gmail.com', '0407654321'),
+('Naami', 'Puronen', 'NewKirjailijaliitto@liitto.fi', '0501234567'),
+('Tony', 'Swift', 'music@tomorrowland.com', '0206537769'),
+('Mikko', 'Korhonen', 'mikko@clockfest.fi', '0509876543');
+
+-- Tapahtumat
+INSERT INTO tapahtuma (nimi, jarjestaja_id) VALUES
+('Keikkakeidas', 1),
+('Teatterin Aave', 1),
+('Vantaan kirjamessut', 2),
+('Helsinki festivalland', 3),
+('Ruislock 2026', 4);
+
+-- Lipputyypit
+INSERT INTO lipputyyppi (nimi) VALUES
+('Lastenlippu'),
+('Opiskelija'),
+('Eläkeläinen'),
+('Normaalihintainen');
+
+-- Postinumero ja paikka (Javassa ei ole, mutta esityskerta tarvitsee paikka_id:n, ks. huomio alla)
+INSERT INTO postinumero (postinumero, postitoimipaikka) VALUES
+('00100', 'Helsinki');
+
+INSERT INTO paikka (nimi, katuosoite, postinumero) VALUES
+('Esimerkkipaikka', 'Esimerkkikatu 1', '00100');
+
+-- Esityskerrat (max_osallistujat, alkuaika, paikka_id, tapahtuma_id)
+INSERT INTO esityskerta (max_osallistujat, alkuaika, paikka_id, tapahtuma_id) VALUES
+(NULL, '2028-10-01 19:00:00', 1, 2),
+(NULL, '2028-11-08 19:00:00', 1, 2),
+(NULL, '2028-10-01 10:00:00', 1, 1),
+(NULL, '2028-11-01 10:00:00', 1, 1),
+(NULL, '2028-12-12 13:00:00', 1, 3);
+
+-- Asiakkaat
+INSERT INTO asiakas (etunimi, sukunimi, sahkoposti, puhelin) VALUES
+('Jordi', 'Alba', 'Jordi.Alba@gmail.com', '+358 878 8473289'),
+('Jonni', 'Ponni', 'Jonni.Ponni@gmail.com', '+358 647 457938'),
+('Bard', 'Chime', 'Bard.Chime@gmail.com', '+358 423 8573498'),
+('Gucci', 'Mane', 'Gucci.Mane@gmail.com', '+358 312 597834');
+
+-- Ostot (ostoaika, kokonaishinta, asiakas_id)
+INSERT INTO osto (ostoaika, kokonaishinta, asiakas_id) VALUES
+('2025-11-09 14:30:00', 25.00, 1),
+('2025-11-15 15:30:00', 20.00, 2),
+('2025-11-18 12:30:00', 10.00, 3);
+
+-- Liput (hinta, kaytetty, esityskerta_id)
+INSERT INTO lippu (hinta, kaytetty, esityskerta_id) VALUES
+(10.00, false, 1), -- Lastenlippu
+(15.00, false, 1), -- Opiskelijalippu
+(20.00, false, 1), -- Normaali
+(10.00, false, 1); -- Eläkeläinen
+
+-- Ostorivit (myyntihinta, kuitti_id, tark_nro)
+INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
+(10.00, 1, 1),
+(15.00, 1, 2),
+(20.00, 2, 3),
+(10.00, 3, 4);
