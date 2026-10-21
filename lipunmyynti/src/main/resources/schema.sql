@@ -48,7 +48,7 @@ CREATE TABLE osto (
     kuitti_id BIGSERIAL PRIMARY KEY,
     ostoaika TIMESTAMP NOT NULL,
     kokonaishinta NUMERIC(10,2) NOT NULL,
-	asiakas_Id BIGINT,
+	asiakas_id BIGINT,
     CONSTRAINT fk_asiakas_id
         FOREIGN KEY (asiakas_id)
         REFERENCES asiakas(asiakas_id)
