@@ -3,10 +3,8 @@ package lipunmyynti.ticketguru;
 import lipunmyynti.ticketguru.repository.*;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 import java.sql.Timestamp;
 
-import org.hibernate.validator.cfg.defs.UUIDDef;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -98,51 +96,32 @@ public class TicketguruApplication {
                     new Osto(Timestamp.valueOf("2025-11-18 12:30:00"), 10.00, asiakasRepository.getReferenceById(3L)));
 
             // Hard-coded Lippu
-            lippuRepository.save(new Lippu(esityskertaRepository.getReferenceById(1L),
-                    lipputyyppiRepository.getReferenceById(1L), new BigDecimal("10.00"), false)); // Lastenlippu
-            lippuRepository.save(new Lippu(esityskertaRepository.getReferenceById(1L),
-                    lipputyyppiRepository.getReferenceById(2L), new BigDecimal("15.00"), false)); // Opiskelijalippu
-            lippuRepository.save(new Lippu(esityskertaRepository.getReferenceById(1L),
-                    lipputyyppiRepository.getReferenceById(4L), new BigDecimal("20.00"), false)); // Normaali
-            lippuRepository.save(new Lippu(esityskertaRepository.getReferenceById(1L),
-                    lipputyyppiRepository.getReferenceById(3L), new BigDecimal("10.00"), false));// Eläkeläinen
+            Lippu lastenlippu = new Lippu(esityskertaRepository.getReferenceById(1L),
+                    lipputyyppiRepository.getReferenceById(1L), new BigDecimal("10.00"), false); // Lastenlippu
+            Lippu opiskelijalippu = new Lippu(esityskertaRepository.getReferenceById(1L),
+                    lipputyyppiRepository.getReferenceById(2L), new BigDecimal("15.00"), false); // Opiskelijalippu
+            Lippu normaalilippu = new Lippu(esityskertaRepository.getReferenceById(1L),
+                    lipputyyppiRepository.getReferenceById(4L), new BigDecimal("20.00"), false); // Normaali
+            Lippu elakelippu = new Lippu(esityskertaRepository.getReferenceById(1L),
+                    lipputyyppiRepository.getReferenceById(3L), new BigDecimal("10.00"), false);// Eläkeläinen
+            // Save hard-coded ticket (and get serial number)
+            lippuRepository.save(lastenlippu);
+            lippuRepository.save(opiskelijalippu);
+            lippuRepository.save(normaalilippu);
+            lippuRepository.save(elakelippu);
 
+            // Hard-coded Ostorivi
+            ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(1L),
+                    lastenlippu, new BigDecimal("10.00")));
+            ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(1L),
+                    opiskelijalippu, new BigDecimal("15.00")));
+            ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(2L),
+                    normaalilippu, new BigDecimal("20.00")));
+            ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(3L),
+                    elakelippu, new BigDecimal("10.00")));
 
-                    
-            Lippu testilippu1 = new Lippu();
-            testilippu1.setHinta(new BigDecimal("10.00"));
-            testilippu1.setKaytetty(false);
-            testilippu1.setEsityskerta(esityskertaRepository.getReferenceById(1L));
-
-            testilippu1.setLipputyyppi(lipputyyppiRepository.getReferenceById(1L));
-
-            Lippu tallennettuLippu1 = lippuRepository.save(testilippu1);
-
-            ostoriviRepository.save(new Ostorivi(
-                    ostoRepository.getReferenceById(1L),
-                    tallennettuLippu1,
-                    new BigDecimal("10.00")));
-
-            /*
-             * UUID oikeaLippuId = UUID.fromString("00000000-0000-0000-0000-000110000001");
-             * 
-             * // Hard-coded Ostorivi
-             * ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(1L),
-             * lippuRepository.getReferenceById(oikeaLippuId), new BigDecimal("10.00")));
-             * ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(1L),
-             * lippuRepository.getReferenceById(oikeaLippuId), new BigDecimal("15.00")));
-             * ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(2L),
-             * lippuRepository.getReferenceById(oikeaLippuId), new BigDecimal("20.00")));
-             * ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(3L),
-             * lippuRepository.getReferenceById(oikeaLippuId), new BigDecimal("10.00")));
-             * 
-             */
-
-            AppUser USER = new AppUser(null, "USER", passwordEncoder.encode("USER"), "USER"); // username: USER,
-                                                                                              // password: USER
-            AppUser ADMIN = new AppUser(null, "ADMIN", passwordEncoder.encode("ADMIN"), "ADMIN"); // username: ADMIN,
-                                                                                                  // password: ADMIN
-                                                                                                  // ISOLLA!!!
+            AppUser USER = new AppUser(null, "USER", passwordEncoder.encode("USER"), "USER"); // username: USER,password: USER
+            AppUser ADMIN = new AppUser(null, "ADMIN", passwordEncoder.encode("ADMIN"), "ADMIN"); // username: ADMIN,password: ADMIN ISOLLA!!!
 
             userRepository.save(USER);
             userRepository.save(ADMIN);

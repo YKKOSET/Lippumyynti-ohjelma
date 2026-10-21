@@ -5,19 +5,18 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Digits;
 
 import java.math.*;
-import java.util.*;
 import java.util.UUID;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.generator.EventType;
+//import org.hibernate.annotations.Generated; // for postgre
+//import org.hibernate.generator.EventType;   // for postgre
 
 @Entity
 @Table(name = "lippu")
 public class Lippu {
 
     @Id
-    @GeneratedValue // (strategy = GenerationType.IDENTITY) //Java generoi
-    // @Generated(event = EventType.INSERT) //Postgre generoi
+    @GeneratedValue // java generates
+    // @Generated(event = EventType.INSERT) // postgre generates
     @Column(name = "tark_nro", updatable = false, nullable = false)
     private UUID id_;
 
