@@ -14,19 +14,24 @@ public class Jarjestaja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-generation
+    @Column(name = "jarjestaja_id")
     private Long id;
 
     @Size(max = 50, message = "Etunimi voi olla enintään 50 merkkiä pitkä.") //it can also be empty
+    @Column(name="etunimi")
     private String etunimi;
 
     @Size(max = 100, message = "Sukunimi voi olla enintään 100 merkkiä pitkä.")
+    @Column(name="sukunimi")
     private String sukunimi;
 
     @Email(message = "Sähköpostiosoite tulee kirjoittaa oikeassa muodossa.")
     @Size(max = 300, message = "Sähköpostiosoite voi olla enintään 300 merkkiä pitkä.")
+    @Column(name="sahkoposti")
     private String sahkoposti;
 
     @Size(max = 20, message = "Puhelinnumero voi olla enintään 20 merkkiä pitkä.")
+    @Column(name="puhelin")
     @Pattern(regexp = "^\\+?[0-9]*$", message = "Puhelinnumero voi sisältää vain numeroita ja voi alkaa + -merkillä.")
     private String puhelin;
 

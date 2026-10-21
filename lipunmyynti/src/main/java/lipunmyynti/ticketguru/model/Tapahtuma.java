@@ -11,13 +11,16 @@ public class Tapahtuma {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tapahtuma_id")
     private Long id;
 
     @NotNull (message = "Syötä tapahtuman nimi")
     @Size(max = 200, message = "Tapahtuman nimi ei saa olla yli 200 merkkiä pitkä")
+    @Column(name = "nimi")
     private String nimi;
 
     @ManyToOne
+    @JoinColumn(name = "jarjestaja_id")
     private Jarjestaja jarjestaja;
     
     @OneToMany(mappedBy = "tapahtuma")

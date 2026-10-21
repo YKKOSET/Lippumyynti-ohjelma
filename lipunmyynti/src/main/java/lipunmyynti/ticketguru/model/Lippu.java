@@ -2,7 +2,6 @@ package lipunmyynti.ticketguru.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import jakarta.validation.constraints.Digits;
 
 import java.math.*;
 import java.util.UUID;
@@ -23,18 +22,20 @@ public class Lippu {
     @NotNull(message = "Hinta on pakollinen")
     @DecimalMin(value = "0.01", message = "Hinnan täytyy olla vähintään 0.01")
     @Digits(integer = 8, fraction = 2, message = "Hinta voi sisältää enintään 2 desimaalia")
+    @Column(name = "hinta")
     private BigDecimal hinta_;
 
+    @Column(name = "kaytetty")
     private boolean kaytetty_;
 
     @NotNull(message = "Lipputyyppi on pakollinen")
     @ManyToOne
-    @JoinColumn(name = "tyyppiId", nullable = false)
+    @JoinColumn(name = "lipputyyppi_id", nullable = false)
     private Lipputyyppi lipputyyppi_;
 
     @NotNull(message = "Esityskerta on pakollinen")
     @ManyToOne
-    @JoinColumn(name = "esitysId", nullable = false)
+    @JoinColumn(name = "esityskerta_id", nullable = false)
     private Esityskerta esityskerta_;
 
     // constructors

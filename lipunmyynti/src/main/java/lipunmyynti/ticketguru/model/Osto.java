@@ -16,6 +16,7 @@ public class Osto {
 
 @Id 
 @GeneratedValue (strategy = GenerationType.IDENTITY)
+@Column(name = "kuitti_id")
 private Long id;
 
 @OneToMany(mappedBy = "osto")
@@ -23,13 +24,15 @@ private List<Ostorivi> ostorivit;
 
 @NotNull (message = "Ostoaika on pakollinen.")
 @PastOrPresent (message = "Ostoaika ei voi olla tulevaisuudessa.")
-@Column (nullable = false)
+@Column (name = "ostoaika", nullable = false)
 private Timestamp ostoaika;
 
 @PositiveOrZero (message = "Kokonaishinta ei voi olla negatiivinen.")
+@Column(name = "kokonaishinta")
 private double kokonaishinta;
 
 @ManyToOne (optional = true) //customer is not necessery
+@JoinColumn(name = "asiakas_id")
 private Asiakas asiakas;
 
 public Osto() {
