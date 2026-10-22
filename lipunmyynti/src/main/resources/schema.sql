@@ -80,7 +80,7 @@ CREATE TABLE esityskerta (
 );
 
 CREATE TABLE lippu (
-    tark_nro UUID NOT NULL PRIMARY KEY,
+    tark_nro UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hinta NUMERIC(10,2) NOT NULL,
     kaytetty BOOLEAN NOT NULL,
     esityskerta_id BIGINT NOT NULL,
@@ -165,7 +165,14 @@ INSERT INTO osto (ostoaika, kokonaishinta, asiakas_id) VALUES
 ('2025-11-15 15:30:00', 20.00, 2),
 ('2025-11-18 12:30:00', 10.00, 3);
 
--- Liput (tark_nro (ohittaa autogeneroinnin), hinta, kaytetty, esityskerta_id, lipputyyppi_id)
+-- Liput generoidulla sarjanumerolla (hinta, kaytetty, esityskerta_id, lipputyyppi_id):
+INSERT INTO lippu (hinta, kaytetty, esityskerta_id, lipputyyppi_id) VALUES
+(10.00, false, 1, 1),
+(15.00, false, 1, 2),
+(20.00, false, 1, 4),
+(10.00, false, 1, 3);
+
+-- Liput, joissa kovakoodattu sarjanro ohittaa autogeneroinnin (tark_nro, hinta, kaytetty, esityskerta_id, lipputyyppi_id)
 INSERT INTO lippu (tark_nro, hinta, kaytetty, esityskerta_id, lipputyyppi_id) VALUES
 ('00220000-0000-3230-8070-000000000001', 10.00, false, 1, 1), -- Lastenlippu
 ('00220000-0000-3230-0070-000000000002', 15.00, false, 1, 2), -- Opiskelijalippu
@@ -182,4 +189,5 @@ INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
 -- Käyttäjät (username, password_hash, app_role)
 INSERT INTO users (username, password_hash, app_role) VALUES
 ('ADMIN', '$2a$10$7sjwudu9tBVMcLk0PgDtUO8IwgddtDOzsbgwFcowHGpDoZIVo3CSm', 'ADMIN'),
-('USER', '$2a$10$FziK2VY3xkXFl2d5wggIn.0lM/jhxKM0lHLwJqpIc0CNCmVwLYLQO', 'USER');
+('USER', '$2a$10$FziK2VY3xkXFl2d5wggIn.0lM/jhxKM0lHLwJqpIc0CNCmVwLYLQO', 'USER'),
+('MYYJA', '$2a$10$vSpJ6mTuAafFSXte5SJ9dOB.eJdiMoTMDJdX80W/sLKWLMzXTXkjm', 'USER');
