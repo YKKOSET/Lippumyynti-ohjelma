@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### lokaali postgre ###
+**/src/main/resources/application-localPostgre.properties
