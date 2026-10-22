@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS lipputyyppi;
 DROP TABLE IF EXISTS ostorivi;
 DROP TABLE IF EXISTS lippu;
+DROP TABLE IF EXISTS lipputyyppi;
 DROP TABLE IF EXISTS esityskerta;
 DROP TABLE IF EXISTS paikka;
 DROP TABLE IF EXISTS osto;
@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS asiakas;
 DROP TABLE IF EXISTS postinumero;
 DROP TABLE IF EXISTS tapahtuma;
 DROP TABLE IF EXISTS jarjestaja;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE jarjestaja (
     jarjestaja_id BIGSERIAL PRIMARY KEY,
@@ -105,6 +106,14 @@ CREATE TABLE ostorivi (
         REFERENCES lippu(tark_nro)
 );
 
+CREATE TABLE users (
+	appuser_id BIGSERIAL PRIMARY KEY,
+	username VARCHAR NOT NULL UNIQUE,
+	password_hash VARCHAR NOT NULL,
+	app_role VARCHAR NOT NULL
+);
+
+
 -- Jarjestajat
 INSERT INTO jarjestaja (etunimi, sukunimi, sahkoposti, puhelin) VALUES
 ('Matti', 'Halminen', 'matin@kukat.fi', '0401234567'),
@@ -137,11 +146,11 @@ INSERT INTO paikka (nimi, katuosoite, postinumero) VALUES
 
 -- Esityskerrat (max_osallistujat, alkuaika, paikka_id, tapahtuma_id)
 INSERT INTO esityskerta (max_osallistujat, alkuaika, paikka_id, tapahtuma_id) VALUES
-(NULL, '2028-10-01 19:00:00', 1, 2),
-(NULL, '2028-11-08 19:00:00', 1, 2),
-(NULL, '2028-10-01 10:00:00', 1, 1),
-(NULL, '2028-11-01 10:00:00', 1, 1),
-(NULL, '2028-12-12 13:00:00', 1, 3);
+(100, '2028-10-01 19:00:00', 1, 2),
+(100, '2028-11-08 19:00:00', 1, 2),
+(100, '2028-10-01 10:00:00', 1, 1),
+(100, '2028-11-01 10:00:00', 1, 1),
+(100, '2028-12-12 13:00:00', 1, 3);
 
 -- Asiakkaat
 INSERT INTO asiakas (etunimi, sukunimi, sahkoposti, puhelin) VALUES
@@ -169,3 +178,8 @@ INSERT INTO ostorivi (myyntihinta, kuitti_id, tark_nro) VALUES
 (15.00, 1, '00220000-0000-3230-0070-000000000002'),
 (20.00, 2, '00220000-0000-3230-0070-000000000003'),
 (10.00, 3, '00220000-0000-3230-0070-000000000004');
+
+-- Käyttäjät (username, password_hash, app_role)
+INSERT INTO users (username, password_hash, app_role) VALUES
+('ADMIN', '$2a$10$7sjwudu9tBVMcLk0PgDtUO8IwgddtDOzsbgwFcowHGpDoZIVo3CSm', 'ADMIN'),
+('USER', '$2a$10$FziK2VY3xkXFl2d5wggIn.0lM/jhxKM0lHLwJqpIc0CNCmVwLYLQO', 'USER');
