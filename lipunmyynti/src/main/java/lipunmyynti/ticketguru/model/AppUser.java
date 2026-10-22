@@ -11,7 +11,7 @@ public class AppUser {
 
     @Id 
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column (name = "id", nullable = false, updatable = false)
+    @Column (name = "appuser_id", nullable = false, updatable = false)
 
     private Long Id;
 
@@ -19,11 +19,11 @@ public class AppUser {
     
     private String username;
 
-    @Column (name = "passwordHash", nullable = false)
+    @Column (name = "password_hash", nullable = false)
 
     private String passwordHash;
 
-    @Column (name = "role", nullable = false)
+    @Column (name = "app_role", nullable = false)
 
     private String role;
 
