@@ -2,6 +2,8 @@ package lipunmyynti.ticketguru.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -24,6 +26,7 @@ public class Paikka {
     private Postinumero postinumero;
 
     @OneToMany(mappedBy = "paikka")
+    @JsonIgnore // stop loop
     private List<Esityskerta> esityskerrat;
 
     public Paikka() {
