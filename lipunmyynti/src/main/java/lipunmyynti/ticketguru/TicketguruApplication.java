@@ -1,21 +1,21 @@
 package lipunmyynti.ticketguru;
 
-import lipunmyynti.ticketguru.repository.*;
+//import lipunmyynti.ticketguru.repository.*;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+//import java.math.BigDecimal;
+//import java.sql.Timestamp;
 
-import org.springframework.boot.CommandLineRunner;
+//import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lipunmyynti.ticketguru.model.*;
+//import lipunmyynti.ticketguru.model.*;
 
 @SpringBootApplication
 public class TicketguruApplication {
-
+/* 
     private final EsityskertaRepository esityskertaRepository;
     private final LippuRepository lippuRepository;
     private final LipputyyppiRepository lipputyyppiRepository;
@@ -33,18 +33,20 @@ public class TicketguruApplication {
         this.ostoRepository = ostoRepository;
         this.ostoriviRepository = ostoriviRepository;
 
-    }
+    }*/
 
     public static void main(String[] args) {
         SpringApplication.run(TicketguruApplication.class, args);
     }
 
-    // This section will be commented out once there is a permanent database:
+    /* This section will be commented out once there is a permanent database:
+
     @Bean
     public CommandLineRunner demo(TapahtumaRepository tapahtumaRepository,
             JarjestajaRepository jarjestajaRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return (args) -> {
 
+            
             // Hard-coded Jarjestajat
             jarjestajaRepository.save(new Jarjestaja("Matti", "Halminen", "matin@kukat.fi", "0401234567"));
             jarjestajaRepository.save(new Jarjestaja("Tom", "Aatti", "tom.aatti@gmail.com", "0407654321"));
@@ -119,13 +121,16 @@ public class TicketguruApplication {
                     normaalilippu, new BigDecimal("20.00")));
             ostoriviRepository.save(new Ostorivi(ostoRepository.getReferenceById(3L),
                     elakelippu, new BigDecimal("10.00")));
+                    
 
             AppUser USER = new AppUser(null, "USER", passwordEncoder.encode("USER"), "USER"); // username: USER,password: USER
             AppUser ADMIN = new AppUser(null, "ADMIN", passwordEncoder.encode("ADMIN"), "ADMIN"); // username: ADMIN,password: ADMIN ISOLLA!!!
 
             userRepository.save(USER);
             userRepository.save(ADMIN);
+            
 
-        };
+        }; 
     }
+        */
 }
