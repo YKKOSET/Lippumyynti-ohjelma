@@ -629,6 +629,8 @@ public List<Tapahtuma> deleteTapahtuma(
 
 Lippurajapinnan avulla saadaan lisättyä ja muokattua lippuja tietokannassa
 
+## Hae  Lippu
+
 ## Lisää uusi lippu
 
 Tallentaa uuden lipun tietokantaan
