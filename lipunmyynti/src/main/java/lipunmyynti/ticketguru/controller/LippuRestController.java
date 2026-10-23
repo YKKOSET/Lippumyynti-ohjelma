@@ -1,5 +1,6 @@
 package lipunmyynti.ticketguru.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 import java.util.*;
 
 @Validated
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/liput") // http://localhost:8080/api/liput
 

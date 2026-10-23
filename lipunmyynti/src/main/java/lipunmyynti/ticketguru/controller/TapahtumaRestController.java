@@ -9,6 +9,7 @@ import lipunmyynti.ticketguru.model.Tapahtuma;
 import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 
 @Validated
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/tapahtumat") // http://localhost:8080/api/tapahtumat
 
