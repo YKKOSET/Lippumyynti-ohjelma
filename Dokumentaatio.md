@@ -629,8 +629,37 @@ public List<Tapahtuma> deleteTapahtuma(
 
 Lippurajapinnan avulla saadaan lisättyä ja muokattua lippuja tietokannassa
 
-## Hae  Lippu
+## Hae lippu
+```http
+GET /api/liput
+```
+### Sisältö
 
+```json
+{
+  "esityskerta": {
+    "alkuaika": "2028-10-01T19:00:00.000Z",
+    "maxOsallistujat": 100,
+    "paikka": {
+      "id": 1,
+      "nimi": "Esimerkkipaikka",
+      "katuosoite": "Esimerkkikatu 1",
+      "postinumero": {
+        "postinumero": "00100",
+        "postitoimipaikka": "Helsinki"
+      }
+    }
+  },
+  "lipputyyppi": {
+    "id_": 1,
+    "nimi_": "Lastenlippu"
+  },
+  "hinta": 10,
+  "kaytetty": false,
+  "id": "5bc04a8b-c2ee-4337-95f8-ac9846fe3151"
+}
+```
+alareunassa oleva id voidaan lisätä osoitteeseen jolla saadaan tämä yksittäinen lippu haettua: ```api/liput/5bc04a8b-c2ee-4337-95f8-ac9846fe3151```
 ## Lisää uusi lippu
 
 Tallentaa uuden lipun tietokantaan
@@ -1014,7 +1043,9 @@ USER-rooli on rajoitettu käyttäjärooli. User voi tunnistautua järjestelmää
 
 REST-rajapintaan kirjaudutaan Postmanissa seuraavasti:
 
-1. Valitaan pyynnön HTTP-metodi ja rajapinnan URL-osoite, esimerkiksi `http://localhost:8080/api/tapahtumat`.
+1. Valitaan pyynnön HTTP-metodi ja rajapinnan URL-osoite, esimerkiksi 
+`https://lippumyynti-ohjelma.onrender.com/` (render)
+`http://localhost:8080/api/tapahtumat` (paikallinen kehitys).
 2. Avataan Authorization-välilehti.
 3. Valitaan tyypiksi **Basic Auth**.
 4. Syötetään käyttäjätunnus ja salasana.
