@@ -18,10 +18,13 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain configure(HttpSecurity http) throws Exception {
                 http
+                                .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers("/css/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/liput/*").hasAnyAuthority("ADMIN", "USER", "MYYJA")
+                                                .requestMatchers(HttpMethod.PATCH, "/api/liput/*").hasAnyAuthority("ADMIN", "USER", "MYYJA")
                                                 .requestMatchers(HttpMethod.GET, "/api/tapahtumat").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/ostot").hasAnyAuthority("ADMIN", "USER")
                                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAuthority("ADMIN")
