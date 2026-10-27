@@ -959,11 +959,54 @@ DELETE /api/ostot/1
 
 Poiston jälkeen rajapinta palauttaa tietokannassa jäljellä olevat ostotapahtumat.
 
+
+
+
 ### Toteutus
 
 ```java
 @DeleteMapping("/{id}")
 public List<Osto> deleteOsto(@PathVariable Long id)
+```
+## Merkitse lippu käytetyksi/käyttämättömäksi
+
+### Pyyntö 
+Lippu merkitään käytetyksi
+```http
+PATCH /api/liput/{id}/kaytetty
+```
+
+Lippu merkitään käyttämättömäksi
+
+```http
+PATCH /api/liput/{id}/kayttamaton
+```
+{id} = lipun UUID
+
+### Esimerkki: muutetaan lippu käyttämättömäksi
+```diff
+{
+  "esityskerta": {
+    "alkuaika": "2028-10-01T19:00:00.000Z",
+    "maxOsallistujat": 100,
+    "paikka": {
+      "id": 1,
+      "nimi": "Esimerkkipaikka",
+      "katuosoite": "Esimerkkikatu 1",
+      "postinumero": {
+        "postinumero": "00100",
+        "postitoimipaikka": "Helsinki"
+      }
+    }
+  },
+  "lipputyyppi": {
+    "id_": 1,
+    "nimi_": "Lastenlippu"
+  },
+  "hinta": 10,
++  "kaytetty": false, 
+  "id": "5bc04a8b-c2ee-4337-95f8-ac9846fe3151" //Lipun UUID 
+}
 ```
 
 ---
