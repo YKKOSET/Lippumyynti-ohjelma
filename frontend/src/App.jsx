@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import './App.css'
 
 import LippuCard from './MUI/LippuCard'
 import CssBaseline from '@mui/material/CssBaseline';
