@@ -15,9 +15,17 @@ import Button from '@mui/material/Button';
 
 function LippuCard({ /*lippu*/ }) {
 
-    //tästä otetaan sarjanumero ja false pois sitten, kun lippu voidaan tuoda propsina (fetch: haetaan renderistä ulkoisena datana, erillinen hakukomponentti)    
+    //tästä otetaan kovakoodattu data pois sitten, kun lippu voidaan tuoda propsina (fetch: haetaan renderistä ulkoisena datana, erillinen hakukomponentti)    
     const [lippu, setValues] = useState({
         id: '5bc04a8b-c2ee-4337-95f8-ac9846fe3151',
+        esityskerta: {
+            alkuaika: '2028-10-01T19:00:00.000Z',
+        },
+        lipputyyppi: {
+            id_: 1,
+            nimi_: 'Lastenlippu',
+        },
+        hinta: 10,
         kaytetty: false,
     });
 
@@ -39,29 +47,34 @@ function LippuCard({ /*lippu*/ }) {
 
     return (
 
-        <Box>
-            <Card>
+        <Box sx={{ ml: 3 }}>
+            <Card sx={{ width: 500, border: "1px solid #ccc", borderRadius: 2 }}>
                 <CardContent
                     sx={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "stretch",
+                        gap: 4,
+                        textAlign: "left",
                     }}>
 
                     <Box>
                         <Typography>
-                            Sarjanumero: {lippu.id}
+                            Sarjanumero:
+                            </Typography>
+                        <Typography>
+                             {lippu.id}
                         </Typography>
                         <Typography>
-
+                            Esitysaika: {lippu.esityskerta.alkuaika}
                         </Typography>
                         <Typography>
-
+                            Lipputyyppi: {lippu.lipputyyppi.nimi_}
                         </Typography>
-                        <Typography>
-
+                        <Typography sx={{ mb: 2 }}>
+                            Hinta: {lippu.hinta} €
                         </Typography>
-
 
                         <FormControl>
                             <FormLabel>Lipun tila:</FormLabel>
