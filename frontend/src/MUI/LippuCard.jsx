@@ -12,6 +12,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
+import Popup from '../components/Popup';
 
 //TÄMÄ LIPPUCARD TALLENTAA MEIDÄN _OMAN_ APPLIKAATION LIPUN KÄYTETYKSI/KÄYTTÄMÄTTÖMÄKSI.
 
@@ -33,6 +34,8 @@ function LippuCard({ /*lippu*/ }) {
 
     const [kaytetty, setKaytetty] = useState(lippu.kaytetty);
 
+    const [showPopUp, setShowPopUp] = useState(false);
+
     const tallenna = async () => {
 
         const url = kaytetty
@@ -45,6 +48,9 @@ function LippuCard({ /*lippu*/ }) {
                 'Authorization': 'Basic ' + btoa(`${username}:${password}`),
             },
         });
+
+        //Kun tallennus tehty, näytetään popup tallennuksen onnistumisesta.
+        setShowPopUp(true);
     };
 
     return (
@@ -93,6 +99,11 @@ function LippuCard({ /*lippu*/ }) {
 
                 </CardContent>
             </Card>
+
+            <Popup
+                showPopUp={showPopUp}
+                setShowPopUp={setShowPopUp}
+            />
         </Box>
 
     );
