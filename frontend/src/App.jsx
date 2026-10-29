@@ -1,7 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { useState } from 'react'
 import LippuCard from './MUI/LippuCard'
-import heroImg from './assets/hero.png'
 import Lippukortti from './components/Lippukortti'
 import './App.css'
 
@@ -27,6 +26,8 @@ function App() {
   return (
     <>
       <CssBaseline />
+
+      <LippuCard />
       <Lippukortti lippu={lippu1} />
     </>
   )
