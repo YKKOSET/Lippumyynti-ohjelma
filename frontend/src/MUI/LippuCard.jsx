@@ -10,6 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
+const username = import.meta.env.VITE_LIPPU_USER;
+const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
 //TÄMÄ LIPPUCARD TALLENTAA MEIDÄN _OMAN_ APPLIKAATION LIPUN KÄYTETYKSI/KÄYTTÄMÄTTÖMÄKSI.
 
@@ -40,12 +42,13 @@ function LippuCard({ /*lippu*/ }) {
         await fetch(url, {
             method: "PATCH",
             headers: {
-                'Authorization': 'Basic ' + btoa('ADMIN:ADMIN'),
+                'Authorization': 'Basic ' + btoa(`${username}:${password}`),
             },
         });
     };
 
     return (
+
 
         <Box sx={{ ml: 3 }}>
             <Card sx={{ width: 500, border: "1px solid #ccc", borderRadius: 2 }}>
@@ -62,9 +65,9 @@ function LippuCard({ /*lippu*/ }) {
                     <Box>
                         <Typography>
                             Sarjanumero:
-                            </Typography>
+                        </Typography>
                         <Typography>
-                             {lippu.id}
+                            {lippu.id}
                         </Typography>
                         <Typography>
                             Esitysaika: {lippu.esityskerta.alkuaika}

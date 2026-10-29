@@ -5,6 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+const username = import.meta.env.VITE_OTHER_USER;
+const password = import.meta.env.VITE_OTHER_PASSWORD;
 
 function Lippukortti({ lippu }) {
     const [kaytetty, setKaytetty] = useState(lippu.kaytetty);
@@ -22,7 +24,7 @@ function Lippukortti({ lippu }) {
             const vastaus = await fetch(url, {
                 method: "PATCH",
                 headers: {
-                    'Authorization': 'Basic ' + btoa('admin@projekti.fi:jokin-vahva-salasana-123'),
+                    'Authorization': 'Basic ' + btoa(`${username}:${password}`),
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ kaytetty: true }),
