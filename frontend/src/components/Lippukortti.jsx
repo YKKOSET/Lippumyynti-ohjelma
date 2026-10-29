@@ -17,6 +17,7 @@ function Lippukortti({ lippu }) {
         if (tallennetaan) return;
         setTallennetaan(true);
         setViesti('');
+        window.location.reload();
 
         const url = `https://lippupalvelu-uons.onrender.com/ticket/${lippu.id}`;
 
