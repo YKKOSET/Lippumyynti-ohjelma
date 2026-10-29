@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { TextField, InputAdornment, IconButton, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+const username = import.meta.env.VITE_OTHER_USER;
+const password = import.meta.env.VITE_OTHER_PASSWORD;
 
 const HAKU_PITUUS = 9;
 
@@ -32,7 +34,7 @@ export default function Hakupalkki({ onLoytyi }) {
         {
             signal: controller.signal,
             headers: {
-            'Authorization': 'Basic ' + btoa('admin@projekti.fi:jokin-vahva-salasana-123'),
+            'Authorization': 'Basic ' + btoa(`${username}:${password}`),
             },
         }
         );
