@@ -11,8 +11,7 @@ function Lippukortti( {lippu} ) {
                 <CardHeader  />
 
                 <CardContent>
-                    <CardHeader title={lippu.id}></CardHeader>
-                    <Lippulistaus lippu={lippu}/>
+
                 </CardContent>
 
                 <CardActions sx={{ display: 'flex', justifyContent: 'right' }}>
