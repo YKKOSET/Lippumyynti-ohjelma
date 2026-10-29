@@ -7,6 +7,15 @@ import './App.css'
 
 
 function App() {
+  const lippu3 =
+  {
+    "id": 1003,
+    "koodi": "TESTI-003",
+    "kuvaus": "Jo käytetty lippu",
+    "hinta": 25,
+    "kaytetty": true
+  }
+
   const lippu2 =
   {
     "id": 1002,
@@ -24,12 +33,13 @@ function App() {
     "kaytetty": false
   }
 
+
   return (
     <>
       <CssBaseline />
 
       <Typography sx={{textAlign: "left", ml: 3, mt: 2}}>Toisen ryhmän sovelluksen lipulle tilanvaihto:</Typography>
-      <Lippukortti lippu={lippu1} />
+      <Lippukortti lippu={lippu3} />
 
       <Typography sx={{textAlign: "left", ml: 3, mt: 3}}>Oman sovelluksemme lipulle tilanvaihto:</Typography>
       <LippuCard />
