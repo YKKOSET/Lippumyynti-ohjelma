@@ -36,7 +36,7 @@ public class Esityskerta {
     @Column(name = "alkuaika")
     private Timestamp alkuaika;
 
-    @OneToMany(mappedBy = "esityskerta_")
+    @OneToMany(mappedBy = "esityskerta")
     @JsonIgnore
     private List<Lippu> liput;
 
