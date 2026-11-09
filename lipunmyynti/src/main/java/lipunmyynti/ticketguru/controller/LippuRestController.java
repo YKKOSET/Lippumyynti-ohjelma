@@ -85,6 +85,37 @@ public class LippuRestController {
         return ResponseEntity.ok(lippu);
     }
 
+    // Merkitse lippu ostetuksi
+    @PatchMapping("/{id}/ostettu")
+    public ResponseEntity<Lippu> merkitseOstetuksi(@PathVariable UUID id) {
+        Optional<Lippu> kasiteltavaLippu = lippuRepository.findById(id);
+
+        if (kasiteltavaLippu.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Lippu lippu = kasiteltavaLippu.get();
+        lippu.setOstettu(true);
+        lippuRepository.save(lippu);
+        return ResponseEntity.ok(lippu);
+    }
+
+    //Merkitse lippu ostamattomaksi
+    @PatchMapping("/{id}/ostamaton")
+    public ResponseEntity<Lippu> merkitseOstamattomaksi(@PathVariable UUID id) {
+        Optional<Lippu> kasiteltavaLippu = lippuRepository.findById(id);
+
+        if (kasiteltavaLippu.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Lippu lippu = kasiteltavaLippu.get();
+        lippu.setOstettu(false);
+        lippuRepository.save(lippu);
+
+        return ResponseEntity.ok(lippu);
+    }
+
     @GetMapping("/{id}/qr")
     public ResponseEntity<byte[]> getLippuQr(@PathVariable UUID id) throws WriterException, IOException {
 

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.*;
 import java.math.*;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //import org.hibernate.annotations.Generated; // for postgre
 //import org.hibernate.generator.EventType;   // for postgre
 
@@ -28,6 +30,9 @@ public class Lippu {
     @Column(name = "kaytetty")
     private boolean kaytetty_;
 
+    @Column(name = "ostettu")
+    private boolean ostettu_;
+
     @NotNull(message = "Lipputyyppi on pakollinen")
     @ManyToOne
     @JoinColumn(name = "lipputyyppi_id", nullable = false)
@@ -36,17 +41,19 @@ public class Lippu {
     @NotNull(message = "Esityskerta on pakollinen")
     @ManyToOne
     @JoinColumn(name = "esityskerta_id", nullable = false)
+    @JsonIgnore
     private Esityskerta esityskerta_;
 
     // constructors
     public Lippu() {
     }
 
-    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty) {
+    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty, boolean ostettu) {
         esityskerta_ = esityskerta;
         lipputyyppi_ = lipputyyppi;
         hinta_ = hinta;
         kaytetty_ = kaytetty;
+        ostettu_ = ostettu;
     }
 
     // setters and getters
@@ -90,11 +97,18 @@ public class Lippu {
         kaytetty_ = kaytetty;
     }
 
-    // to string method
+    public boolean isOstettu() {
+        return ostettu_;
+    }
+
+    public void setOstettu(boolean ostettu_) {
+        this.ostettu_ = ostettu_;
+    }
+
     @Override
     public String toString() {
-        return "Lippu [id_=" + id_ + ", esityskerta_=" + esityskerta_ + ", Lipputyyppi_=" + lipputyyppi_ + ", hinta_="
-                + hinta_
-                + ", kaytetty_=" + kaytetty_ + "]";
+        return "Lippu [id_=" + id_ + ", hinta_=" + hinta_ + ", kaytetty_=" + kaytetty_ + ", ostettu_=" + ostettu_
+                + ", lipputyyppi_=" + lipputyyppi_ + ", esityskerta_=" + esityskerta_ + "]";
     }
+    
 }
