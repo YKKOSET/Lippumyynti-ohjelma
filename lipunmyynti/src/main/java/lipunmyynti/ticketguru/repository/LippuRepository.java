@@ -11,7 +11,7 @@ import lipunmyynti.ticketguru.model.Lippu;
 public interface LippuRepository extends JpaRepository<Lippu, UUID> 
 {
     List<Lippu> findByEsityskerta(Esityskerta esityskerta);
-    List<Lippu> findByEsityskerta_Tapahtuma_Id(Long tapahtumaId);
-    List<Lippu> findByEsityskerta_IdAndEsityskerta_Tapahtuma_Id(Long esityskertaId, Long tapahtumaId);
+    List<Lippu> findByEsityskertaTapahtumaId(Long tapahtumaId);
+    List<Lippu> findByEsityskertaIdAndEsityskertaTapahtumaId(Long esityskertaId, Long tapahtumaId);
 }
 
