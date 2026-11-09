@@ -37,8 +37,8 @@ public class Esityskerta {
     private Timestamp alkuaika;
 
     @OneToMany(mappedBy = "esityskerta_")
+    @JsonIgnore
     private List<Lippu> liput;
-
 
     public Esityskerta() {
     }
@@ -53,6 +53,14 @@ public class Esityskerta {
         this.tapahtuma = tapahtuma;
         this.maxOsallistujat = maxOsallistujat;
         this.alkuaika = alkuaika;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Paikka getPaikka() {
@@ -85,6 +93,10 @@ public class Esityskerta {
 
     public void setAlkuaika(Timestamp alkuaika) {
         this.alkuaika = alkuaika;
+    }
+
+    public List<Lippu> getLiput() {
+        return liput;
     }
 
 }

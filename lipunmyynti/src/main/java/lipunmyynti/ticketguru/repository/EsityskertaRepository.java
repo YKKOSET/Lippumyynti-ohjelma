@@ -7,5 +7,5 @@ import lipunmyynti.ticketguru.model.Esityskerta;
 import lipunmyynti.ticketguru.model.Tapahtuma;
 
 public interface EsityskertaRepository extends JpaRepository<Esityskerta, Long> {
-    List<Tapahtuma> findByTapahtumaId(Long id);
+    List<Esityskerta> findByTapahtumaId(Long id);
 }
