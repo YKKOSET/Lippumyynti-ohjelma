@@ -1,11 +1,16 @@
 package lipunmyynti.ticketguru.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 
+import lipunmyynti.ticketguru.model.Esityskerta;
+import lipunmyynti.ticketguru.model.Lippu;
 import lipunmyynti.ticketguru.model.Tapahtuma;
+import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.TapahtumaRepository;
 
 @Validated
@@ -17,9 +22,11 @@ public class TapahtumaRestController {
 
     // injection: repository into controller
     private final TapahtumaRepository tapahtumaRepository;
+    private final LippuRepository lippuRepository;
 
-    TapahtumaRestController(TapahtumaRepository tapahtumaRepository) {
+    TapahtumaRestController(TapahtumaRepository tapahtumaRepository, LippuRepository lippuRepository) {
         this.tapahtumaRepository = tapahtumaRepository;
+        this.lippuRepository = lippuRepository;
     }
 
     // list all events (findAll() comes automatically from JpaRepository)
@@ -52,6 +59,38 @@ public class TapahtumaRestController {
     @GetMapping("/jarjestaja/{id}")
     public List<Tapahtuma> getTapahtumatByJarjestaja(@PathVariable Long id) {
         return tapahtumaRepository.findByJarjestajaId(id);
+    }
+
+    // Palauttaa kaikki tapahtuman liput esityskerrasta viis
+    // EI TOIMI, syynä lippu-luokan muuttujanimet
+    @GetMapping("/{id}/liput")
+      public List<Lippu> getLiputByTapahtuma(@PathVariable Long id) {
+      return lippuRepository.findByEsityskerta_Tapahtuma_Id(id);
+    }
+
+    // Näyttää tapahtuman liput, lajiteltu esityskerran mukaan
+/*     @GetMapping("/{id}/liput")
+    public Map<Long, List<Lippu>> getLiputByTapahtuma(@PathVariable Long id) {
+        Tapahtuma tapahtuma = tapahtumaRepository.findById(id).orElse(null);
+        if (tapahtuma == null) {
+            return null;
+        }
+        Map<Long, List<Lippu>> liputEsityskerroittain = new HashMap<>();
+        for (Esityskerta esityskerta : tapahtuma.getEsityskerrat()) {
+            liputEsityskerroittain.put(esityskerta.getId(), esityskerta.getLiput());
+        }
+        return liputEsityskerroittain;
+    } */
+
+    // Hakee tietyn esityskerran kaikki liput
+    //HUOM! EI Toimi. Onko syynä lippu-luokan muuttujanimet?
+    @GetMapping("/{tapahtumaId}/{esityskertaId}/liput")
+    public List<Lippu> getLiputByEsityskerta(
+            @PathVariable Long tapahtumaId,
+            @PathVariable Long esityskertaId) {
+
+        return lippuRepository.findByEsityskerta_IdAndEsityskerta_Tapahtuma_Id(
+                esityskertaId, tapahtumaId);
     }
 
 }
