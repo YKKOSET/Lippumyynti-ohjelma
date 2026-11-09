@@ -1,6 +1,7 @@
 package lipunmyynti.ticketguru.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -130,5 +131,14 @@ public class LippuRestController {
         .contentType(MediaType.IMAGE_PNG)
         .body(png);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> poistaLippu(@PathVariable UUID id) {
+        if (!lippuRepository.existsById(id)) {
+        return ResponseEntity.notFound().build();
+    }
+
+    lippuRepository.deleteById(id);
+    return ResponseEntity.noContent().build();
+}
     
 }
