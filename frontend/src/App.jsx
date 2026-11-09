@@ -44,14 +44,7 @@ function App() {
 
       <Typography sx={{textAlign: "left", ml: 3, mt: 2}}>Hae lippu sarjanumerolla:</Typography>
       <Hakupalkki onLoytyi={setHaettuLippu} />
-      {haettuLippu && <Lippukortti lippu={haettuLippu} />}
-
-      <Typography sx={{textAlign: "left", ml: 3, mt: 2}}>Toisen ryhmän sovelluksen lipulle tilanvaihto:</Typography>
-      <Lippukortti lippu={lippu3} />
-
-      <Typography sx={{textAlign: "left", ml: 3, mt: 3}}>Oman sovelluksemme lipulle tilanvaihto:</Typography>
-      <LippuCard />
-
+      {haettuLippu && <LippuCard lippu={haettuLippu} />}
     </>
   )
 }
