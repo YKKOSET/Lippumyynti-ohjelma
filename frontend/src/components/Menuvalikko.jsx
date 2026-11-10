@@ -3,15 +3,12 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import Hakupalkki from './Hakupalkki';
-import Lippukortti from './Lippukortti';
-import Lippulistaus from './lippulistaus';
 import TicketSales from './TicketSales';
 import Etusivu from './Etusivu';
 import Tarkistus from './Tarkistus';
@@ -58,7 +55,7 @@ function Menuvalikko() {
 
   return (
     <>
-      <Box sx={{ position: 'fixed', top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1 }}>
+      <Box sx={{ top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1 }}>
         <IconButton onClick={(e) => menuOpen(e)}>
           <MenuIcon />
         </IconButton>
