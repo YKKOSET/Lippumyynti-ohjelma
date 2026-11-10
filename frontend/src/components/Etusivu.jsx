@@ -10,13 +10,12 @@ const API_URL = 'https://lippumyynti-ohjelma.onrender.com/api/tapahtumat';
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
-// Etusivu.jsx: tapahtumat listautuu näkyviin (kortteja). 
-// Yläosassa hakuominaisuus tapahtumille: suurennuslasi ja textfield (hae tapahtumaa nimellä).
-//HOX:  -> Eli etusivu sisältää haetapahtuma-komponentin ja (tapahtuma)korttilistaus-komponentin.
+// Etusivu: listaa tapahtumat (tapahtumakortit). 
+// Yläoikealla hakuominaisuus tapahtumille: suurennuslasi ja textfield (hae tapahtumaa nimellä).
 
-
-// Nice to know: Kun klikkaa tapahtumakorttia, näkyy tapahtuman tiedot ja esityskerrat 
-// sekä MYY lippu-linkkipainike. klikattaessa avaa myy lippuja-lomakkeen (pohjatietona ko. tapahtuma).
+// Jatkoa varten: Eritellään kortin tiedot niin, että kun klikkaa tapahtumakorttia (linkki on koko kortti), 
+// näkyy tapahtuman tarkemmat tiedot, kuten esityskerrat sekä myy lippu-linkkipainike, 
+// jota klikattaessa aukeaa myy lippuja-lomake (pohjatietona ko. tapahtuma).
 
 function Etusivu() {
 
