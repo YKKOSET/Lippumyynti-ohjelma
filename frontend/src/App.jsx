@@ -20,15 +20,7 @@ function App() {
     <>
       <CssBaseline />
 
-
-
        <Menuvalikko />
-
-  {/*     <Typography sx={{ textAlign: "left", ml: 3, mt: 2 }}>Hae lippu sarjanumerolla:</Typography>
-      <Hakupalkki onLoytyi={setHaettuLippu} />
-      {haettuLippu && <LippuCard lippu={haettuLippu} />} */}
-
-
 
     </>
   )
