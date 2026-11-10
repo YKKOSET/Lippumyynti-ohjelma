@@ -7,6 +7,7 @@ import java.math.*;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //import org.hibernate.annotations.Generated; // for postgre
 //import org.hibernate.generator.EventType;   // for postgre
@@ -41,7 +42,7 @@ public class Lippu {
     @NotNull(message = "Esityskerta on pakollinen")
     @ManyToOne
     @JoinColumn(name = "esityskerta_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties({"liput"})
     private Esityskerta esityskerta;
 
     // constructors
