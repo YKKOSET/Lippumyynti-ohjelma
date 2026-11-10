@@ -7,31 +7,58 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // ---------------------------------------------------------------
-// LIPPUJEN HAKU: vaihda tähän oma osoite
+// OSOITTEET: vaihda omiksi
 // ---------------------------------------------------------------
-const API_URL = 'http://localhost:8080/api/liput';
+const API_URLS = {
+    tapahtumat: 'http://localhost:8080/api/tapahtumat',
+    esityskerrat: 'https://localhost:8080/api/esityskerrat',
+    liput: 'http://localhost:8080/api/liput',
+};
 
 // Sama Basic-tunnistautuminen kuin LippuCardissa (poista, jos API ei vaadi sitä)
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
+// ---------------------------------------------------------------
+// ODOTETTU DATA
+// tapahtumat:   [{ id, nimi }]
+// esityskerrat: [{ id, tapahtumaId, alkuaika }]
+// liput:        [{ id, esityskertaId, lipputyyppi: { nimi }, hinta, saatavilla }]
+// (tapahtumaId ja esityskertaId voivat olla myös sisäkkäisiä: tapahtuma.id, esityskerta.id)
+// ---------------------------------------------------------------
+const lipunEsitysId = (lippu) => lippu.esityskertaId ?? lippu.esityskerta?.id;
+const esityksenTapahtumaId = (esitys) => esitys.tapahtumaId ?? esitys.tapahtuma?.id;
+
 const euro = (n) => `${n.toFixed(2).replace('.', ',')} €`;
+
+const muotoileAika = (alkuaika) =>
+    alkuaika
+        ? new Date(alkuaika).toLocaleString('fi-FI', {
+              weekday: 'short', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit',
+          })
+        : '';
+
+// Hakee yhden osoitteen ja palauttaa aina taulukon
+const haeJson = async (url, signal) => {
+    const res = await fetch(url, {
+        signal,
+        headers: { 'Authorization': 'Basic ' + btoa(`${username}:${password}`) },
+    });
+    if (!res.ok) throw new Error(`Haku epäonnistui (${url}): ${res.status}`);
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+};
 
 // ---------------------------------------------------------------
 // YKSI MYYNTIKORTTI
 // ---------------------------------------------------------------
-function MyyntiKortti({ lippu, onSell }) {
+function MyyntiKortti({ lippu, tapahtuma, esityskerta, onSell }) {
     const [maara, setMaara] = useState(1);
     const [viesti, setViesti] = useState('');
 
     const loppu = lippu.saatavilla <= 0;
     const vahan = !loppu && lippu.saatavilla <= 5;
 
-    const esitysaika = lippu.esityskerta?.alkuaika
-        ? new Date(lippu.esityskerta.alkuaika).toLocaleString('fi-FI', {
-              weekday: 'short', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit',
-          })
-        : '';
     const lipputyyppi = lippu.lipputyyppi?.nimi ?? lippu.lipputyyppi?.nimi_ ?? '';
 
     const muuta = (delta) =>
@@ -49,10 +76,12 @@ function MyyntiKortti({ lippu, onSell }) {
             <Card elevation={0} sx={tyylit.kortti}>
                 {/* Vasen osa */}
                 <Box sx={[tyylit.runko, loppu && tyylit.loppuunmyyty]}>
-                    <Typography component="time" sx={tyylit.aika}>{esitysaika}</Typography>
-                    <Typography sx={tyylit.sarjaLabel}>Sarjanumero</Typography>
-                    <Typography sx={tyylit.sarjanumero}>{lippu.id}</Typography>
+                    <Typography component="time" sx={tyylit.aika}>
+                        {muotoileAika(esityskerta?.alkuaika)}
+                    </Typography>
+                    <Typography sx={tyylit.tapahtumaNimi}>{tapahtuma?.nimi}</Typography>
                     <Typography sx={tyylit.tyyppi}>{lipputyyppi}</Typography>
+                    <Typography sx={tyylit.sarjanumero}>Sarjanumero: {lippu.id}</Typography>
                     <Typography sx={[tyylit.saatavilla, vahan && tyylit.saatavillaVahan]}>
                         {loppu ? 'Loppuunmyyty' : `${lippu.saatavilla} lippua jäljellä`}
                     </Typography>
@@ -80,44 +109,42 @@ function MyyntiKortti({ lippu, onSell }) {
 }
 
 // ---------------------------------------------------------------
-// LISTA KAIKISTA LIPUISTA (hakee datan API:sta)
-// Odotettu vastaus: taulukko lippuja, esim.
-// [{ id, esityskerta: { alkuaika }, lipputyyppi: { nimi }, hinta, saatavilla }]
+// KAIKKI LIPUT: tapahtuma > esityskerta > liput
 // ---------------------------------------------------------------
 function TicketSales({ onSale }) {
+    const [tapahtumat, setTapahtumat] = useState([]);
+    const [esityskerrat, setEsityskerrat] = useState([]);
     const [liput, setLiput] = useState([]);
     const [lataa, setLataa] = useState(true);
     const [virhe, setVirhe] = useState('');
     const [myynti, setMyynti] = useState({ kpl: 0, summa: 0 });
 
-    // Haetaan liput kerran, kun komponentti avautuu
+    // Haetaan kaikki kolme kerralla, kun komponentti avautuu
     useEffect(() => {
         const ac = new AbortController();
 
-        const haeLiput = async () => {
+        const haeKaikki = async () => {
             setLataa(true);
             setVirhe('');
             try {
-                const res = await fetch(API_URL, {
-                    signal: ac.signal,
-                    headers: {
-                        'Authorization': 'Basic ' + btoa(`${username}:${password}`),
-                    },
-                });
-                if (!res.ok) throw new Error(`Haku epäonnistui: ${res.status}`);
-
-                const data = await res.json();
-                setLiput(Array.isArray(data) ? data : []);
+                const [t, e, l] = await Promise.all([
+                    haeJson(API_URLS.tapahtumat, ac.signal),
+                    haeJson(API_URLS.esityskerrat, ac.signal),
+                    haeJson(API_URLS.liput, ac.signal),
+                ]);
+                setTapahtumat(t);
+                setEsityskerrat(e);
+                setLiput(l);
             } catch (err) {
                 if (err.name === 'AbortError') return;
-                console.error('Lippujen haku epäonnistui:', err);
-                setVirhe('Lippujen haku epäonnistui');
+                console.error('Tietojen haku epäonnistui:', err);
+                setVirhe('Tietojen haku epäonnistui');
             } finally {
                 if (!ac.signal.aborted) setLataa(false);
             }
         };
 
-        haeLiput();
+        haeKaikki();
         return () => ac.abort();
     }, []);
 
@@ -132,10 +159,27 @@ function TicketSales({ onSale }) {
         onSale?.({ ticketId: id, quantity: maara, total: maara * lippu.hinta });
     };
 
-    const jarjestetty = useMemo(
-        () => [...liput].sort((a, b) => new Date(a.esityskerta?.alkuaika) - new Date(b.esityskerta?.alkuaika)),
-        [liput]
-    );
+    // Ryhmitellään: tapahtumat aakkosjärjestyksessä, esityskerrat ajan mukaan.
+    // Tyhjiä tapahtumia ja esityskertoja ei näytetä.
+    const ryhmat = useMemo(() => {
+        const esityksetAjanMukaan = [...esityskerrat].sort(
+            (a, b) => new Date(a.alkuaika) - new Date(b.alkuaika)
+        );
+
+        return [...tapahtumat]
+            .sort((a, b) => (a.nimi ?? '').localeCompare(b.nimi ?? '', 'fi'))
+            .map((tapahtuma) => ({
+                tapahtuma,
+                esitykset: esityksetAjanMukaan
+                    .filter((e) => esityksenTapahtumaId(e) === tapahtuma.id)
+                    .map((esityskerta) => ({
+                        esityskerta,
+                        liput: liput.filter((l) => lipunEsitysId(l) === esityskerta.id),
+                    }))
+                    .filter((e) => e.liput.length > 0),
+            }))
+            .filter((r) => r.esitykset.length > 0);
+    }, [tapahtumat, esityskerrat, liput]);
 
     return (
         <Box sx={tyylit.sivu}>
@@ -146,21 +190,41 @@ function TicketSales({ onSale }) {
 
             {lataa && <CircularProgress size={24} sx={{ ml: 3 }} />}
 
-            {virhe && (
-                <Typography color="error" sx={{ ml: 3 }}>{virhe}</Typography>
-            )}
+            {virhe && <Typography color="error" sx={{ ml: 3 }}>{virhe}</Typography>}
 
-            {!lataa && !virhe && jarjestetty.length === 0 && (
+            {!lataa && !virhe && ryhmat.length === 0 && (
                 <Typography sx={{ ml: 3 }}>Ei myytäviä lippuja.</Typography>
             )}
 
-            {jarjestetty.length > 0 && (
-                <Box sx={tyylit.lista}>
-                    {jarjestetty.map((l) => (
-                        <MyyntiKortti key={l.id} lippu={l} onSell={kasitteleMyynti} />
+            {ryhmat.map(({ tapahtuma, esitykset }) => (
+                <Box key={tapahtuma.id} component="section">
+                    {/* Väliotsikko: tapahtuma */}
+                    <Typography variant="h5" component="h2" sx={tyylit.tapahtumaOtsikko}>
+                        {tapahtuma.nimi}
+                    </Typography>
+
+                    {esitykset.map(({ esityskerta, liput: esityksenLiput }) => (
+                        <Box key={esityskerta.id}>
+                            {/* Väliotsikko: esityskerta */}
+                            <Typography variant="subtitle1" component="h3" sx={tyylit.esitysOtsikko}>
+                                {muotoileAika(esityskerta.alkuaika)}
+                            </Typography>
+
+                            <Box sx={tyylit.lista}>
+                                {esityksenLiput.map((l) => (
+                                    <MyyntiKortti
+                                        key={l.id}
+                                        lippu={l}
+                                        tapahtuma={tapahtuma}
+                                        esityskerta={esityskerta}
+                                        onSell={kasitteleMyynti}
+                                    />
+                                ))}
+                            </Box>
+                        </Box>
                     ))}
                 </Box>
-            )}
+            ))}
         </Box>
     );
 }
@@ -192,6 +256,18 @@ const tyylit = {
     otsikko: { textAlign: 'left', ml: 3, mt: 4, fontWeight: 600 },
     yhteenveto: { textAlign: 'left', ml: 3, mb: 2, color: VARIT.himmea },
 
+    // Väliotsikot: tapahtuma ja sen esityskerrat
+    tapahtumaOtsikko: { textAlign: 'left', ml: 3, mt: 4, fontWeight: 700, color: VARIT.teksti },
+    esitysOtsikko: {
+        textAlign: 'left',
+        ml: 3,
+        mt: 2,
+        mb: 1,
+        fontWeight: 600,
+        color: VARIT.korostus,
+        textTransform: 'capitalize',
+    },
+
     // Korttien lista
     lista: { display: 'flex', flexDirection: 'column', gap: 2 },
     korttiUlko: { ml: 3, mr: 3 },
@@ -219,8 +295,8 @@ const tyylit = {
         color: VARIT.korostus,
         textTransform: 'capitalize',
     },
-    sarjaLabel: { fontSize: '.8rem', color: VARIT.himmea, mt: 1.5 },
-    sarjanumero: { fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.25, wordBreak: 'break-all' },
+    tapahtumaNimi: { fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.25, mt: 0.5 },
+    sarjanumero: { fontSize: '.8rem', color: VARIT.himmea, mt: 1.5, wordBreak: 'break-all' },
     tyyppi: { fontSize: '.95rem', color: VARIT.himmea, mt: 0.5 },
     saatavilla: { fontSize: '.9rem', color: VARIT.himmea, mt: 2 },
     saatavillaVahan: { color: VARIT.varoitus, fontWeight: 600 },
