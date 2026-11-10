@@ -62,14 +62,13 @@ public class TapahtumaRestController {
     }
 
     // Palauttaa kaikki tapahtuman liput esityskerrasta viis
-    // EI TOIMI, syynä lippu-luokan muuttujanimet
-    @GetMapping("/{id}/liput")
+    /*@GetMapping("/{id}/liput")
       public List<Lippu> getLiputByTapahtuma(@PathVariable Long id) {
-      return lippuRepository.findByEsityskerta_Tapahtuma_Id(id);
-    }
+      return lippuRepository.findByEsityskertaTapahtumaId(id);
+    }*/
 
     // Näyttää tapahtuman liput, lajiteltu esityskerran mukaan
-/*     @GetMapping("/{id}/liput")
+    @GetMapping("/{id}/liput")
     public Map<Long, List<Lippu>> getLiputByTapahtuma(@PathVariable Long id) {
         Tapahtuma tapahtuma = tapahtumaRepository.findById(id).orElse(null);
         if (tapahtuma == null) {
@@ -80,7 +79,7 @@ public class TapahtumaRestController {
             liputEsityskerroittain.put(esityskerta.getId(), esityskerta.getLiput());
         }
         return liputEsityskerroittain;
-    } */
+    }
 
     // Hakee tietyn esityskerran kaikki liput
     //HUOM! EI Toimi. Onko syynä lippu-luokan muuttujanimet?
@@ -89,7 +88,7 @@ public class TapahtumaRestController {
             @PathVariable Long tapahtumaId,
             @PathVariable Long esityskertaId) {
 
-        return lippuRepository.findByEsityskerta_IdAndEsityskerta_Tapahtuma_Id(
+        return lippuRepository.findByEsityskertaIdAndEsityskertaTapahtumaId(
                 esityskertaId, tapahtumaId);
     }
 

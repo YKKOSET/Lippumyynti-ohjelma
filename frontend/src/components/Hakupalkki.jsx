@@ -39,14 +39,22 @@ export default function Hakupalkki({ onLoytyi }) {
             },
         }
         );
-        if (res.status === 404) {
+        const responseText = await res.text();
+
+        if (res.status === 404 || !responseText.trim()) {
           setVirhe('Lippua ei löytynyt');
           onLoytyi(null);
           return;
         }
-        if (!res.ok) throw new Error();
-        onLoytyi(await res.json());
+        if (!res.ok) {
+          throw new Error(`HTTP-virhe: ${res.status}`);
+        }
+
+        const data = JSON.parse(responseText);
+
+        onLoytyi(data);
         setOnnistui(true);
+        
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('Haun virhe:', err);
