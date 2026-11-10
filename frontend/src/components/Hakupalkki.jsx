@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { TextField, InputAdornment, IconButton, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-const username = import.meta.env.VITE_OTHER_USER;
-const password = import.meta.env.VITE_OTHER_PASSWORD;
+const username = import.meta.env.VITE_LIPPU_USER;
+const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
-const HAKU_PITUUS = 9;
+const HAKU_PITUUS = 36;
 
 export default function Hakupalkki({ onLoytyi }) {
   const [arvo, setArvo] = useState('');
@@ -30,7 +30,8 @@ export default function Hakupalkki({ onLoytyi }) {
       setOnnistui(false);
       try {
         const res = await fetch(
-        `https://lippupalvelu-uons.onrender.com/ticket/ticket?koodi=${encodeURIComponent(arvo)}`,
+        /*`https://lippupalvelu-uons.onrender.com/ticket/ticket?koodi=${encodeURIComponent(arvo)}`*/
+        `https://lippumyynti-ohjelma.onrender.com/api/liput/${encodeURIComponent(arvo)}`,
         {
             signal: controller.signal,
             headers: {
