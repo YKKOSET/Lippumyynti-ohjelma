@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import Hakupalkki from './Hakupalkki';
 import { Typography } from '@mui/material';
+import LippuCard from '../MUI/LippuCard';
 
 
 function Tarkistus() {
