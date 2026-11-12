@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Switch from '@mui/material/Switch';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
@@ -12,6 +11,13 @@ const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
 const API_URL = 'https://lippumyynti-ohjelma.onrender.com/api/liput';
+
+// Värit samat kuin TicketSales-kortissa
+const INK = '#14213d';
+const MUTED = '#5b6478';
+const ACCENT = '#2b59ff';
+const LINE = '#c9d0e0';
+const STUB_BG = '#f7f9fd';
 
 // Tyylitelty liukukytkin, jonka sisällä lukee tila.
 // Vihreä = käyttämätön, punainen = käytetty
@@ -30,7 +36,6 @@ const TilaKytkin = styled(Switch)(() => ({
                 opacity: 1,
                 border: 0,
             },
-            // Näytetään "KÄYTETTY" kun kytkin on päällä
             '& + .MuiSwitch-track::before': {
                 opacity: 1,
             },
@@ -64,13 +69,11 @@ const TilaKytkin = styled(Switch)(() => ({
             letterSpacing: 0.5,
             transition: 'opacity 300ms',
         },
-        // Teksti kun lippu on käytetty (nuppi oikealla, teksti vasemmalla)
         '&::before': {
             content: '"KÄYTETTY"',
             left: 14,
             opacity: 0,
         },
-        // Teksti kun lippu on käyttämätön (nuppi vasemmalla, teksti oikealla)
         '&::after': {
             content: '"KÄYTTÄMÄTÖN"',
             right: 14,
@@ -138,23 +141,86 @@ function LippuCard({ lippu }) {
 
     // Muotoillaan esitysaika luettavaan muotoon
     const esitysaika = lippu.esityskerta?.alkuaika
-        ? new Date(lippu.esityskerta.alkuaika).toLocaleString('fi-FI')
+        ? new Date(lippu.esityskerta.alkuaika).toLocaleString('fi-FI', {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+          })
         : '';
 
     // Tukee sekä nimeä "nimi" että "nimi_"
     const lipputyyppi = lippu.lipputyyppi?.nimi ?? lippu.lipputyyppi?.nimi_ ?? '';
 
     return (
-        <Box sx={{ ml: 3 }}>
-            <Card sx={{ width: 500, border: '1px solid #ccc', borderRadius: 2 }}>
-                <CardContent sx={{ textAlign: 'left' }}>
-                    <Typography>Sarjanumero:</Typography>
-                    <Typography>{lippu.id}</Typography>
-                    <Typography>Esitysaika: {esitysaika}</Typography>
-                    <Typography>Lipputyyppi: {lipputyyppi}</Typography>
-                    <Typography sx={{ mb: 2 }}>Hinta: {lippu.hinta} €</Typography>
+        <Box sx={{ ml: 3, mt: 2, mr: 3 }}>
+            {/* Lippukortti: vasen runko + perforoitu kanta */}
+            <Card
+                elevation={0}
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr auto' },
+                    width: '100%',
+                    maxWidth: 620,
+                    border: `1px solid ${LINE}`,
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    color: INK,
+                    bgcolor: '#fff',
+                }}
+            >
+                {/* Runko */}
+                <Box sx={{ p: '20px 20px 20px 24px', textAlign: 'left', minWidth: 0 }}>
+                    <Typography
+                        component="time"
+                        sx={{ display: 'block', fontSize: '.85rem', fontWeight: 600, color: ACCENT, textTransform: 'capitalize' }}
+                    >
+                        {esitysaika}
+                    </Typography>
+                    <Typography sx={{ fontSize: '.8rem', color: MUTED, mt: 1.5 }}>
+                        Sarjanumero
+                    </Typography>
+                    <Typography sx={{ fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.25, wordBreak: 'break-all' }}>
+                        {lippu.id}
+                    </Typography>
+                    <Typography sx={{ color: MUTED, fontSize: '.95rem', mt: 0.5 }}>
+                        {lipputyyppi}
+                    </Typography>
+                </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Kanta */}
+                <Box
+                    sx={{
+                        width: { xs: 'auto', sm: 200 },
+                        p: '20px 18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1.5,
+                        bgcolor: STUB_BG,
+                        position: 'relative',
+                        borderLeft: { xs: 0, sm: `2px dashed ${LINE}` },
+                        borderTop: { xs: `2px dashed ${LINE}`, sm: 0 },
+                        '&::before, &::after': {
+                            content: '""',
+                            position: 'absolute',
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            bgcolor: 'background.default',
+                            border: `1px solid ${LINE}`,
+                        },
+                        '&::before': { top: -11, left: -11 },
+                        '&::after': { bottom: { xs: 'auto', sm: -11 }, top: { xs: -11, sm: 'auto' }, left: { xs: 'auto', sm: -11 }, right: { xs: -11, sm: 'auto' } },
+                    }}
+                >
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, textAlign: 'center' }}>
+                        {lippu.hinta} €
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <TilaKytkin
                             checked={kaytetty}
                             onChange={vaihdaTila}
@@ -164,11 +230,11 @@ function LippuCard({ lippu }) {
                     </Box>
 
                     {virhe && (
-                        <Typography color="error" sx={{ mt: 1 }}>
+                        <Typography color="error" sx={{ fontSize: '.85rem', textAlign: 'center' }}>
                             {virhe}
                         </Typography>
                     )}
-                </CardContent>
+                </Box>
             </Card>
 
             <Popup showPopUp={showPopUp} setShowPopUp={setShowPopUp} />
