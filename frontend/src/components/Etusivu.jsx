@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tapahtumakortti from './Tapahtumakortti';
 
@@ -22,9 +24,9 @@ function Etusivu() {
     const [tapahtumat, setTapahtumat] = useState([]);
     const [ladataan, setLadataan] = useState(true);
     const [virhe, setVirhe] = useState('');
+    const [haku, setHaku] = useState('');
 
     useEffect(() => {
-
         const haeTapahtumat = async () => {
             try {
                 const vastaus = await fetch(API_URL);
@@ -45,48 +47,62 @@ function Etusivu() {
         };
 
         haeTapahtumat();
-
     }, []);
 
     if (ladataan) {
-        return (
-            <Box>
-                <CircularProgress />
-            </Box>
-        );
+        return <CircularProgress />;
     }
 
     if (virhe) {
-        return (
-                {virhe}
-        );
+        return { virhe };
     }
 
+    const suodatetutTapahtumat = tapahtumat.filter((tapahtuma) =>
+        tapahtuma.nimi?.toLowerCase().includes(haku.trim().toLowerCase())
+    );
+
     return (
-        <Box>
-            <Typography>Tapahtumat</Typography>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    justifyContent: 'flex-start',
-                    alignItems: 'stretch',
-                    gap: 1,
-                }}
-            >
-                {tapahtumat.map((tapahtuma) => (
-                    <Box key={tapahtuma.id}>
-                        <Tapahtumakortti tapahtuma={tapahtuma} />
-                    </Box>
-                ))}
+        <>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                gap: 1,
+                mb: 3,
+            }}>
+                <SearchIcon fontSize="medium" />
+                <TextField
+                    label="Hae tapahtumaa nimellä"
+                    value={haku}
+                    onChange={(e) => setHaku(e.target.value)}
+                />
             </Box>
 
-            {tapahtumat.length === 0 && (
-                <Typography>
-                    Ei tapahtumia.
-                </Typography>
-            )}
-        </Box>
+            <Box>
+                <Typography>Tapahtumat</Typography>
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'flex-start',
+                        alignItems: 'stretch',
+                        gap: 1,
+                    }}>
+                    {suodatetutTapahtumat.map((tapahtuma) => (
+                        <Box key={tapahtuma.id}>
+                            <Tapahtumakortti tapahtuma={tapahtuma} />
+                        </Box>
+                    ))}
+                </Box>
+
+                {suodatetutTapahtumat.length === 0 && (
+                    <Typography>
+                        Ei tapahtumia.
+                    </Typography>
+                )}
+            </Box>
+        </>
     );
 }
 
