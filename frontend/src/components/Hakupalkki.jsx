@@ -54,6 +54,7 @@ export default function Hakupalkki({ onLoytyi }) {
 
         onLoytyi(data);
         setOnnistui(true);
+        setOnnistui(true);
         
       } catch (err) {
         if (err.name === 'AbortError') return;
