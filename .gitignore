@@ -35,4 +35,10 @@ build/
 ### Drawio varmuuskopio ###
 .$tietokantakaavio.drawio.bkp
 
+### Secret ###
 .env
+
+### Robot Framework testitulokset ###
+log.html
+report.html
+output.xml
