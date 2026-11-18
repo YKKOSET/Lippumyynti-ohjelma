@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 // ---------------------------------------------------------------
 // OSOITE: vaihda omaksi
 // ---------------------------------------------------------------
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
 
 const URLS = {
     tapahtumat: `${API_BASE}/tapahtumat`,
