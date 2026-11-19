@@ -55,6 +55,9 @@ function Menuvalikko() {
   const [lataa, setLataa] = useState(false);
   const [virhe, setVirhe] = useState('');
 
+  // Navigoinnin mukana tullut tapahtuma
+    const navigoituTapahtuma = location.state?.tapahtuma ?? null;
+
   // Haetaan tapahtumat ja liput, kun "Myy lippuja" -näkymä avataan
   useEffect(() => {
     if (location.pathname !== '/myynti') return;
@@ -136,7 +139,7 @@ function Menuvalikko() {
       </Box>
 
       <Box>
-        <Outlet context={{ tapahtumat, liput, lataa, virhe }} />
+        <Outlet context={{ tapahtumat, liput, lataa, virhe, navigoituTapahtuma }} />
       </Box>
     </>
   );
