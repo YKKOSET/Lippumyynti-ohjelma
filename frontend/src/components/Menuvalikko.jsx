@@ -13,10 +13,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CheckIcon from '@mui/icons-material/Check';
 
-import Hakupalkki from './Hakupalkki';
-import TicketSales from './TicketSales';
-import Etusivu from './Etusivu';
-import Tarkistus from './Tarkistus';
 
 // OSOITE: vaihda omaksi (tapahtumat samasta osoitteesta kuin Tapahtumakortin tiedot)
 const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
@@ -47,7 +43,6 @@ const haeJson = async (url, signal) => {
 function Menuvalikko() {
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [value, setValue] = useState(0);
 
   // Lipunmyynnin tiedot
   const [tapahtumat, setTapahtumat] = useState([]);
@@ -97,14 +92,9 @@ function Menuvalikko() {
     setAnchorEl(null);
   }
 
-  //vaihda näkymä:
-  const handleChange = (val) => {
-    setValue(val);
-    menuClose();
-  }
 
   const menu =
-    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => menuClose()}>
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={menuClose}>
 
       <MenuItem onClick={menuClose} component={Link} to='/'>
         <ListItemIcon><HomeIcon/></ListItemIcon>
@@ -129,7 +119,7 @@ function Menuvalikko() {
       <Box sx={{
         top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1
       }}>
-        <IconButton onClick={(e) => menuOpen(e)}>
+        <IconButton onClick={menuOpen}>
           <MenuIcon />
         </IconButton>
 
