@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import Switch from '@mui/material/Switch';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
-import Popup from '../components/Popup';
+import Popup from './Popup';
 
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;

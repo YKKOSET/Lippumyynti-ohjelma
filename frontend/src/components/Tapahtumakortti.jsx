@@ -1,13 +1,19 @@
+import { useState } from 'react';
+
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { useNavigate } from 'react-router';
+import { Button } from '@mui/material';
 
 function Tapahtumakortti({ tapahtuma }) {
 
-return(
-        <Card sx={{maxWidth: 200}}>
+    const navigate = useNavigate();
+
+    return (
+        <Card sx={{ maxWidth: 200 }}>
 
             <CardContent>
 
@@ -59,14 +65,19 @@ return(
 
                 {(!tapahtuma.esityskerrat ||
                     tapahtuma.esityskerrat.length === 0) && (
-                    <Typography>
-                        Ei tulevia esityskertoja.
-                    </Typography>
-                )}
+                        <Typography>
+                            Ei tulevia esityskertoja.
+                        </Typography>
+                    )}
             </CardContent>
+            <Button onClick={() => navigate("/myynti", {
+                state: { tapahtuma: tapahtuma }
+            })}>Myy lippuja</Button>
         </Card>
 
-);
+
+
+    );
 }
 
 export default Tapahtumakortti;
