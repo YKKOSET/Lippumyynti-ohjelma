@@ -1,3 +1,5 @@
+import { useOutletContext } from 'react-router';
+
 import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -196,7 +198,18 @@ const nimiTapahtumasta = (t) => t?.nimi ?? t?.nimi_ ?? t?.name ?? null;
 // Myynti: "Myy lippu" lisää lipun myyntilistaan.
 // "Suorita maksu" merkitsee liput ostetuiksi ja luo niistä yhden ostotapahtuman.
 // ---------------------------------------------------------------
-function TicketSales({ tapahtumat = [], lataa = false, virhe = '', onMaksu }) {
+function TicketSales({ onMaksu }) {
+
+    //vastaanottaa menuvalikon kautta tiedot
+    const {
+        tapahtumat = [],
+        liput = [],
+        lataa = false,
+        virhe = '',
+        navigoituTapahtuma = null
+    } = useOutletContext();
+
+
     const [haetutLiput, setHaetutLiput] = useState({}); // { 'tapahtumaId-esityskertaId': [liput] }
     const [lataaLiput, setLataaLiput] = useState(false);
     const [liputVirhe, setLiputVirhe] = useState('');
@@ -216,6 +229,14 @@ function TicketSales({ tapahtumat = [], lataa = false, virhe = '', onMaksu }) {
     // Haku: tyhjä valinta = kaikki
     const [valittuTapahtuma, setValittuTapahtuma] = useState(''); // tapahtuman id
     const [valittuEsitys, setValittuEsitys] = useState('');       // ryhmän avain (tapahtumaId-esityskertaId)
+
+    //aseta pudotusvalikkoon navigoinnin mukana tulleen tapahtuman tiedot
+    useEffect(() => {
+    if (!navigoituTapahtuma?.id) return;
+
+    setValittuTapahtuma(String(navigoituTapahtuma.id));
+    setValittuEsitys('');
+}, [navigoituTapahtuma?.id]);
 
     // Haetaan liput jokaiselle esityskerralle
     useEffect(() => {
