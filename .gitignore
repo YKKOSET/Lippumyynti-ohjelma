@@ -42,3 +42,8 @@ build/
 log.html
 report.html
 output.xml
+record_keyword.html
+results
+
+playwright-log.txt
+
