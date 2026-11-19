@@ -69,6 +69,7 @@ function Etusivu() {
                 alignItems: 'center',
                 gap: 1,
                 mb: 3,
+                mt: '7px',
             }}>
                 <SearchIcon fontSize="medium" />
                 <TextField

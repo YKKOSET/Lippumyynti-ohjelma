@@ -13,6 +13,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CheckIcon from '@mui/icons-material/Check';
 
+import '@fontsource/redaction';
 
 // OSOITE: vaihda omaksi (tapahtumat samasta osoitteesta kuin Tapahtumakortin tiedot)
 const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
@@ -108,7 +109,7 @@ function Menuvalikko() {
 
       <MenuItem onClick={menuClose} component={Link} to='/myynti'>
         <ListItemIcon><PointOfSaleIcon/></ListItemIcon>
-        <ListItemText primary='Myy lippuja' />
+        <ListItemText primary='Myynti' />
       </MenuItem>
 
     </Menu>;
@@ -117,15 +118,15 @@ function Menuvalikko() {
   return (
     <>
       <Box sx={{
-        top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1
+        top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1, bgcolor: 'secondary.main', color: 'secondary.contrastText'
       }}>
-        <IconButton onClick={menuOpen}>
+        <IconButton onClick={menuOpen} sx={{ color: 'inherit' }}>
           <MenuIcon />
         </IconButton>
 
         {menu}
 
-        <Typography>TicketGuru</Typography>
+        <Typography sx={{ fontFamily: '"Redaction", serif'}}>TicketGuru</Typography>
       </Box>
 
       <Box>

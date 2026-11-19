@@ -69,10 +69,21 @@ function Tapahtumakortti({ tapahtuma }) {
                             Ei tulevia esityskertoja.
                         </Typography>
                     )}
+                <Button onClick={() => navigate("/myynti", {
+                    state: { tapahtuma: tapahtuma }
+                })} sx={{
+                    mt: 2,
+                    backgroundColor: 'secondary.main',
+                    color: 'secondary.contrastText',
+                    borderRadius: 2,
+                    padding: '3px 16px',
+                    color: 'secondary.contrastText',
+                    '&:hover': {
+                        backgroundColor: 'secondary.dark',
+                    },
+                }}>Myy lippuja</Button>
             </CardContent>
-            <Button onClick={() => navigate("/myynti", {
-                state: { tapahtuma: tapahtuma }
-            })}>Myy lippuja</Button>
+
         </Card>
 
 
