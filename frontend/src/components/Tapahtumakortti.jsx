@@ -4,6 +4,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import CardActionArea from '@mui/material/CardActionArea';
 
 import { useNavigate } from 'react-router';
 import { Button } from '@mui/material';
@@ -13,82 +14,86 @@ function Tapahtumakortti({ tapahtuma }) {
     const navigate = useNavigate();
 
     return (
-        <Card sx={{ maxWidth: 200 }}>
-
-            <CardContent>
-
-                <Typography>
-                    {tapahtuma.nimi}
-                </Typography>
-
-                <Typography>
-                    Järjestäjä
-                </Typography>
-
-                <Typography>
-                    {tapahtuma.jarjestaja?.etunimi}{' '}
-                    {tapahtuma.jarjestaja?.sukunimi}
-                </Typography>
-
-                <Typography>
-                    {tapahtuma.jarjestaja?.sahkoposti}
-                </Typography>
-
-                <Typography>
-                    Esityskerrat ({tapahtuma.esityskerrat?.length ?? 0})
-                </Typography>
-
-                {tapahtuma.esityskerrat?.map((esitys) => (
-                    <Box key={esitys.id}>
+        <>
+            <Card sx={{ maxWidth: 200 }}>
+                <CardActionArea
+                    onClick={() => navigate(`/tapahtumat/${tapahtuma.id}`)}
+                >
+                    <CardContent>
 
                         <Typography>
-                            {esitys.alkuaika}
+                            {tapahtuma.nimi}
                         </Typography>
 
                         <Typography>
-                            {esitys.paikka?.nimi}
+                            Järjestäjä
                         </Typography>
 
                         <Typography>
-                            {esitys.paikka?.katuosoite}
+                            {tapahtuma.jarjestaja?.etunimi}{' '}
+                            {tapahtuma.jarjestaja?.sukunimi}
                         </Typography>
 
                         <Typography>
-                            {esitys.paikka?.postinumero?.postinumero}{' '}
+                            {tapahtuma.jarjestaja?.sahkoposti}
                         </Typography>
 
                         <Typography>
-                            Enimmäisosallistujat: {esitys.maxOsallistujat}
+                            Esityskerrat ({tapahtuma.esityskerrat?.length ?? 0})
                         </Typography>
-                    </Box>
-                ))}
 
-                {(!tapahtuma.esityskerrat ||
-                    tapahtuma.esityskerrat.length === 0) && (
-                        <Typography>
-                            Ei tulevia esityskertoja.
-                        </Typography>
-                    )}
-                <Button onClick={() => navigate("/myynti", {
-                    state: { tapahtuma: tapahtuma }
-                })} sx={{
-                    mt: 2,
-                    backgroundColor: 'secondary.main',
-                    color: 'secondary.contrastText',
-                    borderRadius: 2,
-                    padding: '3px 16px',
-                    color: 'secondary.contrastText',
-                    '&:hover': {
-                        backgroundColor: 'secondary.dark',
-                    },
-                }}>Myy lippuja</Button>
-            </CardContent>
+                        {tapahtuma.esityskerrat?.map((esitys) => (
+                            <Box key={esitys.id}>
 
-        </Card>
+                                <Typography>
+                                    {esitys.alkuaika}
+                                </Typography>
 
+                                <Typography>
+                                    {esitys.paikka?.nimi}
+                                </Typography>
 
+                                <Typography>
+                                    {esitys.paikka?.katuosoite}
+                                </Typography>
 
+                                <Typography>
+                                    {esitys.paikka?.postinumero?.postinumero}{' '}
+                                </Typography>
+
+                                <Typography>
+                                    Enimmäisosallistujat: {esitys.maxOsallistujat}
+                                </Typography>
+                            </Box>
+                        ))}
+
+                        {(!tapahtuma.esityskerrat ||
+                            tapahtuma.esityskerrat.length === 0) && (
+                                <Typography>
+                                    Ei tulevia esityskertoja.
+                                </Typography>
+                            )}
+                    </CardContent>
+                </CardActionArea>
+                <CardContent>
+                    <Button onClick={() => navigate("/myynti", {
+                        state: { tapahtuma: tapahtuma }
+                    })} sx={{
+                        mt: 2,
+                        backgroundColor: 'secondary.main',
+                        color: 'secondary.contrastText',
+                        borderRadius: 2,
+                        padding: '3px 16px',
+                        color: 'secondary.contrastText',
+                        '&:hover': {
+                            backgroundColor: 'secondary.dark',
+                        },
+                    }}>Myy lippuja</Button>
+                </CardContent >
+            </Card >
+        </>
     );
+
 }
 
-export default Tapahtumakortti;
+            export default Tapahtumakortti;
