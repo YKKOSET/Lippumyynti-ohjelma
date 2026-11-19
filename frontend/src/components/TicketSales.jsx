@@ -203,7 +203,6 @@ function TicketSales({ onMaksu }) {
     //vastaanottaa menuvalikon kautta tiedot
     const {
         tapahtumat = [],
-        liput = [],
         lataa = false,
         virhe = '',
         navigoituTapahtuma = null
