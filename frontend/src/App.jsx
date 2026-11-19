@@ -1,13 +1,13 @@
 import CssBaseline from '@mui/material/CssBaseline'
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router';
 import Typography from '@mui/material/Typography'
 
-import LippuCard from './components/LippuCard'
-import Hakupalkki from './components/Hakupalkki'
 import TicketSales from './components/TicketSales'
 import Menuvalikko from './components/Menuvalikko'
-import Lippukortti from './components/Lippukortti'
-import Lippulistaus from './components/lippulistaus'
+import Etusivu from './components/Etusivu';
+import Tarkistus from './components/Tarkistus';
+import Virhe from './components/Virhe';
 
 import './App.css'
 
@@ -19,8 +19,18 @@ function App() {
   return (
     <>
       <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Menuvalikko />} >
+            <Route index element={<Etusivu />} />
+            <Route path='myynti' element={<TicketSales />} />
+            <Route path='/tarkistus' element={<Tarkistus />} />
+            <Route path='/virhe' element={<Virhe />} />
+            <Route path='*' element={<Virhe virhe='Kyseistä sivua ei ole' />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
 
-       <Menuvalikko />
 
     </>
   )
