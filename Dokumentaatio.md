@@ -158,12 +158,62 @@ tietoa ja keskittyä siihen.  -->
 
 ## Käyttöliittymä
 
+### Alkuperäinen suunnitelma
+
 ![Käyttöliittymäkaavio](./kuvat/kayttoliittyma.png)
 
 
-<!-- Esitetään käyttöliittymän tärkeimmät (vain ne!) näkymät sekä niiden väliset siirtymät käyttöliittymäkaaviona. 
+### Toteutunut käyttöliittymä
 
-Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -->
+Käyttöliittymä on toteutettu React-sovelluksena (Vite, React Router ja MUI-komponenttikirjasto). Se kommunikoi taustajärjestelmän REST-rajapinnan kanssa Basic-tunnistautumisella. Tunnukset luetaan ympäristömuuttujista `VITE_LIPPU_USER` ja `VITE_LIPPU_PASSWORD`.
+
+Näkymät ja siirtymät:
+
+```text
+              Valikko (hampurilaisvalikko, TicketGuru)
+                  │
+   ┌──────────────┼───────────────┐
+   ▼              ▼               ▼
+Etusivu (/)   Myynti (/myynti)  Tarkistus (/tarkistus)
+   │              ▲
+   └─ "Myy lippuja" (valitun tapahtuman tiedot mukana)
+
+Tuntematon osoite → Virhe-näkymä
+```
+
+#### Valikko
+
+Sivun yläreunassa on palkki, jossa on TicketGuru-nimi ja hampurilaisvalikko. Valikosta pääsee näkymiin Etusivu, Tarkistus ja Myynti.
+
+#### Etusivu (`/`)
+
+Etusivulla listataan kaikki tapahtumat tapahtumakortteina. Kortissa näkyvät tapahtuman tulevat esityskerrat (aika, paikka, osoite, postinumero ja enimmäisosallistujamäärä). Hakukenttä "Hae tapahtumaa nimellä" suodattaa tapahtumia kirjoittaessa. Jos hakua vastaavia tapahtumia ei ole, näytetään teksti "Ei tapahtumia.".
+
+#### Myynti (`/myynti`)
+
+Myyntinäkymä lippujen myyntiin:
+
+- Tapahtuma- ja Esityskerta-pudotusvalikoilla rajataan näytettävät liput. "Poista valinnat" -painike tyhjentää rajaukset.
+- Esityskerran liput näytetään lippukortteina (aika, tapahtuman nimi, lipputyyppi, sarjanumero ja hinta). Lipun voi lisätä myyntilistalle "Myy lippu" -painikkeella. Jo myyty lippu on merkitty myydyksi eikä sitä voi lisätä uudelleen.
+- Yhteenvetorivillä näkyy rajauksen mukainen myytyjen lippujen määrä, kokonaismäärä ja myyntisumma.
+- Myyntilista kokoaa valitut liput ja näyttää yhteissumman. Lipun voi poistaa listalta "Poista"-painikkeella.
+- "Suorita maksu" merkitsee listan liput ostetuiksi (`PATCH /api/liput/{id}/ostettu`) ja tallentaa ostotapahtuman (`POST /api/ostot`), johon tulee yksi ostorivi jokaista lippua kohden. Jos jonkin lipun käsittely epäonnistuu, se jää myyntilistalle ja virhe näytetään.
+- "Osto historia" avaa ikkunan, jossa listataan tehdyt ostotapahtumat (`GET /api/ostot`).
+- "Palauta kaikki ostamattomiksi" palauttaa kaikki ladatut ostetut liput takaisin myyntiin (`PATCH /api/liput/{id}/ostamaton`). Toiminto kysyy ensin vahvistuksen.
+
+#### Tarkistus (`/tarkistus`)
+
+Tarkistusnäkymä on lipuntarkastajan työkalu ovella. Käyttäjä kirjoittaa tai liittää lipun sarjanumeron (36 merkkiä, UUID) hakukenttään, ja haku tehdään automaattisesti, kun sarjanumero on täysi.
+
+- Jos lippu löytyy, kentän alle tulee teksti "Lippu löytyi!" ja näkyviin lippukortti (esitysaika, sarjanumero, lipputyyppi ja hinta).
+- Jos lippua ei löydy, näytetään "Lippua ei löytynyt". Muu virhe näytetään tekstillä "Haku epäonnistui".
+- Lippukortin kytkimellä lippu merkitään käytetyksi (punainen, KÄYTETTY) tai käyttämättömäksi (vihreä, KÄYTTÄMÄTÖN). Muutos tallentuu heti rajapintaan (`PATCH /api/liput/{id}/kaytetty` tai `/kayttamaton`) ja onnistumisesta näytetään ilmoitus "Tiedot tallennettu!". Jos tallennus epäonnistuu, kytkin palautuu edelliseen tilaan ja näytetään virheilmoitus.
+
+#### Virhenäkymä
+
+Jos käyttäjä siirtyy osoitteeseen, jota ei ole, näytetään teksti "Kyseistä sivua ei ole".
+
+-----
 
 ## Tietokanta
 
@@ -182,15 +232,16 @@ Jos näkymän tarkoitus ei ole itsestään selvä, se pitää kuvata lyhyesti. -
 > Nimi | varchar(100) |  Lipputyypin nimi (Peruslippu, lastenlippu..)
 
 > ### _Lippu_
-> _Lippu-taulu sisältää liput esityskerroille. Yhdellä lipulla voi olla vain yksi esityskerta, mutta esityskerralla on monta erilaista lippua._
+> _Lippu-taulu sisältää liput esityskerroille. Yhdellä lipulla voi olla vain yksi esityskerta, mutta esityskerralla on monta erilaista lippua. Lipun tunniste on järjestelmän generoima UUID, joka toimii lipun sarjanumerona ja QR-koodin sisältönä._
 >
 > Kenttä | Tyyppi | Kuvaus
 > ------ | ------ | ------
-> Tarknro_id | int PK (identity) | Lipun tarkistusnumero
-> Esitys_id | int FK |  Mihin esitykseen lippu on
-> Tyyppi_id | int FK | Mikä lipputyyppi lippu on
+> Tark_nro | UUID PK (generoitu) | Lipun yksilöivä sarjanumero (tarkistusnumero)
+> Esityskerta_id | int FK |  Mihin esityskertaan lippu on
+> Lipputyyppi_id | int FK | Mikä lipputyyppi lippu on
 > Hinta | numeric(10,2) | Lipun kappalehinta
-> Kaytetty | boolean (default false) | Onko lippu käytetty
+> Kaytetty | boolean | Onko lippu käytetty (merkitään tarkastuksessa)
+> Ostettu | boolean | Onko lippu myyty asiakkaalle
 
 > ### _Ostorivi_
 > _Ostorivi-taulu yhdistää ostetut liput ja ostotapahtuman. Ostorivillä voi olla monta eri lippua, mutta yhdellä lipulla voi olla vain yksi ostorivi, eli ostokerta._
@@ -535,6 +586,95 @@ GET /ticketguru/tapahtumat/1
 ```
 
 ---
+
+## Hae tapahtuman kaikki liput
+
+Palauttaa tapahtuman kaikki liput ryhmiteltynä esityskerroittain. Vastaus on JSON-olio, jossa avaimena on esityskerran id ja arvona kyseisen esityskerran liput.
+
+### Pyyntö
+
+```http
+GET /api/tapahtumat/{id}/liput
+```
+
+### Esimerkki
+
+```http
+GET /api/tapahtumat/2/liput
+```
+
+### Esimerkkivastaus
+
+```json
+{
+  "4": [
+    {
+      "id": "5bc04a8b-c2ee-4337-95f8-ac9846fe3151",
+      "hinta": 10,
+      "kaytetty": false,
+      "ostettu": false,
+      "lipputyyppi": { "id_": 1, "nimi_": "Lastenlippu" },
+      "esityskerta": { "id": 4, "alkuaika": "2026-12-12T13:00:00.000+00:00", "maxOsallistujat": 100, "paikka": null }
+    }
+  ],
+  "5": []
+}
+```
+
+Jos tapahtumaa ei löydy annetulla tunnisteella, vastaus on tyhjä (`null`).
+
+### Toteutus
+
+```java
+@GetMapping("/{id}/liput")
+public Map<Long, List<Lippu>> getLiputByTapahtuma(@PathVariable Long id)
+```
+
+---
+
+## Hae esityskerran kaikki liput
+
+Palauttaa yhden tapahtuman yhden esityskerran kaikki liput listana. Käyttöliittymän myyntinäkymä hakee liput tällä rajapinnalla jokaiselle esityskerralle.
+
+### Pyyntö
+
+```http
+GET /api/tapahtumat/{tapahtumaId}/{esityskertaId}/liput
+```
+
+### Esimerkki
+
+```http
+GET /api/tapahtumat/2/4/liput
+```
+
+### Esimerkkivastaus
+
+```json
+[
+  {
+    "id": "5bc04a8b-c2ee-4337-95f8-ac9846fe3151",
+    "hinta": 10,
+    "kaytetty": false,
+    "ostettu": false,
+    "lipputyyppi": { "id_": 1, "nimi_": "Lastenlippu" },
+    "esityskerta": { "id": 4, "alkuaika": "2026-12-12T13:00:00.000+00:00", "maxOsallistujat": 100, "paikka": null }
+  }
+]
+```
+
+Lippu palautetaan vain, jos esityskerta kuuluu annettuun tapahtumaan. Muussa tapauksessa palautetaan tyhjä lista.
+
+### Toteutus
+
+```java
+@GetMapping("/{tapahtumaId}/{esityskertaId}/liput")
+public List<Lippu> getLiputByEsityskerta(
+        @PathVariable Long tapahtumaId,
+        @PathVariable Long esityskertaId)
+```
+
+-----
 
 ## Päivitä tapahtuma
 
@@ -1098,12 +1238,57 @@ REST-rajapintaan kirjaudutaan Postmanissa seuraavasti:
 
 ## Testaus
 
-<!-- Tässä kohdin selvitetään, miten ohjelmiston oikea toiminta varmistetaan
-testaamalla projektin aikana: millaisia testauksia tehdään ja missä vaiheessa.
-Testauksen tarkemmat sisällöt ja testisuoritusten tulosten raportit kirjataan
-erillisiin dokumentteihin.
+Ohjelmiston toimintaa varmistetaan JUnit-yksikkötesteillä, integraatiotesteillä ja Robot Frameworkilla toteutetuilla automaatiotesteillä.
 
-Tänne kirjataan myös lopuksi järjestelmän tunnetut ongelmat, joita ei ole korjattu. -->
+### JUnit-testit (yksikkötestit)
+
+Yksikkötestien tekoon käytetään JUnitia ja Mock -olioita. Testit sijaitsevat kansiossa `lipunmyynti/src/test/java/lipunmyynti/ticketguru/`.
+
+| Testiluokka | Mitä testataan | Testejä |
+|---|---|---|
+| `LippuRestControllerTest` | Lippujen haku, käytetyksi/käyttämättömäksi ja ostetuksi/ostamattomaksi merkitseminen, QR-koodin haku ja lipun poisto. Jokaisesta toiminnosta testataan onnistunut tapaus ja tilanne, jossa lippua ei löydy (404). | 15 |
+| `TapahtumaRestControllerTest` | Tapahtumien haku, lisäys, muokkaus ja poisto, järjestäjän tapahtumat sekä tapahtuman ja esityskerran liput | 8 |
+| `OstoRestControllerTest` | Ostojen haku, lisäys, muokkaus ja poisto sekä virhetilanteet | 7 |
+| `JarjestajaRestControllerTest` | Järjestäjien haku, lisäys ja muokkaus | 5 |
+| `ModelValidationTest` | Mallien validointisäännöt (mm. lipun hinta ja pakolliset kentät, esityskerran alkuaika, oston summa, asiakkaan sähköposti ja puhelinnumero) | 28 |
+| `QrCodeServiceTest` | QR-koodin muodostus PNG-kuvaksi ja kuvan koko | 2 |
+| `UserDetailsServiceIMPLTest` | Käyttäjän lataus ja rooli oikeutena | 2 (1 ohitettu) |
+
+### Integraatiotestit
+
+Integraatiotestit käynnistävät oikean Spring-kontekstin ja käyttävät H2-muistitietokantaa sekä MockMvc:tä. Niillä varmistetaan, että kontrollerit, repositoryt, validointi ja tietoturvasäännöt toimivat yhdessä. Jokainen testi ajetaan transaktiossa, joten testidata ei jää tietokantaan.
+
+| Testiluokka | Mitä testataan | Testejä |
+|---|---|---|
+| `ApiIntegrationTest` | Pääsynhallinta eri rooleilla (anonyymi, USER, MYYJA, ADMIN), tapahtuman ja järjestäjän luonti (201 Created), lipun merkitseminen käytetyksi ja käyttämättömäksi, QR-koodin haku, lipun poisto (204) ja 404-tilanteet | 15 (2 ohitettu) |
+| `RestSecurityTest` | ADMIN näkee tapahtumat, USER ei näe järjestäjiä (403) | 2 |
+| `RepositorySmokeTest` | Kaikki repositoryt latautuvat | 1 |
+| `TicketguruApplicationTests` | Spring-konteksti käynnistyy | 1 |
+
+Testit käyttävät omia asetuksia (`src/test/resources/application.properties`), joissa tietokantana on H2. Paikallista PostgreSQL-tietokantaa ei siis tarvita.
+
+JUnit- ja integraatiotestit ajetaan kansiossa `lipunmyynti`:
+
+```bash
+./mvnw test
+```
+
+### Automaatiotestit (Robot Framework)
+
+Automaatiotestit on toteutettu Robot Frameworkilla kansiossa `robot-tests/`. Testit vaativat käynnissä olevan sovelluksen. Asennus- ja ajo-ohjeet ovat tiedostossa `robot-tests/README.md`.
+
+| Testitiedosto | Mitä testataan | Testejä |
+|---|---|---|
+| `backend/tapahtumat.robot` | Rajapinta: `GET /api/tapahtumat` palauttaa 200 (RequestsLibrary) | 1 |
+| `frontend/etusivu.robot` | Etusivun avautuminen, tapahtumakortit, tapahtumahaku (ei tuloksia, yksi tulos, kaksi tulosta) ja siirtyminen myyntiin "Myy lippuja" -painikkeella | 8 |
+| `frontend/myynti.robot` | Myyntisivun avautuminen ja elementit (pudotusvalikot, Myyntilista, painikkeet), esityskertojen ja lipputyyppien näkyminen sekä lipun lisääminen myyntilistalle ja poistaminen | 11 |
+| `frontend/tarkistus.robot` | Tarkistussivun avautuminen, lipun haku sarjanumerolla, lipun tietojen näkyminen sekä lipun käytetyksi merkitseminen ja palauttaminen kytkimellä | 6 |
+
+Frontend-testit käyttävät Robot Framework Browser -kirjastoa (Playwright). Ne avaavat selaimen osoitteeseen `http://localhost:5173`, joten sekä frontend että backend täytyy käynnistää ennen testien ajoa.
+
+### Tunnetut ongelmat
+
+---
 
 ## Asennustiedot
 
