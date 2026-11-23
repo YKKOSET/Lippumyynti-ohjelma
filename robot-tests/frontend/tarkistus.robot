@@ -183,7 +183,7 @@ Lipun tilan vaihtaminen ja palauttaminen
     Should Be Equal    ${lopputila}    ${False}
 
 
-# 19.11.2026 klo 23.15 testit menevät läpi
+# 23.11.2026 13:00 testit menevät läpi
 
 
 
