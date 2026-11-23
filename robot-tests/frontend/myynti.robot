@@ -180,7 +180,7 @@ Teatterin Aave lipun lisääminen ja poistaminen myyntilistalta
     ...    disabled
 
 
-# Testit menivät läpi 19.11.2026 klo 21:50
+# Testit menivät läpi 23.11.2026 13:00
 
 
 
