@@ -18,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 // ---------------------------------------------------------------
 // OSOITE: vaihda omaksi
 // ---------------------------------------------------------------
-const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
+const API_BASE = 'http://localhost:8080/api';
 
 // Esityskerran liput: {tapahtumaId}/{esityskertaId}/liput (muuta alkuosa tarvittaessa)
 const lippuUrl = (tapahtumaId, esityskertaId) =>
