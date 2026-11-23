@@ -12,12 +12,6 @@ const API_URL = 'http://localhost:8080/api/tapahtumat';
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
-// Etusivu: listaa tapahtumat (tapahtumakortit). 
-// Yläoikealla hakuominaisuus tapahtumille: suurennuslasi ja textfield (hae tapahtumaa nimellä).
-
-// Jatkoa varten: Eritellään kortin tiedot niin, että kun klikkaa tapahtumakorttia (linkki on koko kortti), 
-// näkyy tapahtuman tarkemmat tiedot, kuten esityskerrat sekä myy lippu-linkkipainike, 
-// jota klikattaessa aukeaa myy lippuja-lomake (pohjatietona ko. tapahtuma).
 
 function Etusivu() {
 
@@ -79,8 +73,8 @@ function Etusivu() {
                 />
             </Box>
 
-            <Box>
-                <Typography>Tapahtumat</Typography>
+            <Box sx={{ml: 3}}>
+                <Typography variant="h3" align="left" sx={{mb: 1}}>Tapahtumat</Typography>
 
                 <Box
                     sx={{
