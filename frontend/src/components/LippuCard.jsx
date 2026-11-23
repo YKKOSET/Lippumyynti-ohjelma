@@ -10,7 +10,7 @@ import Popup from './Popup';
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
-const API_URL = 'https://lippumyynti-ohjelma.onrender.com/api/liput';
+const API_URL = 'http://localhost:8080/api/liput';
 
 // Värit samat kuin TicketSales-kortissa
 const INK = '#14213d';

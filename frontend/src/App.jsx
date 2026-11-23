@@ -14,13 +14,12 @@ import Virhe from './components/Virhe';
 import './App.css'
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { grey } from '@mui/material/colors';
 
 const teema = createTheme({
   palette: {
     primary: { main: '#BDC4A7', dark: '#4c4e43', light: '#cad0b9', contrastText: '#141313' },
     secondary: { main: '#2F2F2F', dark: '#131313', light: '#282828', contrastText: '#F3F9D2' },
-    text: { primary: '#141313', secondary: '#F3F9D2', accent:'#93827F'},
+    text: { primary: '#141313', secondary: '#F3F9D2', accent: '#93827F' },
   },
   typography: {
 
@@ -39,11 +38,17 @@ const teema = createTheme({
         }),
       },
     },
+
+    //tapahtumakortti ottaa määritykset täältä korttiin ja kortin sisällä olevaan painikkeeseen
     MuiCard: {
       styleOverrides: {
         root: ({ theme }) => ({
           backgroundColor: theme.palette.primary.light,
           color: theme.palette.text.primary,
+          maxWidth: 200,
+          minHeight: 140,
+          display: 'flex',
+          flexDirection: 'column',
         }),
       },
     },
@@ -53,6 +58,22 @@ const teema = createTheme({
           color: theme.palette.text.primary,
         }),
       },
+
+      variants: [
+        {
+          props: { variant: 'contained', color: 'secondary' },
+          style: ({ theme }) => ({
+            marginTop: theme.spacing(2),
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.contrastText,
+            borderRadius: 2,
+            padding: '3px 16px',
+            '&:hover': {
+              backgroundColor: theme.palette.secondary.dark,
+            },
+          }),
+        },
+      ],
     },
 
 

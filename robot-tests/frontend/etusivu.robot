@@ -23,7 +23,7 @@ Tapahtumakortteja näytetään
     Odota etusivun latautumista
 
     ${maara}=    Get Element Count
-    ...    role=button[name="Myy lippuja"]
+    ...    text=Näytä lisää
 
     Should Be True    ${maara} > 0
 
@@ -102,6 +102,8 @@ Tapahtuman haku, myy lippu ja siirry myyntiin
     Fill Text    
     ...    role=textbox[name*="Hae tapahtumaa nimellä"i]    
     ...    aave
+    Click
+    ...    text=Näytä lisää
     Click    
     ...    role=button[name*="Myy lippuja"i]
     # Tarkistetaan siirtyminen myynti-sivulle
