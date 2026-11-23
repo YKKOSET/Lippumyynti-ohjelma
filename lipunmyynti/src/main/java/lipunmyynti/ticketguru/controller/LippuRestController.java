@@ -5,11 +5,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.zxing.WriterException;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +27,7 @@ import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 import lipunmyynti.ticketguru.service.QrCodeService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,11 +42,15 @@ public class LippuRestController {
     // injection: repository to restcontroller
     private final LippuRepository lippuRepository;
     private final QrCodeService qrCodeService;
+    private final EsityskertaRepository esityskertaRepository;
+    private final LipputyyppiRepository lipputyyppiRepository;
 
     public LippuRestController(LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository,
             LipputyyppiRepository lipputyyppiRepository, QrCodeService qrCodeService) {
         this.lippuRepository = lippuRepository;
         this.qrCodeService = qrCodeService;
+        this.esityskertaRepository = esityskertaRepository;
+        this.lipputyyppiRepository = lipputyyppiRepository;
     }
 
     @GetMapping
@@ -139,6 +149,53 @@ public class LippuRestController {
 
     lippuRepository.deleteById(id);
     return ResponseEntity.noContent().build();
+}
+
+@PostMapping
+public ResponseEntity<Lippu> luoLippu(@Valid @RequestBody Lippu lippu) {
+    Optional<Esityskerta> esityskerta = esityskertaRepository.findById(lippu.getEsityskerta().getId());
+    Optional<Lipputyyppi> lipputyyppi = lipputyyppiRepository.findById(lippu.getLipputyyppi().getId_());
+
+    if (esityskerta.isEmpty() || lipputyyppi.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    lippu.setId(null); // varmistaa, että luodaan uusi eikä päivitetä vanhaa
+    lippu.setEsityskerta(esityskerta.get());
+    lippu.setLipputyyppi(lipputyyppi.get());
+
+    Lippu tallennettu = lippuRepository.save(lippu);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(tallennettu.getId())
+            .toUri();
+
+    return ResponseEntity.created(location).body(tallennettu);
+}
+
+@PutMapping("/{id}")
+public ResponseEntity<Lippu> paivitaLippu(@PathVariable UUID id, @Valid @RequestBody Lippu uusiLippu) {
+    Optional<Lippu> olemassaOleva = lippuRepository.findById(id);
+    if (olemassaOleva.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Optional<Esityskerta> esityskerta = esityskertaRepository.findById(uusiLippu.getEsityskerta().getId());
+    Optional<Lipputyyppi> lipputyyppi = lipputyyppiRepository.findById(uusiLippu.getLipputyyppi().getId_());
+
+    if (esityskerta.isEmpty() || lipputyyppi.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    Lippu lippu = olemassaOleva.get();
+    lippu.setHinta(uusiLippu.getHinta());
+    lippu.setKaytetty(uusiLippu.isKaytetty());
+    lippu.setOstettu(uusiLippu.isOstettu());
+    lippu.setEsityskerta(esityskerta.get());
+    lippu.setLipputyyppi(lipputyyppi.get());
+
+    return ResponseEntity.ok(lippuRepository.save(lippu));
 }
     
 }
