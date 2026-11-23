@@ -120,7 +120,7 @@ Keikkakeitaan esityskerta löytyy pudotusvalikosta
 
     # Tarkistetaan, että haluttu esityskerta löytyy listalta
     Wait For Elements State
-    ...    role=option[name*="su 1.10. klo 13.00"]
+    ...    role=option[name*="su 1.10. klo 10.00"]
     ...    visible
     ...    timeout=15s
 
