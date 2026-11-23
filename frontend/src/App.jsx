@@ -13,7 +13,7 @@ import Virhe from './components/Virhe';
 
 import './App.css'
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, darken } from '@mui/material/styles';
 
 const teema = createTheme({
   palette: {
@@ -49,7 +49,30 @@ const teema = createTheme({
           minHeight: 140,
           display: 'flex',
           flexDirection: 'column',
+          borderRadius: 5,
+          border: `1px solid ${darken(theme.palette.primary.main, 0.15)}`,
+          boxShadow: theme.shadows[4],
+          '&:hover': {
+            boxShadow: theme.shadows[8],
+          },
         }),
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          flexGrow: 1, //estää hypähdyksen lisätietoja avattaessa
+        },
+      },
+    },
+    MuiCardActionArea: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          flexGrow: 1,
+        },
       },
     },
     MuiButton: {
@@ -57,8 +80,7 @@ const teema = createTheme({
         root: ({ theme }) => ({
           color: theme.palette.text.primary,
         }),
-      },
-
+      }, //koskee vain painikkeita joissa variant="contained" color="secondary"
       variants: [
         {
           props: { variant: 'contained', color: 'secondary' },
@@ -75,6 +97,7 @@ const teema = createTheme({
         },
       ],
     },
+
 
 
   }
