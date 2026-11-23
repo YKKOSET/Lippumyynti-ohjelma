@@ -25,7 +25,7 @@ function Tapahtumakortti({ tapahtuma }) {
 
 
     return (
-        <Card sx={{ maxWidth: 200 }} >
+        <Card>
             <CardActionArea onClick={avaaKortti}>
                 <CardContent>
 
@@ -59,19 +59,9 @@ function Tapahtumakortti({ tapahtuma }) {
                         )}
 
 
-                        <Button onClick={() => navigate("/myynti", {
+                        <Button variant="contained" color="secondary" onClick={() => navigate("/myynti", {
                             state: { tapahtuma: tapahtuma }
-                        })} sx={{
-                            mt: 2,
-                            backgroundColor: 'secondary.main',
-                            color: 'secondary.contrastText',
-                            borderRadius: 2,
-                            padding: '3px 16px',
-                            color: 'secondary.contrastText',
-                            '&:hover': {
-                                backgroundColor: 'secondary.dark',
-                            },
-                        }}>Myy lippuja</Button>
+                        })}>Myy lippuja</Button>
 
                     </Collapse>
 

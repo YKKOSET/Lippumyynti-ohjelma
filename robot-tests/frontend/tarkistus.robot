@@ -5,7 +5,7 @@ Test Setup       Avaa sovellus
 Test Teardown    Sulje selain
 
 *** Variables ***
-${LIPUN_SARJANUMERO}    fb2f277a-2318-40f8-a021-4741a3f55a97
+${LIPUN_SARJANUMERO}    00220000-0000-3230-0070-000000000003
 
 
 *** Test Cases ***
@@ -43,6 +43,30 @@ Lipun haku onnistuu
     ...    visible
     ...    timeout=30s
 
+Lipun haku väärin muotoilulla sarjanumerolla ei onnistu
+    Avaa tarkistussivu
+
+    Fill Text
+    ...    role=textbox[name="Sarjanumero"]
+    ...    a12frg65zds65fxg1c6xv586095dfgaedr465ujhyt
+
+    Wait For Elements State
+    ...    text=Haku epäonnistui
+    ...    visible
+    ...    timeout=30s
+
+Lipun haku väärällä sarjanumerolla ei onnistu
+    Avaa tarkistussivu
+
+    Fill Text
+    ...    role=textbox[name="Sarjanumero"]
+    ...    00220000-0000-3230-1170-000000000088
+
+    Wait For Elements State
+    ...    text=Lippua ei löytynyt
+    ...    visible
+    ...    timeout=30s
+
 
 Lipun tiedot näkyvät haun jälkeen
     Avaa tarkistussivu
@@ -61,7 +85,7 @@ Lipun tiedot näkyvät haun jälkeen
     ...    visible
 
     Wait For Elements State
-    ...    text=Eläkeläinen
+    ...    text=Normaalihintainen
     ...    visible
     ...    timeout=10s
 
@@ -159,7 +183,7 @@ Lipun tilan vaihtaminen ja palauttaminen
     Should Be Equal    ${lopputila}    ${False}
 
 
-# 19.11.2026 klo 23.15 testit menevät läpi
+# 23.11.2026 13:00 testit menevät läpi
 
 
 

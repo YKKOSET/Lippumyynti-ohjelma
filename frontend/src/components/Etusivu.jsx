@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tapahtumakortti from './Tapahtumakortti';
 
-const API_URL = 'https://lippumyynti-ohjelma.onrender.com/api/tapahtumat';
+const API_URL = 'http://localhost:8080/api/tapahtumat';
 
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;

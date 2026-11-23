@@ -23,7 +23,7 @@ Tapahtumakortteja näytetään
     Odota etusivun latautumista
 
     ${maara}=    Get Element Count
-    ...    role=button[name="Myy lippuja"]
+    ...    text=Näytä lisää
 
     Should Be True    ${maara} > 0
 
@@ -102,8 +102,10 @@ Tapahtuman haku, myy lippu ja siirry myyntiin
     Fill Text    
     ...    role=textbox[name*="Hae tapahtumaa nimellä"i]    
     ...    aave
-    Click    
-    ...    role=button[name*="Myy lippuja"i]
+    Click
+    ...    text=Näytä lisää
+    Click
+    ...    button.MuiButton-contained:has-text("Myy lippuja")
     # Tarkistetaan siirtyminen myynti-sivulle
     ${url}=    Get Url
     Should Contain    ${url}    /myynti
@@ -121,7 +123,7 @@ Tapahtuman haku, myy lippu ja siirry myyntiin
     Wait Until Keyword Succeeds    10s    200ms    Tarkista valittu tapahtuma
     
 
-# 19.11.2026 21:15 nämä testit menevät läpi
+# 23.11.2026 13:00 nämä testit menevät läpi
 
 
 

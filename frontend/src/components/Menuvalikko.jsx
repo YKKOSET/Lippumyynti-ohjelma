@@ -16,7 +16,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import '@fontsource/redaction';
 
 // OSOITE: vaihda omaksi (tapahtumat samasta osoitteesta kuin Tapahtumakortin tiedot)
-const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
+const API_BASE = 'http://localhost:8080/api';
 
 const URLS = {
   tapahtumat: `${API_BASE}/tapahtumat`,
