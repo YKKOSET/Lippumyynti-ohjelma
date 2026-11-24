@@ -99,4 +99,12 @@ public class Esityskerta {
         return liput;
     }
 
+    public long vapaitaPaikkoja(long varatut) {
+        return Math.max(0, maxOsallistujat - varatut);
+    }
+
+    public boolean onTilaa(long varatut, int haluttu) {
+        return haluttu > 0 && haluttu <= vapaitaPaikkoja(varatut);
+    }
+
 }

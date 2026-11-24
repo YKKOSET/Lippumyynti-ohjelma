@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import lipunmyynti.ticketguru.exception.LiianVahanLippujaException;
+
 @RestControllerAdvice
 
 public class GlobalExceptionHandler {
@@ -41,5 +43,14 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body("-404 Resource not found-");
+    }
+
+    // 409: esityskerralla ei ole tarpeeksi vapaita paikkoja
+    @ExceptionHandler(LiianVahanLippujaException.class)
+    public ResponseEntity<String> handleLiianVahanLippuja(LiianVahanLippujaException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(ex.getMessage());
     }
 }
