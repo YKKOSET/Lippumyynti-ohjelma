@@ -29,10 +29,10 @@ public class Lippu {
     private BigDecimal hinta;
 
     @Column(name = "kaytetty")
-    private boolean kaytetty = false;
+    private boolean kaytetty; //= false; Annetaan arvo uutta luotaessa
 
     @Column(name = "ostettu")
-    private boolean ostettu = true;
+    private boolean ostettu; //= true; Annetaan arvo uutta luotaessa
 
     @NotNull(message = "Lipputyyppi on pakollinen")
     @ManyToOne
