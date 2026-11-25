@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, Outlet, useLocation } from 'react-router';
 
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,14 +8,16 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import CheckIcon from '@mui/icons-material/Check';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
-import Hakupalkki from './Hakupalkki';
-import TicketSales from './TicketSales';
-import Etusivu from './Etusivu';
-import Tarkistus from './Tarkistus';
+import '@fontsource/redaction';
 
 // OSOITE: vaihda omaksi (tapahtumat samasta osoitteesta kuin Tapahtumakortin tiedot)
-const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
+const API_BASE = 'http://localhost:8080/api';
 
 const URLS = {
   tapahtumat: `${API_BASE}/tapahtumat`,
@@ -37,10 +40,11 @@ const haeJson = async (url, signal) => {
 };
 
 
-function Menuvalikko() {
 
+
+function Menuvalikko() {
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [value, setValue] = useState(0);
 
   // Lipunmyynnin tiedot
   const [tapahtumat, setTapahtumat] = useState([]);
@@ -48,9 +52,12 @@ function Menuvalikko() {
   const [lataa, setLataa] = useState(false);
   const [virhe, setVirhe] = useState('');
 
+  // Navigoinnin mukana tullut tapahtuma
+    const navigoituTapahtuma = location.state?.tapahtuma ?? null;
+
   // Haetaan tapahtumat ja liput, kun "Myy lippuja" -näkymä avataan
   useEffect(() => {
-    if (value !== 2) return;
+    if (location.pathname !== '/myynti') return;
 
     const ac = new AbortController();
 
@@ -75,7 +82,7 @@ function Menuvalikko() {
 
     haeKaikki();
     return () => ac.abort();
-  }, [value]);
+  }, [location.pathname]);
 
   //menu auki:
   const menuOpen = (e) => {
@@ -87,25 +94,29 @@ function Menuvalikko() {
     setAnchorEl(null);
   }
 
-  //vaihda näkymä:
-  const handleChange = (val) => {
-    setValue(val);
-    menuClose();
-  }
 
   const menu =
-    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => menuClose()}>
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={menuClose}>
 
-      <MenuItem onClick={() => handleChange(0)}>
+      <MenuItem onClick={menuClose} component={Link} to='/'>
+        <ListItemIcon><HomeIcon/></ListItemIcon>
         <ListItemText primary='Etusivu' />
       </MenuItem>
 
-      <MenuItem onClick={() => handleChange(1)}>
+      <MenuItem onClick={menuClose} component={Link} to='/tarkistus'>
+        <ListItemIcon><CheckIcon/></ListItemIcon>
         <ListItemText primary='Tarkistus' />
       </MenuItem>
 
-      <MenuItem onClick={() => handleChange(2)}>
-        <ListItemText primary='Myy lippuja' />
+      <MenuItem onClick={menuClose} component={Link} to='/myynti'>
+        <ListItemIcon><PointOfSaleIcon/></ListItemIcon>
+        <ListItemText primary='Myynti' />
+      </MenuItem>
+
+      
+      <MenuItem onClick={menuClose} component={Link} to='/lisaatapahtuma'>
+        <ListItemIcon><EditCalendarIcon/></ListItemIcon>
+        <ListItemText primary='Lisää tapahtuma' />
       </MenuItem>
 
     </Menu>;
@@ -113,30 +124,23 @@ function Menuvalikko() {
 
   return (
     <>
-      <Box sx={{ top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1 }}>
-        <IconButton onClick={(e) => menuOpen(e)}>
+      <Box sx={{
+        top: 0, left: 0, display: 'flex', alignItems: 'center', p: 1, bgcolor: 'secondary.main', color: 'secondary.contrastText'
+      }}>
+        <IconButton onClick={menuOpen} sx={{ color: 'inherit' }}>
           <MenuIcon />
         </IconButton>
+
         {menu}
-        <Typography>TicketGuru</Typography>
+
+        <Typography sx={{ fontFamily: '"Redaction", serif'}}>TicketGuru</Typography>
       </Box>
+
       <Box>
-        {value === 0 && <Etusivu />}
-        {value === 1 && <Tarkistus />}
-        {value === 2 && (
-          <TicketSales
-            tapahtumat={tapahtumat}
-            liput={liput}
-            lataa={lataa}
-            virhe={virhe}
-          />
-        )}
-
+        <Outlet context={{ tapahtumat, liput, lataa, virhe, navigoituTapahtuma }} />
       </Box>
-
     </>
   );
-
 }
 
 export default Menuvalikko;

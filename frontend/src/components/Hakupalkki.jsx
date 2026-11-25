@@ -31,7 +31,7 @@ export default function Hakupalkki({ onLoytyi }) {
       try {
         const res = await fetch(
         /*`https://lippupalvelu-uons.onrender.com/ticket/ticket?koodi=${encodeURIComponent(arvo)}`*/
-        `https://lippumyynti-ohjelma.onrender.com/api/liput/${encodeURIComponent(arvo)}`,
+        `http://localhost:8080/api/liput/${encodeURIComponent(arvo)}`,
         {
             signal: controller.signal,
             headers: {

@@ -13,5 +13,11 @@ public interface LippuRepository extends JpaRepository<Lippu, UUID>
     List<Lippu> findByEsityskerta(Esityskerta esityskerta);
     List<Lippu> findByEsityskertaTapahtumaId(Long tapahtumaId);
     List<Lippu> findByEsityskertaIdAndEsityskertaTapahtumaId(Long esityskertaId, Long tapahtumaId);
+
+    // Kaikki esityskerralle luodut liput (myös ostamattomat)
+    long countByEsityskertaId(Long esityskertaId);
+
+    // Esityskerralla jo myydyt liput (ostettu = true)
+    long countByEsityskertaIdAndOstettuTrue(Long esityskertaId);
 }
 

@@ -5,11 +5,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.zxing.WriterException;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +25,10 @@ import lipunmyynti.ticketguru.repository.EsityskertaRepository;
 import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 import lipunmyynti.ticketguru.service.QrCodeService;
+import lipunmyynti.ticketguru.exception.LiianVahanLippujaException;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,16 +43,44 @@ public class LippuRestController {
     // injection: repository to restcontroller
     private final LippuRepository lippuRepository;
     private final QrCodeService qrCodeService;
+    private final EsityskertaRepository esityskertaRepository;
+    private final LipputyyppiRepository lipputyyppiRepository;
 
     public LippuRestController(LippuRepository lippuRepository, EsityskertaRepository esityskertaRepository,
             LipputyyppiRepository lipputyyppiRepository, QrCodeService qrCodeService) {
         this.lippuRepository = lippuRepository;
         this.qrCodeService = qrCodeService;
+        this.esityskertaRepository = esityskertaRepository;
+        this.lipputyyppiRepository = lipputyyppiRepository;
     }
 
     @GetMapping
     public List<Lippu> getAllLiput() {
         return lippuRepository.findAll();
+    }
+
+    // Vastaus saatavuustarkistukseen: saatavilla = boolean, jota frontti käyttää
+    public record Saatavuus(boolean saatavilla, long jaljella, String viesti) {
+    }
+
+    // Tarkistaa, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
+    // Esim. GET /api/liput/saatavuus?esityskertaId=1&maara=5
+    // Jos jäljellä on 2 ja halutaan 5, palautetaan heti saatavilla=false (ei osittaista myyntiä).
+    @GetMapping("/saatavuus")
+    public ResponseEntity<Saatavuus> tarkistaSaatavuus(@RequestParam Long esityskertaId,
+            @RequestParam(defaultValue = "1") int maara) {
+        Optional<Esityskerta> esityskerta = esityskertaRepository.findById(esityskertaId);
+        if (esityskerta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        long myydyt = lippuRepository.countByEsityskertaIdAndOstettuTrue(esityskertaId);
+        long jaljella = esityskerta.get().vapaitaPaikkoja(myydyt);
+
+        if (esityskerta.get().onTilaa(myydyt, maara)) {
+            return ResponseEntity.ok(new Saatavuus(true, jaljella, "OK"));
+        }
+        return ResponseEntity.ok(new Saatavuus(false, jaljella, "Lippuja ei ole tarpeeksi"));
     }
 
     //Search lippu with id
@@ -96,6 +131,17 @@ public class LippuRestController {
         }
 
         Lippu lippu = kasiteltavaLippu.get();
+
+        // Myyntiä ei sallita, jos esityskerran paikat on jo myyty loppuun.
+        // (Jo ostetuksi merkittyä lippua ei lasketa uudelleen.)
+        Esityskerta esityskerta = lippu.getEsityskerta();
+        if (!lippu.isOstettu() && esityskerta != null) {
+            long myydyt = lippuRepository.countByEsityskertaIdAndOstettuTrue(esityskerta.getId());
+            if (!esityskerta.onTilaa(myydyt, 1)) {
+                throw new LiianVahanLippujaException();
+            }
+        }
+
         lippu.setOstettu(true);
         lippuRepository.save(lippu);
         return ResponseEntity.ok(lippu);
@@ -140,5 +186,58 @@ public class LippuRestController {
     lippuRepository.deleteById(id);
     return ResponseEntity.noContent().build();
 }
-    
+
+@PostMapping
+public ResponseEntity<Lippu> luoLippu(@Valid @RequestBody Lippu lippu) {
+    Optional<Esityskerta> esityskerta = esityskertaRepository.findById(lippu.getEsityskerta().getId());
+    Optional<Lipputyyppi> lipputyyppi = lipputyyppiRepository.findById(lippu.getLipputyyppi().getId_());
+
+    if (esityskerta.isEmpty() || lipputyyppi.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    // Lippuja ei voi luoda enempää kuin esityskerralle on määritelty (maxOsallistujat)
+    long luodut = lippuRepository.countByEsityskertaId(esityskerta.get().getId());
+    if (!esityskerta.get().onTilaa(luodut, 1)) {
+        throw new LiianVahanLippujaException();
+    }
+
+    lippu.setId(null); // varmistaa, että luodaan uusi eikä päivitetä vanhaa
+    lippu.setEsityskerta(esityskerta.get());
+    lippu.setLipputyyppi(lipputyyppi.get());
+
+    Lippu tallennettu = lippuRepository.save(lippu);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(tallennettu.getId())
+            .toUri();
+
+    return ResponseEntity.created(location).body(tallennettu);
 }
+
+@PutMapping("/{id}")
+public ResponseEntity<Lippu> paivitaLippu(@PathVariable UUID id, @Valid @RequestBody Lippu uusiLippu) {
+    Optional<Lippu> olemassaOleva = lippuRepository.findById(id);
+    if (olemassaOleva.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Optional<Esityskerta> esityskerta = esityskertaRepository.findById(uusiLippu.getEsityskerta().getId());
+    Optional<Lipputyyppi> lipputyyppi = lipputyyppiRepository.findById(uusiLippu.getLipputyyppi().getId_());
+
+    if (esityskerta.isEmpty() || lipputyyppi.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    Lippu lippu = olemassaOleva.get();
+    lippu.setHinta(uusiLippu.getHinta());
+    lippu.setKaytetty(uusiLippu.isKaytetty());
+    lippu.setOstettu(uusiLippu.isOstettu());
+    lippu.setEsityskerta(esityskerta.get());
+    lippu.setLipputyyppi(lipputyyppi.get());
+
+    return ResponseEntity.ok(lippuRepository.save(lippu));
+}
+    
+}

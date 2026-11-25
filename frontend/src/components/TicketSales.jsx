@@ -1,3 +1,5 @@
+import { useOutletContext } from 'react-router';
+
 import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -16,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 // ---------------------------------------------------------------
 // OSOITE: vaihda omaksi
 // ---------------------------------------------------------------
-const API_BASE = 'https://lippumyynti-ohjelma.onrender.com/api';
+const API_BASE = 'http://localhost:8080/api';
 
 // Esityskerran liput: {tapahtumaId}/{esityskertaId}/liput (muuta alkuosa tarvittaessa)
 const lippuUrl = (tapahtumaId, esityskertaId) =>
@@ -67,6 +69,17 @@ const merkitseOstetuksi = async (lippuId) => {
         throw new Error(`Lipun ${lippuId} merkitseminen epäonnistui (${res.status}): ${vastaus || res.statusText}`);
     }
     return true;
+};
+
+// Kysyy backendiltä, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
+// Palauttaa { saatavilla: boolean, jaljella: number, viesti: string }.
+const tarkistaSaatavuus = async (esityskertaId, maara) => {
+    const res = await fetch(
+        `${API_BASE}/liput/saatavuus?esityskertaId=${esityskertaId}&maara=${maara}`,
+        { headers: { 'Authorization': basicAuth() } }
+    );
+    if (!res.ok) throw new Error(`Saatavuuden tarkistus epäonnistui (${res.status})`);
+    return res.json();
 };
 
 // ---------------------------------------------------------------
@@ -196,7 +209,17 @@ const nimiTapahtumasta = (t) => t?.nimi ?? t?.nimi_ ?? t?.name ?? null;
 // Myynti: "Myy lippu" lisää lipun myyntilistaan.
 // "Suorita maksu" merkitsee liput ostetuiksi ja luo niistä yhden ostotapahtuman.
 // ---------------------------------------------------------------
-function TicketSales({ tapahtumat = [], lataa = false, virhe = '', onMaksu }) {
+function TicketSales({ onMaksu }) {
+
+    //vastaanottaa menuvalikon kautta tiedot
+    const {
+        tapahtumat = [],
+        lataa = false,
+        virhe = '',
+        navigoituTapahtuma = null
+    } = useOutletContext();
+
+
     const [haetutLiput, setHaetutLiput] = useState({}); // { 'tapahtumaId-esityskertaId': [liput] }
     const [lataaLiput, setLataaLiput] = useState(false);
     const [liputVirhe, setLiputVirhe] = useState('');
@@ -216,6 +239,14 @@ function TicketSales({ tapahtumat = [], lataa = false, virhe = '', onMaksu }) {
     // Haku: tyhjä valinta = kaikki
     const [valittuTapahtuma, setValittuTapahtuma] = useState(''); // tapahtuman id
     const [valittuEsitys, setValittuEsitys] = useState('');       // ryhmän avain (tapahtumaId-esityskertaId)
+
+    //aseta pudotusvalikkoon navigoinnin mukana tulleen tapahtuman tiedot
+    useEffect(() => {
+    if (!navigoituTapahtuma?.id) return;
+
+    setValittuTapahtuma(String(navigoituTapahtuma.id));
+    setValittuEsitys('');
+}, [navigoituTapahtuma?.id]);
 
     // Haetaan liput jokaiselle esityskerralle
     useEffect(() => {
@@ -427,6 +458,29 @@ function TicketSales({ tapahtumat = [], lataa = false, virhe = '', onMaksu }) {
         setMaksuVirhe('');
 
         try {
+            // Tarkistetaan ensin jokaisen esityskerran saatavuus. Jos yhdelläkin esityskerralla
+            // ei ole tarpeeksi vapaita paikkoja, mitään ei myydä (ei osittaista myyntiä).
+            const maaratEsityksittain = {};
+            myytavat.forEach((l) => {
+                maaratEsityksittain[l.esityskertaId] = (maaratEsityksittain[l.esityskertaId] ?? 0) + 1;
+            });
+            for (const [esityskertaId, maara] of Object.entries(maaratEsityksittain)) {
+                let saatavuus;
+                try {
+                    saatavuus = await tarkistaSaatavuus(esityskertaId, maara);
+                } catch (err) {
+                    console.error('Saatavuuden tarkistus epäonnistui:', err);
+                    setMaksuVirhe(err.message || 'Saatavuuden tarkistus epäonnistui.');
+                    return;
+                }
+                if (!saatavuus.saatavilla) {
+                    setMaksuVirhe(
+                        `Lippuja ei ole tarpeeksi: valitsit ${maara} lippua, mutta paikkoja on jäljellä ${saatavuus.jaljella}.`
+                    );
+                    return; // finally-lohko nollaa kasitellaan-tilan
+                }
+            }
+
             for (const lippu of myytavat) {
                 try {
                     await merkitseOstetuksi(lippu.id);
@@ -940,4 +994,4 @@ const tyylit = {
 
     // Vahvistus myynnin jälkeen
     viesti: { fontSize: '.8rem', color: VARIT.onnistui, textAlign: 'center', minHeight: '1.2em' },
-};
+};
