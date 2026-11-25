@@ -25,6 +25,7 @@ import lipunmyynti.ticketguru.repository.EsityskertaRepository;
 import lipunmyynti.ticketguru.repository.LippuRepository;
 import lipunmyynti.ticketguru.repository.LipputyyppiRepository;
 import lipunmyynti.ticketguru.service.QrCodeService;
+import lipunmyynti.ticketguru.exception.LiianVahanLippujaException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,6 +57,30 @@ public class LippuRestController {
     @GetMapping
     public List<Lippu> getAllLiput() {
         return lippuRepository.findAll();
+    }
+
+    // Vastaus saatavuustarkistukseen: saatavilla = boolean, jota frontti käyttää
+    public record Saatavuus(boolean saatavilla, long jaljella, String viesti) {
+    }
+
+    // Tarkistaa, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
+    // Esim. GET /api/liput/saatavuus?esityskertaId=1&maara=5
+    // Jos jäljellä on 2 ja halutaan 5, palautetaan heti saatavilla=false (ei osittaista myyntiä).
+    @GetMapping("/saatavuus")
+    public ResponseEntity<Saatavuus> tarkistaSaatavuus(@RequestParam Long esityskertaId,
+            @RequestParam(defaultValue = "1") int maara) {
+        Optional<Esityskerta> esityskerta = esityskertaRepository.findById(esityskertaId);
+        if (esityskerta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        long myydyt = lippuRepository.countByEsityskertaIdAndOstettuTrue(esityskertaId);
+        long jaljella = esityskerta.get().vapaitaPaikkoja(myydyt);
+
+        if (esityskerta.get().onTilaa(myydyt, maara)) {
+            return ResponseEntity.ok(new Saatavuus(true, jaljella, "OK"));
+        }
+        return ResponseEntity.ok(new Saatavuus(false, jaljella, "Lippuja ei ole tarpeeksi"));
     }
 
     //Search lippu with id
@@ -106,6 +131,17 @@ public class LippuRestController {
         }
 
         Lippu lippu = kasiteltavaLippu.get();
+
+        // Myyntiä ei sallita, jos esityskerran paikat on jo myyty loppuun.
+        // (Jo ostetuksi merkittyä lippua ei lasketa uudelleen.)
+        Esityskerta esityskerta = lippu.getEsityskerta();
+        if (!lippu.isOstettu() && esityskerta != null) {
+            long myydyt = lippuRepository.countByEsityskertaIdAndOstettuTrue(esityskerta.getId());
+            if (!esityskerta.onTilaa(myydyt, 1)) {
+                throw new LiianVahanLippujaException();
+            }
+        }
+
         lippu.setOstettu(true);
         lippuRepository.save(lippu);
         return ResponseEntity.ok(lippu);
@@ -160,6 +196,12 @@ public ResponseEntity<Lippu> luoLippu(@Valid @RequestBody Lippu lippu) {
         return ResponseEntity.badRequest().build();
     }
 
+    // Lippuja ei voi luoda enempää kuin esityskerralle on määritelty (maxOsallistujat)
+    long luodut = lippuRepository.countByEsityskertaId(esityskerta.get().getId());
+    if (!esityskerta.get().onTilaa(luodut, 1)) {
+        throw new LiianVahanLippujaException();
+    }
+
     lippu.setId(null); // varmistaa, että luodaan uusi eikä päivitetä vanhaa
     lippu.setEsityskerta(esityskerta.get());
     lippu.setLipputyyppi(lipputyyppi.get());
@@ -198,4 +240,4 @@ public ResponseEntity<Lippu> paivitaLippu(@PathVariable UUID id, @Valid @Request
     return ResponseEntity.ok(lippuRepository.save(lippu));
 }
     
-}
+}

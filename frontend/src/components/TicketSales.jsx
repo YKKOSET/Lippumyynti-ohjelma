@@ -71,6 +71,17 @@ const merkitseOstetuksi = async (lippuId) => {
     return true;
 };
 
+// Kysyy backendiltä, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
+// Palauttaa { saatavilla: boolean, jaljella: number, viesti: string }.
+const tarkistaSaatavuus = async (esityskertaId, maara) => {
+    const res = await fetch(
+        `${API_BASE}/liput/saatavuus?esityskertaId=${esityskertaId}&maara=${maara}`,
+        { headers: { 'Authorization': basicAuth() } }
+    );
+    if (!res.ok) throw new Error(`Saatavuuden tarkistus epäonnistui (${res.status})`);
+    return res.json();
+};
+
 // ---------------------------------------------------------------
 // ODOTETTU DATA
 // props.tapahtumat: [{ id, nimi, esityskerrat: [{ id, alkuaika, maxOsallistujat, paikka: { nimi } }] }]
@@ -447,6 +458,29 @@ function TicketSales({ onMaksu }) {
         setMaksuVirhe('');
 
         try {
+            // Tarkistetaan ensin jokaisen esityskerran saatavuus. Jos yhdelläkin esityskerralla
+            // ei ole tarpeeksi vapaita paikkoja, mitään ei myydä (ei osittaista myyntiä).
+            const maaratEsityksittain = {};
+            myytavat.forEach((l) => {
+                maaratEsityksittain[l.esityskertaId] = (maaratEsityksittain[l.esityskertaId] ?? 0) + 1;
+            });
+            for (const [esityskertaId, maara] of Object.entries(maaratEsityksittain)) {
+                let saatavuus;
+                try {
+                    saatavuus = await tarkistaSaatavuus(esityskertaId, maara);
+                } catch (err) {
+                    console.error('Saatavuuden tarkistus epäonnistui:', err);
+                    setMaksuVirhe(err.message || 'Saatavuuden tarkistus epäonnistui.');
+                    return;
+                }
+                if (!saatavuus.saatavilla) {
+                    setMaksuVirhe(
+                        `Lippuja ei ole tarpeeksi: valitsit ${maara} lippua, mutta paikkoja on jäljellä ${saatavuus.jaljella}.`
+                    );
+                    return; // finally-lohko nollaa kasitellaan-tilan
+                }
+            }
+
             for (const lippu of myytavat) {
                 try {
                     await merkitseOstetuksi(lippu.id);
@@ -960,4 +994,4 @@ const tyylit = {
 
     // Vahvistus myynnin jälkeen
     viesti: { fontSize: '.8rem', color: VARIT.onnistui, textAlign: 'center', minHeight: '1.2em' },
-};
+};
