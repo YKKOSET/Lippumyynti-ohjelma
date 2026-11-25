@@ -12,6 +12,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CheckIcon from '@mui/icons-material/Check';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 import '@fontsource/redaction';
 
@@ -110,6 +111,12 @@ function Menuvalikko() {
       <MenuItem onClick={menuClose} component={Link} to='/myynti'>
         <ListItemIcon><PointOfSaleIcon/></ListItemIcon>
         <ListItemText primary='Myynti' />
+      </MenuItem>
+
+      
+      <MenuItem onClick={menuClose} component={Link} to='/lisaatapahtuma'>
+        <ListItemIcon><EditCalendarIcon/></ListItemIcon>
+        <ListItemText primary='Lisää tapahtuma' />
       </MenuItem>
 
     </Menu>;

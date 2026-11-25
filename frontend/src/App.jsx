@@ -10,6 +10,7 @@ import Menuvalikko from './components/Menuvalikko'
 import Etusivu from './components/Etusivu';
 import Tarkistus from './components/Tarkistus';
 import Virhe from './components/Virhe';
+import Tapahtumalomake from './components/Tapahtumalomake';
 
 import './App.css'
 
@@ -118,6 +119,7 @@ function App() {
               <Route index element={<Etusivu />} />
               <Route path='myynti' element={<TicketSales />} />
               <Route path='/tarkistus' element={<Tarkistus />} />
+              <Route path='/lisaatapahtuma' element={<Tapahtumalomake />} />
               <Route path='/virhe' element={<Virhe />} />
               <Route path='*' element={<Virhe virhe='Kyseistä sivua ei ole' />} />
             </Route>
