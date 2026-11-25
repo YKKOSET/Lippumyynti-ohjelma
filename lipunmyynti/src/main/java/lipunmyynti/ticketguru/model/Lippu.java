@@ -49,6 +49,14 @@ public class Lippu {
     public Lippu() {
     }
 
+    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta) {
+        this.esityskerta = esityskerta;
+        this.lipputyyppi = lipputyyppi;
+        this.hinta = hinta;
+        this.kaytetty = false;
+        this.ostettu = true;
+    }
+
     public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty, boolean ostettu) {
         this.esityskerta = esityskerta;
         this.lipputyyppi = lipputyyppi;
