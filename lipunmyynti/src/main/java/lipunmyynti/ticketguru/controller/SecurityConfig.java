@@ -25,7 +25,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/h2-console/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/liput/*").hasAnyAuthority("ADMIN", "USER", "MYYJA")
                                                 .requestMatchers(HttpMethod.PATCH, "/api/liput/*").hasAnyAuthority("ADMIN", "USER", "MYYJA")
-                                                .requestMatchers(HttpMethod.GET, "/api/tapahtumat").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/tapahtumat/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/ostot").hasAnyAuthority("ADMIN", "USER")
                                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAuthority("ADMIN")
                                                 .requestMatchers(HttpMethod.POST, "/api/**")

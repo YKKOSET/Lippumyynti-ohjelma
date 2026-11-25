@@ -22,21 +22,19 @@ function Tapahtumakortti({ tapahtuma }) {
                     <CardContent>
 
                         <Typography>
-                            {tapahtuma.nimi}
+                            {tapahtuma.nimi} <br/>
                         </Typography>
 
-                        <Typography>
-                            Järjestäjä
-                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline' }}>
+                            <Typography fontWeight="bold">
+                                Järjestäjä:
+                            </Typography>
 
-                        <Typography>
-                            {tapahtuma.jarjestaja?.etunimi}{' '}
-                            {tapahtuma.jarjestaja?.sukunimi}
-                        </Typography>
-
-                        <Typography>
-                            {tapahtuma.jarjestaja?.sahkoposti}
-                        </Typography>
+                            <Typography>
+                                {tapahtuma.jarjestaja?.etunimi}{' '}
+                                {tapahtuma.jarjestaja?.sukunimi}
+                            </Typography>
+                        </Box>
 
                         <Typography>
                             Esityskerrat ({tapahtuma.esityskerrat?.length ?? 0})
@@ -96,4 +94,4 @@ function Tapahtumakortti({ tapahtuma }) {
 
 }
 
-            export default Tapahtumakortti;
+export default Tapahtumakortti;
