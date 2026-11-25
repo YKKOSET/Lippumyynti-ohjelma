@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import Typography from '@mui/material/Typography'
 
 import TicketSales from './components/TicketSales'
+import OstoHistoria from './components/OstoHistoria'
 import Menuvalikko from './components/Menuvalikko'
 import Etusivu from './components/Etusivu';
 import Tarkistus from './components/Tarkistus';
@@ -104,7 +105,6 @@ const teema = createTheme({
   }
 });
 
-
 function App() {
 
   const [haettuLippu, setHaettuLippu] = useState(null);
@@ -118,6 +118,7 @@ function App() {
             <Route path='/' element={<Menuvalikko />} >
               <Route index element={<Etusivu />} />
               <Route path='myynti' element={<TicketSales />} />
+              <Route path='ostohistoria' element={<OstoHistoria />} />
               <Route path='/tarkistus' element={<Tarkistus />} />
               <Route path='/lisaatapahtuma' element={<Tapahtumalomake />} />
               <Route path='/virhe' element={<Virhe />} />
