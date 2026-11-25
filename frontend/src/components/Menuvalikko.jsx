@@ -11,6 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CheckIcon from '@mui/icons-material/Check';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
@@ -23,6 +24,9 @@ const URLS = {
   tapahtumat: `${API_BASE}/tapahtumat`,
   liput: `${API_BASE}/liput`,
 };
+
+// Sivut, joille tapahtumat ja liput haetaan
+const TIETOJA_TARVITSEVAT_SIVUT = ['/myynti', '/ostohistoria'];
 
 // Basic-tunnistautuminen (poista, jos API ei vaadi sitä)
 const username = import.meta.env.VITE_LIPPU_USER;
@@ -53,11 +57,11 @@ function Menuvalikko() {
   const [virhe, setVirhe] = useState('');
 
   // Navigoinnin mukana tullut tapahtuma
-    const navigoituTapahtuma = location.state?.tapahtuma ?? null;
+  const navigoituTapahtuma = location.state?.tapahtuma ?? null;
 
-  // Haetaan tapahtumat ja liput, kun "Myy lippuja" -näkymä avataan
+  // Haetaan tapahtumat ja liput, kun "Myynti" tai "Osto historia" -näkymä avataan
   useEffect(() => {
-    if (location.pathname !== '/myynti') return;
+    if (!TIETOJA_TARVITSEVAT_SIVUT.includes(location.pathname)) return;
 
     const ac = new AbortController();
 
@@ -113,7 +117,11 @@ function Menuvalikko() {
         <ListItemText primary='Myynti' />
       </MenuItem>
 
-      
+      <MenuItem onClick={menuClose} component={Link} to='/ostohistoria'>
+        <ListItemIcon><ReceiptLongIcon/></ListItemIcon>
+        <ListItemText primary='Osto historia' />
+      </MenuItem>
+
       <MenuItem onClick={menuClose} component={Link} to='/lisaatapahtuma'>
         <ListItemIcon><EditCalendarIcon/></ListItemIcon>
         <ListItemText primary='Lisää tapahtuma' />
