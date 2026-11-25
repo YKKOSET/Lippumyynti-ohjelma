@@ -100,6 +100,7 @@ function OstoHistoria() {
                     throw new Error(`Ostojen haku epäonnistui (${res.status}): ${vastaus || res.statusText}`);
                 }
                 const data = vastaus ? JSON.parse(vastaus) : [];
+                console.log('[OSTOT] GET /api/ostot raakavastaus:', data);
                 setOstot(Array.isArray(data) ? data : []);
             } catch (err) {
                 if (err.name === 'AbortError') return;

@@ -15,16 +15,122 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 // ---------------------------------------------------------------
+// OSOITE: vaihda omaksi
+// ---------------------------------------------------------------
+const API_BASE = 'http://localhost:8080/api';
+
+// ---------------------------------------------------------------
+// TESTITILA
+// true  = ei lähetetä mitään kantaan (ei lippujen eikä oston luontia).
+//         Pyynnöt tulostetaan selaimen consoleen (F12 → Console).
+// false = normaali toiminta, tiedot tallennetaan kantaan.
+// Saatavuustarkistus (GET) tehdään testitilassakin, koska se vain lukee.
+// ---------------------------------------------------------------
+const TESTITILA = false;
+
+// UUDEN LIPUN LUONTI: POST /api/liput (LippuRestController.luoLippu)
+// Palvelin tarkistaa esityskerran ja lipputyypin, asettaa id:n ja palauttaa luodun lipun (201).
+const luoLippuUrl = `${API_BASE}/liput`;
+
+// Uuden lipun sisältö. Lipputyyppi viitataan id:llä (kentän nimi on id_).
+// ostettu: true, koska lippu luodaan myyntitilanteessa heti ostetuksi.
+const luoLippuPayload = (esityskertaId, tyyppi) => ({
+    hinta: tyyppi.hinta,
+    ostettu: true,
+    kaytetty: false,
+    esityskerta: { id: esityskertaId },
+    lipputyyppi: { id_: tyyppi.dbId },
+});
+
+// Basic-tunnistautuminen (poista, jos API ei vaadi sitä)
+const username = import.meta.env.VITE_LIPPU_USER;
+const password = import.meta.env.VITE_LIPPU_PASSWORD;
+
+// Muodostaa Basic-tunnistautumisen myös ääkkösiä sisältäville tunnuksille.
+const basicAuth = () => {
+    const tunnukset = `${username ?? ''}:${password ?? ''}`;
+    const tavut = new TextEncoder().encode(tunnukset);
+    let binaari = '';
+    tavut.forEach((tavu) => { binaari += String.fromCharCode(tavu); });
+    return `Basic ${btoa(binaari)}`;
+};
+
+// Luo uuden (ostetuksi merkityn) lipun esityskerralle ja palauttaa palvelimen luoman lipun.
+const luoLippu = async (esityskertaId, tyyppi) => {
+    if (TESTITILA) {
+        const body = luoLippuPayload(esityskertaId, tyyppi);
+        console.log(`[TESTI] POST ${luoLippuUrl} (lipun luonti, EI lähetetty)`, body);
+        console.log('[TESTI] JSON-runko:', JSON.stringify(body));
+        return { id: `TESTI-${crypto.randomUUID()}`, ...body };
+    }
+    const res = await fetch(luoLippuUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': basicAuth(),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(luoLippuPayload(esityskertaId, tyyppi)),
+    });
+    const vastaus = await res.text();
+    if (!res.ok) {
+        throw new Error(`Lipun luonti epäonnistui (${res.status}): ${vastaus || res.statusText}`);
+    }
+    let lippu = null;
+    try { lippu = vastaus ? JSON.parse(vastaus) : null; } catch { /* ei JSON */ }
+    if (lippu?.id === undefined || lippu?.id === null) {
+        throw new Error('Lipun luonti epäonnistui: vastauksessa ei ollut lipun id:tä.');
+    }
+    return lippu;
+};
+
+// Tallentaa oston: POST /api/ostot. Testitilassa vain tulostaa sisällön consoleen.
+const lahetaOsto = async (ostoPayload) => {
+    if (TESTITILA) {
+        console.log(`[TESTI] POST ${API_BASE}/ostot (EI lähetetty)`, ostoPayload);
+        console.log('[TESTI] JSON-runko:', JSON.stringify(ostoPayload, null, 2));
+        return;
+    }
+    const res = await fetch(`${API_BASE}/ostot`, {
+        method: 'POST',
+        headers: {
+            'Authorization': basicAuth(),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(ostoPayload),
+    });
+    const vastaus = await res.text();
+    if (!res.ok) {
+        throw new Error(`Ostotapahtuman tallennus epäonnistui (${res.status}): ${vastaus || res.statusText}`);
+    }
+};
+
+// Kysyy backendiltä, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
+// Palauttaa { saatavilla: boolean, jaljella: number, viesti: string }.
+const tarkistaSaatavuus = async (esityskertaId, maara) => {
+    const res = await fetch(
+        `${API_BASE}/liput/saatavuus?esityskertaId=${esityskertaId}&maara=${maara}`,
+        { headers: { 'Authorization': basicAuth() } }
+    );
+    if (!res.ok) throw new Error(`Saatavuuden tarkistus epäonnistui (${res.status})`);
+    const data = await res.json();
+    if (TESTITILA) console.log(`[TESTI] Saatavuus esityskerta ${esityskertaId}, määrä ${maara}:`, data);
+    return data;
+};
+
+// ---------------------------------------------------------------
 // LIPPUTYYPIT
 // Jokaiselle esityskerralle tarjotaan nämä tyypit samassa järjestyksessä.
-// HINNAT OVAT VAIN ESIMERKKEJÄ: vaihda ne omiksi tai hae myöhemmin kannasta.
+// HINNAT OVAT VAIN ESIMERKKEJÄ: vaihda ne omiksi.
 // ---------------------------------------------------------------
 const LIPPUTYYPIT = [
-    { id: 'elakelainen', nimi: 'Eläkeläinen', hinta: 15 },
-    { id: 'opiskelija', nimi: 'Opiskelija', hinta: 15 },
-    { id: 'normaali', nimi: 'Normaalihintainen', hinta: 20 },
-    { id: 'lapsi', nimi: 'Lastenlippu', hinta: 10 },
+    { id: 'elakelainen', nimi: 'Eläkeläinen', hinta: 15, dbId: 1 },
+    { id: 'opiskelija', nimi: 'Opiskelija', hinta: 15, dbId: 2 },
+    { id: 'normaali', nimi: 'Normaalihintainen', hinta: 20, dbId: 3 },
+    { id: 'lapsi', nimi: 'Lastenlippu', hinta: 10, dbId: 4 },
 ];
+// dbId = Lipputyyppi-taulun id_ tietokannassa. TARKISTA, että ne vastaavat kantaa.
 
 // ---------------------------------------------------------------
 // ODOTETTU DATA
@@ -107,7 +213,7 @@ function LippuKortti({ tyyppi, maara, nimi, esityskerta, onLisaa, onVahenna }) {
 // KAIKKI TAPAHTUMAT: jokainen esityskerta omana ryhmänään,
 // otsikkona tapahtuman nimi. Jokaisen esityskerran alla ovat lipputyypit.
 // ---------------------------------------------------------------
-function TicketSales() {
+function TicketSales({ onMaksu }) {
 
     //vastaanottaa menuvalikon kautta tiedot
     const {
@@ -120,6 +226,8 @@ function TicketSales() {
     // { 'tapahtumaId-esityskertaId': { [lipputyyppiId]: määrä } }
     const [maarat, setMaarat] = useState({});
     const [maksuViesti, setMaksuViesti] = useState('');
+    const [maksuVirhe, setMaksuVirhe] = useState('');
+    const [kasitellaan, setKasitellaan] = useState(false); // maksu käynnissä
 
     // Haku: tyhjä valinta = kaikki
     const [valittuTapahtuma, setValittuTapahtuma] = useState(''); // tapahtuman id
@@ -179,7 +287,9 @@ function TicketSales() {
 
     // muutos: +1 tai -1. Määrä ei mene alle nollan.
     const muutaMaaraa = (avain, tyyppiId, muutos) => {
+        if (kasitellaan) return;
         setMaksuViesti('');
+        setMaksuVirhe('');
         setMaarat((vanhat) => {
             const nyt = vanhat[avain]?.[tyyppiId] ?? 0;
             return {
@@ -190,12 +300,15 @@ function TicketSales() {
     };
 
     const nollaaRivi = (avain, tyyppiId) => {
+        if (kasitellaan) return;
         setMaarat((vanhat) => ({ ...vanhat, [avain]: { ...vanhat[avain], [tyyppiId]: 0 } }));
     };
 
     const tyhjennaLista = () => {
+        if (kasitellaan) return;
         setMaarat({});
         setMaksuViesti('');
+        setMaksuVirhe('');
     };
 
     // Myyntilista: kaikki rivit, joiden määrä on yli nolla (kaikista esityskerroista,
@@ -217,18 +330,138 @@ function TicketSales() {
     const kokonaishinta = valitut.reduce((summa, r) => summa + r.summa, 0);
 
     // ---------------------------------------------------------------
-    // MAKSU: lippujen luomista kantaan ei ole vielä toteutettu.
-    // Myöhemmin tässä luodaan jokaisesta valitusta lipusta uusi lippu-tietue
-    // (esityskertaId + lipputyyppi + hinta) ja niistä yksi osto POST /api/ostot.
+    // MAKSU: luo jokaisesta valitusta lipusta uuden ostetuksi merkityn lipun kantaan
+    // ja tallentaa kaikista onnistuneista yhden oston.
+    // Liput luodaan peräkkäin, jotta palvelinta ei kuormiteta.
+    // Epäonnistuneet liput jäävät myyntilistalle, onnistuneet poistuvat siitä.
     // ---------------------------------------------------------------
-    const suoritaMaksu = () => {
-        if (valitut.length === 0) return;
-        setMaksuViesti('Lippujen luominen kantaan ei ole vielä käytössä. Mitään ei tallennettu.');
+    const suoritaMaksu = async () => {
+        if (valitut.length === 0 || kasitellaan) return;
+
+        const myytavat = valitut.map(({ ryhma, tyyppi, maara }) => ({ ryhma, tyyppi, maara }));
+
+        setKasitellaan(true);
+        setMaksuViesti('');
+        setMaksuVirhe('');
+
+        try {
+            // Tarkistetaan ensin jokaisen esityskerran saatavuus. Jos yhdelläkin esityskerralla
+            // ei ole tarpeeksi vapaita paikkoja, mitään ei luoda (ei osittaista myyntiä).
+            const maaratEsityksittain = {};
+            myytavat.forEach(({ ryhma, maara }) => {
+                const id = ryhma.esityskerta.id;
+                maaratEsityksittain[id] = (maaratEsityksittain[id] ?? 0) + maara;
+            });
+            for (const [esityskertaId, maara] of Object.entries(maaratEsityksittain)) {
+                let saatavuus;
+                try {
+                    saatavuus = await tarkistaSaatavuus(esityskertaId, maara);
+                } catch (err) {
+                    console.error('Saatavuuden tarkistus epäonnistui:', err);
+                    setMaksuVirhe(err.message || 'Saatavuuden tarkistus epäonnistui.');
+                    return;
+                }
+                if (!saatavuus.saatavilla) {
+                    setMaksuVirhe(
+                        `Lippuja ei ole tarpeeksi: valitsit ${maara} lippua, mutta paikkoja on jäljellä ${saatavuus.jaljella}.`
+                    );
+                    return; // finally-lohko nollaa kasitellaan-tilan
+                }
+            }
+
+            // Luodaan liput yksi kerrallaan
+            const luodut = [];      // { lippu, hinta, tapahtumaId, esityskertaId }
+            const jaljelle = {};    // { avain: { tyyppiId: määrä } } – epäonnistuneet
+            const virheet = [];
+
+            for (const { ryhma, tyyppi, maara } of myytavat) {
+                for (let i = 0; i < maara; i += 1) {
+                    try {
+                        const lippu = await luoLippu(ryhma.esityskerta.id, tyyppi);
+                        luodut.push({
+                            lippu,
+                            hinta: tyyppi.hinta,
+                            tapahtumaId: ryhma.tapahtuma.id,
+                            esityskertaId: ryhma.esityskerta.id,
+                        });
+                    } catch (err) {
+                        virheet.push(err.message || String(err));
+                        console.error('Lipun luonti epäonnistui:', err);
+                        jaljelle[ryhma.avain] = {
+                            ...jaljelle[ryhma.avain],
+                            [tyyppi.id]: (jaljelle[ryhma.avain]?.[tyyppi.id] ?? 0) + 1,
+                        };
+                    }
+                }
+            }
+
+            if (luodut.length > 0) {
+                const yhteensa = luodut.reduce((summa, l) => summa + Number(l.hinta || 0), 0);
+
+                // Yksi maksu muodostaa yhden Osto-tietueen ja jokaisesta lipusta
+                // oman Ostorivi-tietueen (tallennus palvelimen POST /api/ostot -käsittelijässä).
+                const ostoPayload = {
+                    ostoaika: new Date().toISOString(),
+                    kokonaishinta: Number(yhteensa.toFixed(2)),
+                    ostorivit: luodut.map(({ lippu, hinta }) => ({
+                        lippu: { id: lippu.id },
+                        myyntihinta: Number(Number(hinta || 0).toFixed(2)),
+                    })),
+                };
+
+                let ostoTallennettu = false;
+                try {
+                    await lahetaOsto(ostoPayload);
+                    ostoTallennettu = true;
+                } catch (err) {
+                    // Liput on jo luotu ostetuiksi, joten niitä ei palauteta myyntilistalle.
+                    console.error('Ostotapahtuman tallennus epäonnistui:', err);
+                    setMaksuVirhe(`Liput luotiin ostetuiksi, mutta ostotapahtuman tallennus epäonnistui. ${err.message || ''}`);
+                }
+
+                try {
+                    if (!TESTITILA) onMaksu?.({
+                        liput: luodut.map(({ lippu, hinta, tapahtumaId, esityskertaId }) => ({
+                            id: lippu.id, hinta, tapahtumaId, esityskertaId,
+                        })),
+                        yhteensa,
+                    });
+                } catch (err) {
+                    console.error('onMaksu-käsittelijä epäonnistui:', err);
+                }
+
+                setMaksuViesti(
+                    TESTITILA
+                        ? `TESTITILA: ${luodut.length} lippua ja yksi osto tulostettiin consoleen, mitään ei tallennettu.`
+                        : ostoTallennettu
+                        ? `Maksu suoritettu ja ostotapahtuma tallennettu: ${luodut.length} kpl · ${euro(yhteensa)}`
+                        : `Liput luotu: ${luodut.length} kpl · ${euro(yhteensa)}`
+                );
+            }
+
+            if (virheet.length > 0) {
+                setMaksuVirhe((vanha) =>
+                    `${virheet.length} lipun luonti epäonnistui. Epäonnistuneet liput jäivät myyntilistalle. ${virheet[0]}` +
+                    (vanha ? ` ${vanha}` : '')
+                );
+            }
+
+            // Myyntilistalle jäävät vain epäonnistuneet
+            // Testitilassa lista säilyy, jotta samaa myyntiä voi testata uudelleen
+            if (!TESTITILA) setMaarat(jaljelle);
+        } finally {
+            setKasitellaan(false);
+        }
     };
 
     return (
         <Box sx={tyylit.sivu}>
             <Typography variant="h6" sx={tyylit.otsikko}>Myy liput</Typography>
+            {TESTITILA && (
+                <Typography sx={{ ml: 3, mt: 1, textAlign: 'left', color: '#b45309', fontSize: '.85rem' }}>
+                    TESTITILA: mitään ei lähetetä kantaan, pyynnöt tulostuvat selaimen consoleen.
+                </Typography>
+            )}
 
             {/* Hakuvalikko: tapahtuma ja esityskerta. Ei valintaa = kaikki. */}
             <Box sx={tyylit.haku}>
@@ -327,21 +560,28 @@ function TicketSales() {
                         disableElevation
                         sx={tyylit.myyNappi}
                         onClick={suoritaMaksu}
-                        disabled={valitut.length === 0}
+                        disabled={valitut.length === 0 || kasitellaan}
                     >
-                        {`Suorita maksu ${valitut.length > 0 ? euro(kokonaishinta) : ''}`}
+                        {kasitellaan
+                            ? 'Käsitellään...'
+                            : `Suorita maksu ${valitut.length > 0 ? euro(kokonaishinta) : ''}`}
                     </Button>
                     <Button
                         variant="outlined"
                         size="small"
                         sx={tyylit.poistaNappi}
                         onClick={tyhjennaLista}
-                        disabled={valitut.length === 0}
+                        disabled={valitut.length === 0 || kasitellaan}
                     >
                         Tyhjennä lista
                     </Button>
 
                     <Typography sx={tyylit.viesti} role="status">{maksuViesti}</Typography>
+                    {maksuVirhe && (
+                        <Typography color="error" sx={{ fontSize: '.85rem', textAlign: 'center' }} role="alert">
+                            {maksuVirhe}
+                        </Typography>
+                    )}
                 </Card>
             </Box>
 
