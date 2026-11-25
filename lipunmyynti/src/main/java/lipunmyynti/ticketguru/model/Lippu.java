@@ -29,10 +29,10 @@ public class Lippu {
     private BigDecimal hinta;
 
     @Column(name = "kaytetty")
-    private boolean kaytetty;
+    private boolean kaytetty = false;
 
     @Column(name = "ostettu")
-    private boolean ostettu;
+    private boolean ostettu = true;
 
     @NotNull(message = "Lipputyyppi on pakollinen")
     @ManyToOne
@@ -42,22 +42,15 @@ public class Lippu {
     @NotNull(message = "Esityskerta on pakollinen")
     @ManyToOne
     @JoinColumn(name = "esityskerta_id", nullable = false)
-    @JsonIgnoreProperties({"liput"})
+    @JsonIgnoreProperties({ "liput" })
     private Esityskerta esityskerta;
 
     // constructors
     public Lippu() {
     }
 
-    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta) {
-        this.esityskerta = esityskerta;
-        this.lipputyyppi = lipputyyppi;
-        this.hinta = hinta;
-        this.kaytetty = false;
-        this.ostettu = true;
-    }
-
-    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty, boolean ostettu) {
+    public Lippu(Esityskerta esityskerta, Lipputyyppi lipputyyppi, BigDecimal hinta, boolean kaytetty,
+            boolean ostettu) {
         this.esityskerta = esityskerta;
         this.lipputyyppi = lipputyyppi;
         this.hinta = hinta;
@@ -116,8 +109,9 @@ public class Lippu {
 
     @Override
     public String toString() {
-        return "Lippu [id_=" + this.id + ", hinta_=" + this.hinta + ", kaytetty_=" + this.kaytetty + ", ostettu_=" + this.ostettu
+        return "Lippu [id_=" + this.id + ", hinta_=" + this.hinta + ", kaytetty_=" + this.kaytetty + ", ostettu_="
+                + this.ostettu
                 + ", lipputyyppi_=" + this.lipputyyppi + ", esityskerta_=" + this.esityskerta + "]";
     }
-    
+
 }
