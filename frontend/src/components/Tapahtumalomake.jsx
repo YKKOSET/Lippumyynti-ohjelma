@@ -209,7 +209,7 @@ const Tapahtumalomake = ({ jarjestajat = [], onSubmit }) => {
                 <Button variant="outlined" startIcon={<AddIcon />} onClick={lisaaEsityskerta}>
                     Lisää esityskerta
                 </Button>
-                
+
                 <Divider />
 
                 <Button type="submit" variant="contained" disabled={!nimi.trim() || esityskerrat.length === 0}>
