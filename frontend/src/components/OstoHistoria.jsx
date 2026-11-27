@@ -4,22 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CircularProgress from '@mui/material/CircularProgress';
-
-// OSOITE: vaihda omaksi
-const API_BASE = 'http://localhost:8080/api';
-
-// Basic-tunnistautuminen (poista, jos API ei vaadi sitä)
-const username = import.meta.env.VITE_LIPPU_USER;
-const password = import.meta.env.VITE_LIPPU_PASSWORD;
-
-// Muodostaa Basic-tunnistautumisen myös ääkkösiä sisältäville tunnuksille.
-const basicAuth = () => {
-    const tunnukset = `${username ?? ''}:${password ?? ''}`;
-    const tavut = new TextEncoder().encode(tunnukset);
-    let binaari = '';
-    tavut.forEach((tavu) => { binaari += String.fromCharCode(tavu); });
-    return `Basic ${btoa(binaari)}`;
-};
+import { api } from './LippuTietokanta';
 
 const nimiTapahtumasta = (t) => t?.nimi ?? t?.nimi_ ?? t?.name ?? null;
 
@@ -91,15 +76,7 @@ function OstoHistoria() {
             setLataaOstoja(true);
             setOstotVirhe('');
             try {
-                const res = await fetch(`${API_BASE}/ostot`, {
-                    signal: ac.signal,
-                    headers: { Authorization: basicAuth() },
-                });
-                const vastaus = await res.text();
-                if (!res.ok) {
-                    throw new Error(`Ostojen haku epäonnistui (${res.status}): ${vastaus || res.statusText}`);
-                }
-                const data = vastaus ? JSON.parse(vastaus) : [];
+                const data = await api.ostot.hae(ac.signal);
                 console.log('[OSTOT] GET /api/ostot raakavastaus:', data);
                 setOstot(Array.isArray(data) ? data : []);
             } catch (err) {
@@ -127,12 +104,7 @@ function OstoHistoria() {
                 tapahtumat.flatMap((t) =>
                     (t.esityskerrat ?? []).map(async (e) => {
                         try {
-                            const res = await fetch(
-                                `${API_BASE}/tapahtumat/${t.id}/${e.id}/liput`,
-                                { signal: ac.signal, headers: { Authorization: basicAuth() } }
-                            );
-                            if (!res.ok) return;
-                            const data = await res.json();
+                            const data = await api.haeEsityskerranLiput(t.id, e.id, ac.signal);
                             if (!Array.isArray(data)) return;
                             const nimi = nimiTapahtumasta(t) ?? 'Nimetön tapahtuma';
                             data.forEach((lippu) => { taulu[String(lippu.id)] = { lippu, nimi }; });

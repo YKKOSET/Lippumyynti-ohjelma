@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "esityskerta")
@@ -25,7 +26,7 @@ public class Esityskerta {
 
     @ManyToOne
     @JoinColumn(name = "tapahtuma_id")
-    @JsonIgnore 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Tapahtuma tapahtuma;
 
     @Column(name = "max_osallistujat")

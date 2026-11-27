@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { TextField, InputAdornment, IconButton, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-const username = import.meta.env.VITE_LIPPU_USER;
-const password = import.meta.env.VITE_LIPPU_PASSWORD;
+import { api } from './LippuTietokanta';
 
 const HAKU_PITUUS = 36;
 
@@ -29,33 +28,16 @@ export default function Hakupalkki({ onLoytyi }) {
       setVirhe('');
       setOnnistui(false);
       try {
-        const res = await fetch(
-        /*`https://lippupalvelu-uons.onrender.com/ticket/ticket?koodi=${encodeURIComponent(arvo)}`*/
-        `http://localhost:8080/api/liput/${encodeURIComponent(arvo)}`,
-        {
-            signal: controller.signal,
-            headers: {
-            'Authorization': 'Basic ' + btoa(`${username}:${password}`),
-            },
-        }
-        );
-        const responseText = await res.text();
+        const data = await api.haeLippu(arvo, controller.signal);
 
-        if (res.status === 404 || !responseText.trim()) {
+        if (!data) {
           setVirhe('Lippua ei löytynyt');
           onLoytyi(null);
           return;
         }
-        if (!res.ok) {
-          throw new Error(`HTTP-virhe: ${res.status}`);
-        }
-
-        const data = JSON.parse(responseText);
 
         onLoytyi(data);
         setOnnistui(true);
-        setOnnistui(true);
-        
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('Haun virhe:', err);

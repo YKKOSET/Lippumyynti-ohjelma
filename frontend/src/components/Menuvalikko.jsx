@@ -16,35 +16,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 import '@fontsource/redaction';
-
-// OSOITE: vaihda omaksi (tapahtumat samasta osoitteesta kuin Tapahtumakortin tiedot)
-const API_BASE = 'http://localhost:8080/api';
-
-const URLS = {
-  tapahtumat: `${API_BASE}/tapahtumat`,
-  liput: `${API_BASE}/liput`,
-};
+import { api } from './LippuTietokanta';
 
 // Sivut, joille tapahtumat ja liput haetaan
 const TIETOJA_TARVITSEVAT_SIVUT = ['/myynti', '/ostohistoria'];
 
-// Basic-tunnistautuminen (poista, jos API ei vaadi sitä)
-const username = import.meta.env.VITE_LIPPU_USER;
-const password = import.meta.env.VITE_LIPPU_PASSWORD;
-
-// Hakee osoitteen ja palauttaa aina taulukon
-const haeJson = async (url, signal) => {
-  const res = await fetch(url, {
-    signal,
-    headers: { Authorization: 'Basic ' + btoa(`${username}:${password}`) },
-  });
-  if (!res.ok) throw new Error(`Haku epäonnistui (${url}): ${res.status}`);
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-};
-
-
-
+// Palauttaa aina taulukon
+const taulukoksi = (data) => (Array.isArray(data) ? data : []);
 
 function Menuvalikko() {
   const location = useLocation();
@@ -70,11 +48,11 @@ function Menuvalikko() {
       setVirhe('');
       try {
         const [t, l] = await Promise.all([
-          haeJson(URLS.tapahtumat, ac.signal),
-          haeJson(URLS.liput, ac.signal),
+          api.tapahtumat.hae(ac.signal),
+          api.liput.hae(ac.signal),
         ]);
-        setTapahtumat(t);
-        setLiput(l);
+        setTapahtumat(taulukoksi(t));
+        setLiput(taulukoksi(l));
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('Tietojen haku epäonnistui:', err);

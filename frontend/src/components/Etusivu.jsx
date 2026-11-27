@@ -6,12 +6,7 @@ import { TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tapahtumakortti from './Tapahtumakortti';
-
-const API_URL = 'http://localhost:8080/api/tapahtumat';
-
-const username = import.meta.env.VITE_LIPPU_USER;
-const password = import.meta.env.VITE_LIPPU_PASSWORD;
-
+import { api } from './LippuTietokanta';
 
 function Etusivu() {
 
@@ -23,15 +18,8 @@ function Etusivu() {
     useEffect(() => {
         const haeTapahtumat = async () => {
             try {
-                const vastaus = await fetch(API_URL);
-
-                if (!vastaus.ok) {
-                    throw new Error('Tapahtumien haku epäonnistui');
-                }
-
-                const data = await vastaus.json();
-                setTapahtumat(data);
-
+                const data = await api.tapahtumat.hae();
+                setTapahtumat(data ?? []);
             } catch (error) {
                 console.error(error);
                 setVirhe('Tapahtumien lataaminen epäonnistui.');
@@ -48,7 +36,7 @@ function Etusivu() {
     }
 
     if (virhe) {
-        return { virhe };
+        return <Typography color="error">{virhe}</Typography>;
     }
 
     const suodatetutTapahtumat = tapahtumat.filter((tapahtuma) =>

@@ -1,6 +1,6 @@
 import { useOutletContext } from 'react-router';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -13,133 +13,19 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import LippuTietokanta from './LippuTietokanta';
 
-// ---------------------------------------------------------------
-// OSOITE: vaihda omaksi
-// ---------------------------------------------------------------
-const API_BASE = 'http://localhost:8080/api';
-
-// ---------------------------------------------------------------
-// TESTITILA
-// true  = ei lähetetä mitään kantaan (ei lippujen eikä oston luontia).
-//         Pyynnöt tulostetaan selaimen consoleen (F12 → Console).
-// false = normaali toiminta, tiedot tallennetaan kantaan.
-// Saatavuustarkistus (GET) tehdään testitilassakin, koska se vain lukee.
-// ---------------------------------------------------------------
-const TESTITILA = false;
-
-// UUDEN LIPUN LUONTI: POST /api/liput (LippuRestController.luoLippu)
-// Palvelin tarkistaa esityskerran ja lipputyypin, asettaa id:n ja palauttaa luodun lipun (201).
-const luoLippuUrl = `${API_BASE}/liput`;
-
-// Uuden lipun sisältö. Lipputyyppi viitataan id:llä (kentän nimi on id_).
-// ostettu: true, koska lippu luodaan myyntitilanteessa heti ostetuksi.
-const luoLippuPayload = (esityskertaId, tyyppi) => ({
-    hinta: tyyppi.hinta,
-    ostettu: true,
-    kaytetty: false,
-    esityskerta: { id: esityskertaId },
-    lipputyyppi: { id_: tyyppi.dbId },
-});
-
-// Basic-tunnistautuminen (poista, jos API ei vaadi sitä)
 const username = import.meta.env.VITE_LIPPU_USER;
 const password = import.meta.env.VITE_LIPPU_PASSWORD;
 
-// Muodostaa Basic-tunnistautumisen myös ääkkösiä sisältäville tunnuksille.
-const basicAuth = () => {
-    const tunnukset = `${username ?? ''}:${password ?? ''}`;
-    const tavut = new TextEncoder().encode(tunnukset);
-    let binaari = '';
-    tavut.forEach((tavu) => { binaari += String.fromCharCode(tavu); });
-    return `Basic ${btoa(binaari)}`;
-};
-
-// Luo uuden (ostetuksi merkityn) lipun esityskerralle ja palauttaa palvelimen luoman lipun.
-const luoLippu = async (esityskertaId, tyyppi) => {
-    if (TESTITILA) {
-        const body = luoLippuPayload(esityskertaId, tyyppi);
-        console.log(`[TESTI] POST ${luoLippuUrl} (lipun luonti, EI lähetetty)`, body);
-        console.log('[TESTI] JSON-runko:', JSON.stringify(body));
-        return { id: `TESTI-${crypto.randomUUID()}`, ...body };
-    }
-    const res = await fetch(luoLippuUrl, {
-        method: 'POST',
-        headers: {
-            'Authorization': basicAuth(),
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(luoLippuPayload(esityskertaId, tyyppi)),
-    });
-    const vastaus = await res.text();
-    if (!res.ok) {
-        throw new Error(`Lipun luonti epäonnistui (${res.status}): ${vastaus || res.statusText}`);
-    }
-    let lippu = null;
-    try { lippu = vastaus ? JSON.parse(vastaus) : null; } catch { /* ei JSON */ }
-    if (lippu?.id === undefined || lippu?.id === null) {
-        throw new Error('Lipun luonti epäonnistui: vastauksessa ei ollut lipun id:tä.');
-    }
-    return lippu;
-};
-
-// Tallentaa oston: POST /api/ostot. Testitilassa vain tulostaa sisällön consoleen.
-const lahetaOsto = async (ostoPayload) => {
-    if (TESTITILA) {
-        console.log(`[TESTI] POST ${API_BASE}/ostot (EI lähetetty)`, ostoPayload);
-        console.log('[TESTI] JSON-runko:', JSON.stringify(ostoPayload, null, 2));
-        return;
-    }
-    const res = await fetch(`${API_BASE}/ostot`, {
-        method: 'POST',
-        headers: {
-            'Authorization': basicAuth(),
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(ostoPayload),
-    });
-    const vastaus = await res.text();
-    if (!res.ok) {
-        throw new Error(`Ostotapahtuman tallennus epäonnistui (${res.status}): ${vastaus || res.statusText}`);
-    }
-};
-
-// Kysyy backendiltä, riittääkö esityskerralla vapaita paikkoja haluttuun määrään.
-// Palauttaa { saatavilla: boolean, jaljella: number, viesti: string }.
-const tarkistaSaatavuus = async (esityskertaId, maara) => {
-    const res = await fetch(
-        `${API_BASE}/liput/saatavuus?esityskertaId=${esityskertaId}&maara=${maara}`,
-        { headers: { 'Authorization': basicAuth() } }
-    );
-    if (!res.ok) throw new Error(`Saatavuuden tarkistus epäonnistui (${res.status})`);
-    const data = await res.json();
-    if (TESTITILA) console.log(`[TESTI] Saatavuus esityskerta ${esityskertaId}, määrä ${maara}:`, data);
-    return data;
-};
-
-// ---------------------------------------------------------------
-// LIPPUTYYPIT
-// Jokaiselle esityskerralle tarjotaan nämä tyypit samassa järjestyksessä.
-// HINNAT OVAT VAIN ESIMERKKEJÄ: vaihda ne omiksi.
-// ---------------------------------------------------------------
+// dbId = Lipputyyppi-taulun id_ tietokannassa.
 const LIPPUTYYPIT = [
     { id: 'elakelainen', nimi: 'Eläkeläinen', hinta: 15, dbId: 1 },
     { id: 'opiskelija', nimi: 'Opiskelija', hinta: 15, dbId: 2 },
     { id: 'normaali', nimi: 'Normaalihintainen', hinta: 20, dbId: 3 },
     { id: 'lapsi', nimi: 'Lastenlippu', hinta: 10, dbId: 4 },
 ];
-// dbId = Lipputyyppi-taulun id_ tietokannassa. TARKISTA, että ne vastaavat kantaa.
 
-// ---------------------------------------------------------------
-// ODOTETTU DATA
-// useOutletContext(): tapahtumat: [{ id, nimi, esityskerrat: [{ id, alkuaika, maxOsallistujat, paikka: { nimi } }] }]
-// Lippuja ei haeta kannasta. Myyntilista muodostuu tyyppikohtaisista määristä
-// ({ 'tapahtumaId-esityskertaId': { elakelainen: 0, opiskelija: 2, ... } }).
-// ---------------------------------------------------------------
-
-// Enimmäisosallistujamäärä numerona (null = ei tietoa)
 const haeMaksimi = (esityskerta) => {
     const arvo = esityskerta?.maxOsallistujat;
     if (arvo === null || arvo === undefined || arvo === '') return null;
@@ -152,23 +38,21 @@ const euro = (n) => `${Number(n).toFixed(2).replace('.', ',')} €`;
 const muotoileAika = (alkuaika) =>
     alkuaika
         ? new Date(alkuaika).toLocaleString('fi-FI', {
-              weekday: 'short', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit',
+              weekday: 'short',
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
           })
         : '';
 
-// Tapahtuman nimi eri muodoista
 const nimiTapahtumasta = (t) => t?.nimi ?? t?.nimi_ ?? t?.name ?? null;
 
-// ---------------------------------------------------------------
-// YKSI LIPPUKORTTI (yksi lipputyyppi)
-// Vasen osa: aika, tapahtuman nimi ja lipputyyppi.
-// Oikea osa (perforoitu kanta): hinta sekä määrä + / - -painikkeilla.
-// ---------------------------------------------------------------
-function LippuKortti({ tyyppi, maara, nimi, esityskerta, onLisaa, onVahenna }) {
+function LippuKortti({ tyyppi, maara, nimi, esityskerta, lisaysEstetty, onLisaa, onVahenna }) {
     return (
         <Box sx={tyylit.korttiUlko}>
             <Card elevation={0} sx={tyylit.kortti}>
-                {/* Vasen osa */}
                 <Box sx={tyylit.runko}>
                     <Typography component="time" sx={tyylit.aika}>
                         {muotoileAika(esityskerta?.alkuaika)}
@@ -177,7 +61,6 @@ function LippuKortti({ tyyppi, maara, nimi, esityskerta, onLisaa, onVahenna }) {
                     <Typography sx={tyylit.tyyppi}>{tyyppi.nimi}</Typography>
                 </Box>
 
-                {/* Oikea osa */}
                 <Box sx={tyylit.kanta}>
                     <Typography sx={tyylit.hinta}>{euro(tyyppi.hinta)}</Typography>
 
@@ -197,6 +80,7 @@ function LippuKortti({ tyyppi, maara, nimi, esityskerta, onLisaa, onVahenna }) {
                         <IconButton
                             size="small"
                             onClick={onLisaa}
+                            disabled={lisaysEstetty}
                             aria-label={`Lisää: ${tyyppi.nimi}`}
                             sx={tyylit.pyoreaNappi}
                         >
@@ -209,13 +93,9 @@ function LippuKortti({ tyyppi, maara, nimi, esityskerta, onLisaa, onVahenna }) {
     );
 }
 
-// ---------------------------------------------------------------
-// KAIKKI TAPAHTUMAT: jokainen esityskerta omana ryhmänään,
-// otsikkona tapahtuman nimi. Jokaisen esityskerran alla ovat lipputyypit.
-// ---------------------------------------------------------------
-function TicketSales({ onMaksu }) {
+function MyyntiSisalto({ onMaksu, api }) {
+    const { luoLippu, lahetaOsto, tarkistaSaatavuus } = api;
 
-    //vastaanottaa menuvalikon kautta tiedot
     const {
         tapahtumat = [],
         lataa = false,
@@ -227,13 +107,15 @@ function TicketSales({ onMaksu }) {
     const [maarat, setMaarat] = useState({});
     const [maksuViesti, setMaksuViesti] = useState('');
     const [maksuVirhe, setMaksuVirhe] = useState('');
-    const [kasitellaan, setKasitellaan] = useState(false); // maksu käynnissä
+    const [kasitellaan, setKasitellaan] = useState(false);
+    const [tarkistetaan, setTarkistetaan] = useState(false);
 
-    // Haku: tyhjä valinta = kaikki
-    const [valittuTapahtuma, setValittuTapahtuma] = useState(''); // tapahtuman id
-    const [valittuEsitys, setValittuEsitys] = useState('');       // ryhmän avain (tapahtumaId-esityskertaId)
+    // { [esityskertaId]: vapaita paikkoja palvelimen mukaan }
+    const [jaljella, setJaljella] = useState({});
 
-    //aseta pudotusvalikkoon navigoinnin mukana tulleen tapahtuman tiedot
+    const [valittuTapahtuma, setValittuTapahtuma] = useState('');
+    const [valittuEsitys, setValittuEsitys] = useState('');
+
     useEffect(() => {
         if (!navigoituTapahtuma?.id) return;
 
@@ -261,12 +143,29 @@ function TicketSales({ onMaksu }) {
         [tapahtumat]
     );
 
-    // Esityskerta-valinnassa näkyvät vain valitun tapahtuman esityskerrat (tai kaikki, jos tapahtumaa ei valittu)
+    const paivitaJaljella = useCallback(async () => {
+        const tulokset = await Promise.all(
+            ryhmat.map(async ({ esityskerta }) => {
+                try {
+                    const data = await tarkistaSaatavuus(esityskerta.id, 1);
+                    return [esityskerta.id, data.jaljella];
+                } catch (err) {
+                    console.error('Jäljellä olevien paikkojen haku epäonnistui:', err);
+                    return null;
+                }
+            })
+        );
+        setJaljella(Object.fromEntries(tulokset.filter(Boolean)));
+    }, [ryhmat, tarkistaSaatavuus]);
+
+    useEffect(() => {
+        paivitaJaljella();
+    }, [paivitaJaljella]);
+
     const esitysVaihtoehdot = ryhmat.filter(
         (r) => !valittuTapahtuma || String(r.tapahtuma.id) === valittuTapahtuma
     );
 
-    // Näytettävät ryhmät hakuvalintojen mukaan
     const nakyvat = ryhmat.filter(
         (r) =>
             (!valittuTapahtuma || String(r.tapahtuma.id) === valittuTapahtuma) &&
@@ -275,7 +174,7 @@ function TicketSales({ onMaksu }) {
 
     const vaihdaTapahtuma = (id) => {
         setValittuTapahtuma(id);
-        setValittuEsitys(''); // esityskerta valitaan uudelleen uuden tapahtuman sisältä
+        setValittuEsitys('');
     };
 
     const poistaValinnat = () => {
@@ -285,7 +184,6 @@ function TicketSales({ onMaksu }) {
 
     const haeMaara = (avain, tyyppiId) => maarat[avain]?.[tyyppiId] ?? 0;
 
-    // muutos: +1 tai -1. Määrä ei mene alle nollan.
     const muutaMaaraa = (avain, tyyppiId, muutos) => {
         if (kasitellaan) return;
         setMaksuViesti('');
@@ -297,6 +195,30 @@ function TicketSales({ onMaksu }) {
                 [avain]: { ...vanhat[avain], [tyyppiId]: Math.max(0, nyt + muutos) },
             };
         });
+    };
+
+    // Tarkistaa palvelimelta, että yksi lippu lisää on myytävissä, ennen kuin määrää kasvatetaan.
+    const lisaaLippu = async (ryhma, tyyppiId) => {
+        if (kasitellaan || tarkistetaan) return;
+        const { avain, esityskerta } = ryhma;
+        const valittuYhteensa = LIPPUTYYPIT.reduce((summa, t) => summa + haeMaara(avain, t.id), 0);
+
+        setTarkistetaan(true);
+        try {
+            const data = await tarkistaSaatavuus(esityskerta.id, valittuYhteensa + 1);
+            setJaljella((vanhat) => ({ ...vanhat, [esityskerta.id]: data.jaljella }));
+            if (!data.saatavilla) {
+                setMaksuViesti('');
+                setMaksuVirhe(`Lippuja ei ole enää saatavilla: paikkoja on jäljellä ${data.jaljella}.`);
+                return;
+            }
+            muutaMaaraa(avain, tyyppiId, 1);
+        } catch (err) {
+            console.error('Saatavuuden tarkistus epäonnistui:', err);
+            setMaksuVirhe(err.message || 'Saatavuuden tarkistus epäonnistui.');
+        } finally {
+            setTarkistetaan(false);
+        }
     };
 
     const nollaaRivi = (avain, tyyppiId) => {
@@ -311,8 +233,7 @@ function TicketSales({ onMaksu }) {
         setMaksuVirhe('');
     };
 
-    // Myyntilista: kaikki rivit, joiden määrä on yli nolla (kaikista esityskerroista,
-    // myös hakusuodatuksen ulkopuolisista, jotta valinnat eivät katoa suodatettaessa)
+    // Kaikki rivit, joiden määrä on yli nolla (myös suodatuksen ulkopuolelta)
     const valitut = useMemo(
         () =>
             ryhmat.flatMap((ryhma) =>
@@ -329,12 +250,8 @@ function TicketSales({ onMaksu }) {
     const lippuja = valitut.reduce((summa, r) => summa + r.maara, 0);
     const kokonaishinta = valitut.reduce((summa, r) => summa + r.summa, 0);
 
-    // ---------------------------------------------------------------
-    // MAKSU: luo jokaisesta valitusta lipusta uuden ostetuksi merkityn lipun kantaan
-    // ja tallentaa kaikista onnistuneista yhden oston.
-    // Liput luodaan peräkkäin, jotta palvelinta ei kuormiteta.
-    // Epäonnistuneet liput jäävät myyntilistalle, onnistuneet poistuvat siitä.
-    // ---------------------------------------------------------------
+    // Luo liput peräkkäin ja tallentaa onnistuneista yhden oston.
+    // Epäonnistuneet liput jäävät myyntilistalle.
     const suoritaMaksu = async () => {
         if (valitut.length === 0 || kasitellaan) return;
 
@@ -345,8 +262,7 @@ function TicketSales({ onMaksu }) {
         setMaksuVirhe('');
 
         try {
-            // Tarkistetaan ensin jokaisen esityskerran saatavuus. Jos yhdelläkin esityskerralla
-            // ei ole tarpeeksi vapaita paikkoja, mitään ei luoda (ei osittaista myyntiä).
+            // Jos yhdelläkään esityskerralla ei ole tarpeeksi paikkoja, mitään ei luoda.
             const maaratEsityksittain = {};
             myytavat.forEach(({ ryhma, maara }) => {
                 const id = ryhma.esityskerta.id;
@@ -365,13 +281,12 @@ function TicketSales({ onMaksu }) {
                     setMaksuVirhe(
                         `Lippuja ei ole tarpeeksi: valitsit ${maara} lippua, mutta paikkoja on jäljellä ${saatavuus.jaljella}.`
                     );
-                    return; // finally-lohko nollaa kasitellaan-tilan
+                    return;
                 }
             }
 
-            // Luodaan liput yksi kerrallaan
-            const luodut = [];      // { lippu, hinta, tapahtumaId, esityskertaId }
-            const jaljelle = {};    // { avain: { tyyppiId: määrä } } – epäonnistuneet
+            const luodut = [];
+            const jaljelle = {};
             const virheet = [];
 
             for (const { ryhma, tyyppi, maara } of myytavat) {
@@ -398,8 +313,6 @@ function TicketSales({ onMaksu }) {
             if (luodut.length > 0) {
                 const yhteensa = luodut.reduce((summa, l) => summa + Number(l.hinta || 0), 0);
 
-                // Yksi maksu muodostaa yhden Osto-tietueen ja jokaisesta lipusta
-                // oman Ostorivi-tietueen (tallennus palvelimen POST /api/ostot -käsittelijässä).
                 const ostoPayload = {
                     ostoaika: new Date().toISOString(),
                     kokonaishinta: Number(yhteensa.toFixed(2)),
@@ -414,13 +327,12 @@ function TicketSales({ onMaksu }) {
                     await lahetaOsto(ostoPayload);
                     ostoTallennettu = true;
                 } catch (err) {
-                    // Liput on jo luotu ostetuiksi, joten niitä ei palauteta myyntilistalle.
                     console.error('Ostotapahtuman tallennus epäonnistui:', err);
                     setMaksuVirhe(`Liput luotiin ostetuiksi, mutta ostotapahtuman tallennus epäonnistui. ${err.message || ''}`);
                 }
 
                 try {
-                    if (!TESTITILA) onMaksu?.({
+                    onMaksu?.({
                         liput: luodut.map(({ lippu, hinta, tapahtumaId, esityskertaId }) => ({
                             id: lippu.id, hinta, tapahtumaId, esityskertaId,
                         })),
@@ -431,9 +343,7 @@ function TicketSales({ onMaksu }) {
                 }
 
                 setMaksuViesti(
-                    TESTITILA
-                        ? `TESTITILA: ${luodut.length} lippua ja yksi osto tulostettiin consoleen, mitään ei tallennettu.`
-                        : ostoTallennettu
+                    ostoTallennettu
                         ? `Maksu suoritettu ja ostotapahtuma tallennettu: ${luodut.length} kpl · ${euro(yhteensa)}`
                         : `Liput luotu: ${luodut.length} kpl · ${euro(yhteensa)}`
                 );
@@ -446,10 +356,9 @@ function TicketSales({ onMaksu }) {
                 );
             }
 
-            // Myyntilistalle jäävät vain epäonnistuneet
-            // Testitilassa lista säilyy, jotta samaa myyntiä voi testata uudelleen
-            if (!TESTITILA) setMaarat(jaljelle);
+            setMaarat(jaljelle);
         } finally {
+            await paivitaJaljella();
             setKasitellaan(false);
         }
     };
@@ -457,13 +366,7 @@ function TicketSales({ onMaksu }) {
     return (
         <Box sx={tyylit.sivu}>
             <Typography variant="h6" sx={tyylit.otsikko}>Myy liput</Typography>
-            {TESTITILA && (
-                <Typography sx={{ ml: 3, mt: 1, textAlign: 'left', color: '#b45309', fontSize: '.85rem' }}>
-                    TESTITILA: mitään ei lähetetä kantaan, pyynnöt tulostuvat selaimen consoleen.
-                </Typography>
-            )}
 
-            {/* Hakuvalikko: tapahtuma ja esityskerta. Ei valintaa = kaikki. */}
             <Box sx={tyylit.haku}>
                 <FormControl size="small" sx={tyylit.hakuKentta}>
                     <InputLabel id="haku-tapahtuma" shrink>Tapahtuma</InputLabel>
@@ -520,7 +423,6 @@ function TicketSales({ onMaksu }) {
                 </Button>
             </Box>
 
-            {/* Myyntilista: valitut määrät ja kokonaishinta */}
             <Box sx={tyylit.korttiUlko}>
                 <Card variant="outlined" sx={tyylit.myyntilista}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
@@ -595,19 +497,25 @@ function TicketSales({ onMaksu }) {
 
             {nakyvat.map((ryhma) => {
                 const { avain, nimi, esityskerta, maksimi } = ryhma;
+                const palvelimelta = jaljella[esityskerta.id];
+                const valittuMaara = LIPPUTYYPIT.reduce((summa, t) => summa + haeMaara(avain, t.id), 0);
+                const vapaana = palvelimelta === undefined ? null : Math.max(0, palvelimelta - valittuMaara);
                 return (
                     <Box key={avain} component="section">
                         <Typography variant="h5" component="h2" sx={tyylit.tapahtumaOtsikko}>
                             {nimi}
                         </Typography>
                         <Typography sx={tyylit.tapahtumaTiedot}>
-                            {[
-                                muotoileAika(esityskerta.alkuaika),
-                                esityskerta.paikka?.nimi,
-                                maksimi !== null ? `Paikkoja enintään ${maksimi}` : '',
-                            ]
+                            {[muotoileAika(esityskerta.alkuaika), esityskerta.paikka?.nimi]
                                 .filter(Boolean)
                                 .join(' · ')}
+                            {vapaana !== null && (
+                                <>
+                                    {' · '}Lippuja jäljellä{' '}
+                                    <Box component="strong" sx={{ color: VARIT.teksti }}>{vapaana}</Box>
+                                    {maksimi !== null && ` / ${maksimi}`}
+                                </>
+                            )}
                         </Typography>
 
                         <Box sx={tyylit.lista}>
@@ -618,7 +526,8 @@ function TicketSales({ onMaksu }) {
                                     maara={haeMaara(avain, tyyppi.id)}
                                     nimi={nimi}
                                     esityskerta={esityskerta}
-                                    onLisaa={() => muutaMaaraa(avain, tyyppi.id, 1)}
+                                    lisaysEstetty={kasitellaan || tarkistetaan || (vapaana !== null && vapaana <= 0)}
+                                    onLisaa={() => lisaaLippu(ryhma, tyyppi.id)}
                                     onVahenna={() => muutaMaaraa(avain, tyyppi.id, -1)}
                                 />
                             ))}
@@ -630,11 +539,16 @@ function TicketSales({ onMaksu }) {
     );
 }
 
+function TicketSales({ onMaksu }) {
+    return (
+        <LippuTietokanta tunnus={username} salasana={password}>
+            {(api) => <MyyntiSisalto api={api} onMaksu={onMaksu} />}
+        </LippuTietokanta>
+    );
+}
+
 export default TicketSales;
 
-// ---------------------------------------------------------------
-// VÄRIT (muuta tyylin värit täältä)
-// ---------------------------------------------------------------
 const VARIT = {
     teksti: '#14213d',
     himmea: '#5b6478',
@@ -645,28 +559,21 @@ const VARIT = {
     onnistui: '#15803d',
 };
 
-// ---------------------------------------------------------------
-// TYYLIT (jokaisella osalla oma nimi ja selite)
-// ---------------------------------------------------------------
 const tyylit = {
-    // Koko sivun osio
     sivu: { pb: 4 },
     otsikko: { textAlign: 'left', ml: 3, mt: 4, fontWeight: 600 },
 
-    // Väliotsikko: tapahtuma
     tapahtumaOtsikko: { textAlign: 'left', ml: 3, mt: 4, fontWeight: 700, color: VARIT.teksti },
     tapahtumaTiedot: { textAlign: 'left', ml: 3, mb: 1.5, fontSize: '.9rem', color: VARIT.himmea },
 
-    // Korttien lista
     lista: { display: 'flex', flexDirection: 'column', gap: 2 },
     korttiUlko: { ml: 3, mr: 3 },
 
-    // Itse kortti: kaksi osaa vierekkäin (runko + kanta)
     kortti: {
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: '1fr auto' }, // pienellä näytöllä allekkain
+        gridTemplateColumns: { xs: '1fr', sm: '1fr auto' },
         width: '100%',
-        maxWidth: 620,                                      // kortin enimmäisleveys
+        maxWidth: 620,
         border: `1px solid ${VARIT.viiva}`,
         borderRadius: '14px',
         overflow: 'hidden',
@@ -674,7 +581,6 @@ const tyylit = {
         bgcolor: '#fff',
     },
 
-    // Vasen osa: tapahtuman tiedot
     runko: { p: '20px 20px 20px 24px', textAlign: 'left', minWidth: 0 },
     aika: {
         display: 'block',
@@ -687,7 +593,6 @@ const tyylit = {
     tapahtumaNimi: { fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.25 },
     tyyppi: { fontSize: '.95rem', color: VARIT.himmea, mt: 0.5 },
 
-    // Oikea osa: hinta ja määrä (perforoitu kanta)
     kanta: {
         width: { xs: 'auto', sm: 210 },
         p: '20px 18px',
@@ -699,7 +604,6 @@ const tyylit = {
         position: 'relative',
         borderLeft: { xs: 0, sm: `2px dashed ${VARIT.viiva}` },
         borderTop: { xs: `2px dashed ${VARIT.viiva}`, sm: 0 },
-        // Perforaation pyöreät lovet
         '&::before, &::after': {
             content: '""',
             position: 'absolute',
@@ -726,7 +630,6 @@ const tyylit = {
         '&.Mui-disabled': { borderColor: VARIT.viiva },
     },
 
-    // Myy-painike
     myyNappi: {
         textTransform: 'none',
         fontWeight: 600,
@@ -735,7 +638,6 @@ const tyylit = {
         '&:hover': { bgcolor: VARIT.korostusHover },
     },
 
-    // Hakuvalikko sivun alussa
     haku: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -747,7 +649,6 @@ const tyylit = {
     },
     hakuKentta: { minWidth: 220, flex: '1 1 220px', maxWidth: 320, textAlign: 'left' },
 
-    // Toissijaiset painikkeet
     poistaNappi: {
         textTransform: 'none',
         fontWeight: 600,
@@ -756,7 +657,6 @@ const tyylit = {
         borderColor: VARIT.korostus,
     },
 
-    // Myyntilista (myytävät liput ja kokonaishinta)
     myyntilista: {
         display: 'flex',
         flexDirection: 'column',
@@ -783,6 +683,5 @@ const tyylit = {
     rivinLisatieto: { fontSize: '.8rem', color: VARIT.himmea, mt: 0.5 },
     yhteensaRivi: { display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem' },
 
-    // Viesti maksun jälkeen
     viesti: { fontSize: '.8rem', color: VARIT.onnistui, textAlign: 'center', minHeight: '1.2em' },
 };
