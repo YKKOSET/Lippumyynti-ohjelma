@@ -6,11 +6,7 @@ import Switch from '@mui/material/Switch';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 import Popup from './Popup';
-
-const username = import.meta.env.VITE_LIPPU_USER;
-const password = import.meta.env.VITE_LIPPU_PASSWORD;
-
-const API_URL = 'http://localhost:8080/api/liput';
+import { api } from './LippuTietokanta';
 
 // Värit samat kuin TicketSales-kortissa
 const INK = '#14213d';
@@ -112,20 +108,8 @@ function LippuCard({ lippu }) {
         setTallennetaan(true);
         setVirhe('');
 
-        const tila = uusiTila ? 'kaytetty' : 'kayttamaton';
-        const url = `${API_URL}/${encodeURIComponent(lippu.id)}/${tila}`;
-
         try {
-            const res = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Basic ' + btoa(`${username}:${password}`),
-                },
-            });
-
-            if (!res.ok) {
-                throw new Error(`Tallennus epäonnistui: ${res.status}`);
-            }
+            await api.merkitseKaytetyksi(lippu.id, uusiTila);
 
             // Kun tallennus on tehty, näytetään popup onnistumisesta
             setShowPopUp(true);
